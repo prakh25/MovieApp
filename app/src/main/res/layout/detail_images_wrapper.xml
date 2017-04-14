@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/image_wrapper_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Images (54)"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:textSize="18sp"
+        android:padding="16dp"/>
+
+    <Button
+        android:id="@+id/more_images_btn"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="VIEW ALL"
+        android:textColor="@color/colorAccent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="8dp"
+        android:visibility="gone"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/images_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/recycler_view_margin_top"
+        android:scrollbars="horizontal"
+        android:scrollbarStyle="outsideInset"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:background="@android:color/darker_gray"
+        android:layout_gravity="bottom"/>
+
+</FrameLayout>

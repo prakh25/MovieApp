@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+    
+    <string name="movie_poster">MoviePoster</string>
+
+
+    <string name="add_to_watchlist">Add to WatchList</string>
+    <string name="added_to_watchlist">Added to WatchList</string>
+
+    <string name="mark_as_favorite">Mark as Favorite</string>
+    <string name="marked_as_favorite">Marked as Favorite</string>
+    <string name="add_to">Add to</string>
+    <string name="more_btn">More</string>
+    <string name="recommendation_wrapper">Recommendations</string>
+    <string name="movie_overview">Overview</string>
+    <string name="top_billed_crew">Top Billed Crew</string>
+    <string name="full_crew_btn">Full Crew</string>
+    <string name="director">Director</string>
+    <string name="written_by">Written By</string>
+    <string name="top_billed_cast">Top Billed Cast</string>
+    <string name="full_cast_btn">Full Cast</string>
+    <string name="action_movies">Movies</string>
+    <string name="action_television">Television</string>
+    <string name="action_search">Search</string>
+    <string name="action_people">People</string>
+    <string name="action_you">You</string>
+
+    //HomeLinkTitle
+    <string name="home_link_discover_movies">Discover Movies</string>
+    <string name="u_s_weekend_box_office">U.S. Weekend Box Office</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="most_popular_movies">Most Popular Movies</string>
+    <string name="top_rated_movies">Top Rated Movies</string>
+    <string name="popular_movies_by_genres">Popular Movies By Genres</string>
+    <string name="search_home"><![CDATA[Search Movies & TV]]></string>
+    <string name="user_rate_movie">Rate Movie</string>
+    <string name="dialog_save_btn">Save</string>
+    <string name="dialog_delete_btn">DELETE</string>
+    <string name="movie_details">Details</string>
+    <string name="movie_plot">Plot Summary</string>
+    <string name="no_rating">- /10</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+</resources>

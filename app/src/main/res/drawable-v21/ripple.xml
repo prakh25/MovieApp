@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@android:color/darker_gray">
+
+    <!-- If you give an item this mask id then it will only be used to determine the shape of -->
+    <!-- ripple, but will not be drawn in any way -->
+    <item android:id="@android:id/mask">
+        <!-- android:shape defines the shape of the ripple. I use oval for a circular one, -->
+        <!-- but there are also rectangle, line, ring -->
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white"/>
+        </shape>
+    </item>
+</ripple>

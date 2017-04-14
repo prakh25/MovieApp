@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/full_credit_item_frame"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardElevation="6dp"
+    android:stateListAnimator="@animator/lift_on_touch">
+
+    <ImageView
+        android:id="@+id/full_crew_person_image"
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:scaleType="fitXY" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="85dp"
+        android:layout_marginLeft="85dp"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/full_crew_person_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hugh JackMan"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"/>
+
+        <TextView
+            android:id="@+id/full_crew_person_character"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Logan"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Known For"
+        android:padding="16dp"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:textSize="18sp"/>
+
+    <GridView
+        android:id="@+id/people_known_for_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="110dp"
+        android:numColumns="3"
+        android:stretchMode="spacingWidthUniform"
+        tools:listitem="@layout/people_credits_acting_item" />
+
+    <TextView
+        android:id="@+id/people_view_all_credits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="16dp"
+        android:text="View All Credits"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:background="@android:color/darker_gray"/>
+</LinearLayout>

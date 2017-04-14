@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/people_header_frame"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    app:layout_collapseMode="parallax"
+    app:layout_collapseParallaxMultiplier="0.3">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:orientation="vertical"
+        app:layout_collapseMode="parallax"
+        app:layout_collapseParallaxMultiplier="0.3">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/people_person_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/people_person_name"
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp" />
+
+        <LinearLayout
+            android:id="@+id/people_external_ids_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:layout_collapseMode="parallax"
+            app:layout_collapseParallaxMultiplier="0.3">
+
+            <ImageButton
+                android:id="@+id/people_facebook_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:focusable="true"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:src="@drawable/ic_facebook_box_white_24dp"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/people_instagram_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:padding="16dp"
+                android:src="@drawable/ic_instagram_white_24dp"
+                android:visibility="gone"
+                android:focusable="true"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"/>
+
+            <ImageButton
+                android:id="@+id/people_twitter_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:padding="16dp"
+                android:src="@drawable/ic_twitter_white_24dp"
+                android:visibility="gone"
+                android:focusable="true"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"/>
+
+            <ImageButton
+                android:id="@+id/people_imdb_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:padding="16dp"
+                android:src="@drawable/ic_imdb_logo"
+                android:visibility="gone"
+                android:focusable="true"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

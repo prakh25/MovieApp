@@ -1,0 +1,123 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'realm-android'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
+    defaultConfig {
+        applicationId "com.example.prakhar.movieapp"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildTypes.each {
+        it.buildConfigField('String', 'TMDB_API_KEY', MyTmdbapikey)
+        it.buildConfigField('String', 'TRAKT_CLIENT_ID', MyTraktClientId)
+        it.buildConfigField('String', 'YOU_TUBE_DATA_API_KEY', YouTubeApiKey)
+        it.buildConfigField('String', 'YOU_TUBE_CHANNEL_ID', YouTubeChannelId)
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    compile "com.android.support:cardview-v7:$supportLibaryVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibaryVersion"
+    compile "com.android.support:palette-v7:$supportLibaryVersion"
+    compile "com.android.support:appcompat-v7:$supportLibaryVersion"
+    compile "com.android.support:design:$supportLibaryVersion"
+    compile "com.android.support:support-annotations:$supportLibaryVersion"
+    compile "com.android.support:support-v4:$supportLibaryVersion"
+
+
+    testCompile "junit:junit:$junitVersion"
+
+    retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion"
+
+    compile "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    compile "io.reactivex.rxjava2:rxandroid:$rxJavaVersion"
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+
+    compile "com.squareup.okhttp3:okhttp:$okHttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    testCompile "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
+
+    //Gson
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile ('com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.5.0') {
+        exclude group: "joda-time", module: "joda-time"
+    }
+
+    //Butterknife
+    compile "com.jakewharton:butterknife:$butterKnifeVersion"
+    apt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+
+    //Android
+
+    //Joda time
+    compile "net.danlew:android.joda:$jodaTimeVersion"
+
+    //debugging
+    compile "com.jakewharton.timber:timber:$timberVersion"
+
+
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "org.powermock:powermock-module-junit4:$powermockVersion"
+    testCompile "org.powermock:powermock-api-mockito:$powermockVersion"
+
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
+
+    compile 'com.github.jd-alexander:LikeButton:0.2.0'
+
+    compile 'com.github.mukeshsolanki:country-picker-android:1.1.7'
+
+    compile "com.github.bumptech.glide:glide:$glideVersion"
+
+    compile 'io.realm:android-adapters:2.0.0'
+
+    debugCompile  'com.facebook.stetho:stetho:1.4.1'
+    debugCompile  'com.uphyca:stetho_realm:2.0.0'
+
+    compile 'me.zhanghai.android.materialratingbar:library:1.0.2'
+
+    compile 'com.github.rubensousa:gravitysnaphelper:1.1'
+
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
+
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+
+    compile 'com.ms-square:expandableTextView:0.1.4'
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Popular People"
+        android:padding="16dp"
+        style="@style/Base.TextAppearance.AppCompat.Title"
+        android:gravity="center"/>
+
+    <include layout="@layout/progress_bar_fragment"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/home_people_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false" />
+
+</LinearLayout>

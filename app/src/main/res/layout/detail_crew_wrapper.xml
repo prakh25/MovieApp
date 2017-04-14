@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/top_billed_crew"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textSize="18sp"
+        android:layout_gravity="center_vertical"/>
+
+        <Button
+            android:id="@+id/detail_full_crew_btn"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/full_crew_btn"
+            android:textColor="@color/colorAccent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/director_name_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:paddingBottom="8dp"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/director"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/director_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginTop="36dp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/writers_name_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:paddingBottom="8dp"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/written_by"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/writers_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginTop="36dp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/screenplay_name_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:paddingBottom="8dp"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Screenplay"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/screenplay_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginTop="36dp" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>
