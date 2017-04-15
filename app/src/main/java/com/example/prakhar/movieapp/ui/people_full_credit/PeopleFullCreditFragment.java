@@ -116,7 +116,6 @@ public class PeopleFullCreditFragment extends Fragment {
             Color.colorToHSV(color, hsv);
             hsv[2] *= 0.6f; // value component
             int statusBarColor = Color.HSVToColor(hsv);
-
             activity.getWindow().setStatusBarColor(statusBarColor);
         }
 

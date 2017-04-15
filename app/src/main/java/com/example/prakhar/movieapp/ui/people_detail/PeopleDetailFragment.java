@@ -1,6 +1,5 @@
 package com.example.prakhar.movieapp.ui.people_detail;
 
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,6 +35,7 @@ import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.movie_detail.MovieDetailActivity;
 import com.example.prakhar.movieapp.ui.people_full_credit.PeopleFullCreditActivity;
 import com.example.prakhar.movieapp.utils.Constants;
+import com.example.prakhar.movieapp.utils.Utils;
 import com.example.prakhar.movieapp.utils.palette.PaletteBitmap;
 import com.example.prakhar.movieapp.utils.palette.PaletteBitmapTranscoder;
 import com.example.prakhar.movieapp.widgets.people_detail.KnownForAdapter;
@@ -93,7 +93,6 @@ public class PeopleDetailFragment extends Fragment implements AppBarLayout.OnOff
 
     private Integer personId;
     private String profilePath;
-
     private AppCompatActivity activity;
     private PeopleDetailPresenter presenter;
     private Unbinder unbinder;
@@ -149,69 +148,6 @@ public class PeopleDetailFragment extends Fragment implements AppBarLayout.OnOff
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
         }
-
-//        if (profilePath != null && !profilePath.isEmpty()) {
-//            BitmapRequestBuilder<String, PaletteBitmap> glideRequest =
-//                    Glide.with(activity).fromString().asBitmap()
-//                            .transcode(new PaletteBitmapTranscoder(activity), PaletteBitmap.class);
-//
-//            glideRequest.load(Constants.TMDB_IMAGE_URL + "w185" + profilePath)
-//                    .into(new ImageViewTarget<PaletteBitmap>(personProfileImage) {
-//                        @Override
-//                        protected void setResource(PaletteBitmap resource) {
-//                            super.view.setImageBitmap(resource.bitmap);
-//                            toolbarColor = resource.palette.getVibrantColor(
-//                                    resource.palette.getDominantColor(
-//                                            resource.palette.getMutedColor(
-//                                                    resource.palette.getDarkVibrantColor(
-//                                                            resource.palette.getDarkMutedColor(
-//                                                                    ContextCompat.getColor(activity, R.color.colorPrimary))))));
-//
-//                            int[] colors = {toolbarColor, ContextCompat
-//                                    .getColor(activity, android.R.color.transparent)};
-//
-//                            gradientDrawable = new GradientDrawable(
-//                                    GradientDrawable.Orientation.TOP_BOTTOM,
-//                                    colors);
-//                            gradientDrawable.setCornerRadius(0f);
-//                            gradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-//
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//                                headerFrame.setBackground(gradientDrawable);
-//                                headerFrame.setAnimation(animation);
-//                            } else {
-//                                headerFrame.setBackgroundDrawable(gradientDrawable);
-//                            }
-//                        }
-//                    });
-//        } else {
-//            BitmapRequestBuilder<Integer, PaletteBitmap> glideRequest;
-//            glideRequest = Glide.with(this).fromResource().asBitmap()
-//                    .transcode(new PaletteBitmapTranscoder(activity), PaletteBitmap.class);
-//            glideRequest.load(R.drawable.movie_people_placeholder)
-//                    .into(new ImageViewTarget<PaletteBitmap>(personProfileImage) {
-//                        @Override
-//                        protected void setResource(PaletteBitmap resource) {
-//                            super.view.setImageBitmap(resource.bitmap);
-//                            toolbarColor = resource.palette.getVibrantColor(
-//                                    resource.palette.getDominantColor(ContextCompat.getColor(activity, R.color.colorPrimary)));
-//                            int[] colors = {toolbarColor, ContextCompat
-//                                    .getColor(activity, android.R.color.transparent)};
-//
-//                            gradientDrawable = new GradientDrawable(
-//                                    GradientDrawable.Orientation.TOP_BOTTOM,
-//                                    colors);
-//                            gradientDrawable.setCornerRadius(0f);
-//                            gradientDrawable.setAlpha(60);
-//                            gradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//                                headerFrame.setBackground(gradientDrawable);
-//                            } else {
-//                                headerFrame.setBackgroundDrawable(gradientDrawable);
-//                            }
-//                        }
-//                    });
-//        }
     }
 
     @Override
@@ -221,11 +157,7 @@ public class PeopleDetailFragment extends Fragment implements AppBarLayout.OnOff
             activityTtile.setText(personName.getText());
             toolbar.setBackgroundColor(toolbarColor);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                float[] hsv = new float[3];
-                Color.colorToHSV(toolbarColor, hsv);
-                hsv[2] *= 0.8f; // value component
-                int statusBarColor = Color.HSVToColor(hsv);
-                activity.getWindow().setStatusBarColor(statusBarColor);
+                activity.getWindow().setStatusBarColor(Utils.getDarkColor(toolbarColor));
             }
         } else {
             activityTtile.setVisibility(View.GONE);

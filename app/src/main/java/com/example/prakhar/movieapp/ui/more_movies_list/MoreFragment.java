@@ -52,12 +52,9 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
     private MorePresenter morePresenter;
     private MoreAdapter moreAdapter;
     private AppCompatActivity activity;
-
     private int position;
     private int genreId;
-
     private int ID;
-
     private String fragmentTitle;
 
     public MoreFragment() {

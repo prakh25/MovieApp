@@ -49,13 +49,12 @@ public class FullScreenImageFragment extends DialogFragment implements
 
     private boolean isToolbarVisible = false;
     private boolean isPageCountVisible = false;
-
-    public FullScreenImageFragment() {
-    }
-
     private List<Poster> imageList;
     private int selectedPosition = 0;
     private Unbinder unbinder;
+
+    public FullScreenImageFragment() {
+    }
 
     public static FullScreenImageFragment newInstance(ArrayList<Poster> imageList, int position) {
         Bundle args = new Bundle();

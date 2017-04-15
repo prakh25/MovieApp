@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by Prakhar on 3/27/2017.
@@ -42,6 +43,7 @@ public class GenreFragment extends Fragment implements
     private GenreAdapter genreAdapter;
     private AppCompatActivity activity;
     private GenrePresenter genrePresenter;
+    private Unbinder unbinder;
 
     public GenreFragment() {
     }
@@ -77,7 +79,7 @@ public class GenreFragment extends Fragment implements
     }
 
     private void init(View view) {
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         activity = (AppCompatActivity) getActivity();
 
@@ -135,5 +137,17 @@ public class GenreFragment extends Fragment implements
     @Override
     public void showGenreList(List<Genre> genreList) {
         genreAdapter.addItems(genreList);
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        genrePresenter.detachView();
+        super.onDestroy();
     }
 }

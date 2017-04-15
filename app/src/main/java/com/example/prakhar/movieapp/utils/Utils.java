@@ -2,6 +2,7 @@ package com.example.prakhar.movieapp.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -124,6 +125,13 @@ public class Utils {
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int noOfColumns = (int)(dpWidth / 180);
         return  noOfColumns;
+    }
+
+    public static int getDarkColor(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.8f; // value component
+        return Color.HSVToColor(hsv);
     }
 }
 

@@ -6,9 +6,6 @@ package com.example.prakhar.movieapp.utils;
 
 public final class Constants {
 
-    private Constants() {
-    }
-
     //OkHttp
     public static final String CACHE_CONTROL = "cache_control";
     public static final int HTTP_CACHE_SIZE = 10*1024*1024; //10 MB
@@ -101,5 +98,6 @@ public final class Constants {
     //full credit view pager
     public static final String ARG_VIEW_TYPE = "argViewType";
 
-
+    private Constants() {
+    }
 }

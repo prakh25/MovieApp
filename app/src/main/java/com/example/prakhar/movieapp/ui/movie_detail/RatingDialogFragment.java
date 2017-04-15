@@ -40,7 +40,6 @@ public class RatingDialogFragment extends DialogFragment {
 
     private Integer userRating;
     private Result result;
-
     private RatingDialogListener listener;
 
     public RatingDialogFragment() {

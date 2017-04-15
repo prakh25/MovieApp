@@ -1,6 +1,5 @@
 package com.example.prakhar.movieapp.ui.more_images;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -48,6 +47,14 @@ public class MoreImagesFragment extends Fragment implements
     @BindView(R.id.more_images_toolbar)
     Toolbar toolbar;
 
+    private AppCompatActivity mActivity;
+    private List<Poster> imagesList;
+    private String title;
+    private int toolbarColor;
+    private MoreImagesAdapter adapter;
+    private Unbinder unbinder;
+
+
     public MoreImagesFragment() {
     }
 
@@ -61,14 +68,6 @@ public class MoreImagesFragment extends Fragment implements
         fragment.setArguments(args);
         return fragment;
     }
-
-    private AppCompatActivity mActivity;
-    private List<Poster> imagesList;
-    private String title;
-    private int toolbarColor;
-
-    private MoreImagesAdapter adapter;
-    private Unbinder unbinder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,11 +112,7 @@ public class MoreImagesFragment extends Fragment implements
         }
         toolbar.setBackgroundColor(toolbarColor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            float[] hsv = new float[3];
-            Color.colorToHSV(toolbarColor, hsv);
-            hsv[2] *= 0.8f; // value component
-            int statusBarColor = Color.HSVToColor(hsv);
-            mActivity.getWindow().setStatusBarColor(statusBarColor);
+            mActivity.getWindow().setStatusBarColor(Utils.getDarkColor(toolbarColor));
         }
         toolbar.setTitle(title);
 

@@ -1,7 +1,6 @@
 package com.example.prakhar.movieapp.ui.movie_detail;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -549,11 +548,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
             toolbarMovieTitle.setText(toolbarTitle);
             toolbar.setBackgroundColor(toolbarColor);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                float[] hsv = new float[3];
-                Color.colorToHSV(toolbarColor, hsv);
-                hsv[2] *= 0.8f; // value component
-                int statusBarColor = Color.HSVToColor(hsv);
-                mActivity.getWindow().setStatusBarColor(statusBarColor);
+                mActivity.getWindow().setStatusBarColor(Utils.getDarkColor(toolbarColor));
             }
         } else {
             toolbarMovieTitle.setText("");

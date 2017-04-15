@@ -46,7 +46,6 @@ public class PeopleFullCreditViewPagerFragment extends Fragment
     private List<Cast> castList;
     private List<Crew> crewList;
     private int viewType;
-
     private PeopleFullCreditAdapter adapter;
     private Unbinder unbinder;
 

@@ -1,6 +1,5 @@
 package com.example.prakhar.movieapp.ui.full_credits;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +21,7 @@ import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Cast;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Crew;
 import com.example.prakhar.movieapp.ui.people_detail.PeopleDetailActivity;
+import com.example.prakhar.movieapp.utils.Utils;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static com.example.prakhar.movieapp.utils.Constants.ARG_CAST_LIST;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_CREW_LIST;
@@ -51,7 +52,7 @@ public class FullCreditFragment extends Fragment implements FullCreditAdapter.Fu
     private List<Crew> crewList;
     private List<Cast> castList;
     private AppCompatActivity mActivity;
-
+    private Unbinder unbinder;
     private FullCreditAdapter adapter;
 
     public FullCreditFragment() {
@@ -131,7 +132,7 @@ public class FullCreditFragment extends Fragment implements FullCreditAdapter.Fu
     }
 
     private void init(View view) {
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         mActivity = (AppCompatActivity) getActivity();
         mActivity.setSupportActionBar(toolbar);
         ActionBar actionBar = mActivity.getSupportActionBar();
@@ -141,11 +142,7 @@ public class FullCreditFragment extends Fragment implements FullCreditAdapter.Fu
         }
         toolbar.setBackgroundColor(color);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            float[] hsv = new float[3];
-            Color.colorToHSV(color, hsv);
-            hsv[2] *= 0.8f; // value component
-            int statusBarColor = Color.HSVToColor(hsv);
-            mActivity.getWindow().setStatusBarColor(statusBarColor);
+            mActivity.getWindow().setStatusBarColor(Utils.getDarkColor(color));
         }
         toolbar.setTitle(title);
 
@@ -166,5 +163,11 @@ public class FullCreditFragment extends Fragment implements FullCreditAdapter.Fu
     public void onPersonClicked(Integer personId, String profilePath, int clickedPosition) {
         startActivity(PeopleDetailActivity.newStartIntent(mActivity, personId, profilePath));
         mActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
     }
 }
