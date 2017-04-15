@@ -25,16 +25,17 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static com.example.prakhar.movieapp.utils.Constants.ARG_CAST_LIST;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_CREW_LIST;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_COLOR;
 
 /**
  * Created by Prakhar on 4/6/2017.
  */
 
 public class PeopleFullCreditFragment extends Fragment {
-
-    private static final String ARG_CAST_LIST = "argCasts";
-    private static final String ARG_CREW_LIST = "argCrewList";
-    private static final String ARG_TAB_INDICATOR_COLOR = "argIndicatorColor";
 
     @BindView(R.id.people_full_credit_view_pager)
     ViewPager viewPager;
@@ -48,7 +49,7 @@ public class PeopleFullCreditFragment extends Fragment {
     private List<Cast> castList;
     private List<Crew> crewList;
     private int color;
-    private AppCompatActivity activity;
+    private Unbinder unbinder;
 
     public PeopleFullCreditFragment() {
     }
@@ -59,7 +60,7 @@ public class PeopleFullCreditFragment extends Fragment {
 
         args.putParcelableArrayList(ARG_CAST_LIST, casts);
         args.putParcelableArrayList(ARG_CREW_LIST, crews);
-        args.putInt(ARG_TAB_INDICATOR_COLOR, color);
+        args.putInt(ARG_TOOLBAR_COLOR, color);
 
         PeopleFullCreditFragment fragment = new PeopleFullCreditFragment();
         fragment.setArguments(args);
@@ -72,7 +73,7 @@ public class PeopleFullCreditFragment extends Fragment {
         castList = new ArrayList<>();
         crewList = new ArrayList<>();
         if(getArguments() != null) {
-            color = getArguments().getInt(ARG_TAB_INDICATOR_COLOR);
+            color = getArguments().getInt(ARG_TOOLBAR_COLOR);
             castList.addAll(getArguments().getParcelableArrayList(ARG_CAST_LIST));
             crewList.addAll(getArguments().getParcelableArrayList(ARG_CREW_LIST));
         }
@@ -87,8 +88,8 @@ public class PeopleFullCreditFragment extends Fragment {
     }
 
     private void init(View view) {
-        ButterKnife.bind(this, view);
-        activity = (AppCompatActivity) getActivity();
+        unbinder = ButterKnife.bind(this, view);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
 
         activity.setSupportActionBar(toolbar);
         ActionBar actionBar = activity.getSupportActionBar();
@@ -100,6 +101,7 @@ public class PeopleFullCreditFragment extends Fragment {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            activity.getWindow().setStatusBarColor(color);
 //        }
+
         toolbar.setTitle("Full Credits");
 
         float[] hsv = new float[3];
@@ -127,5 +129,11 @@ public class PeopleFullCreditFragment extends Fragment {
 
         tabLayout.setupWithViewPager(viewPager);
 //        tabLayout.setSelectedTabIndicatorColor(color);
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
     }
 }

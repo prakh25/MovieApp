@@ -20,27 +20,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_USER_LIST_NAME;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_USER_RESULT;
+
 /**
  * Created by Prakhar on 3/25/2017.
  */
 
 public class UserListDialogFragment extends DialogFragment
         implements UserListDialogAdapter.UserListDialogListener {
-
-    private static final String ARG_USER_LIST_NAME = "argUserList";
-
-    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//    private static final String ARG_USER_RESULT = "argResult";
-//
 
     @BindView(R.id.user_list_dialog_list)
     RecyclerView recyclerView;

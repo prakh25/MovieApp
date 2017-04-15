@@ -25,6 +25,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static com.example.prakhar.movieapp.utils.Constants.ARG_CAST_LIST;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_CREW_LIST;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_VIEW_TYPE;
 
 /**
  * Created by Prakhar on 4/6/2017.
@@ -32,10 +37,6 @@ import butterknife.ButterKnife;
 
 public class PeopleFullCreditViewPagerFragment extends Fragment
         implements PeopleFullCreditAdapter.PeopleFullCreditListener {
-
-    private static final String ARG_CAST_LIST = "argCasts";
-    private static final String ARG_CREW_LIST = "argCrewList";
-    private static final String ARG_VIEW_TYPE = "argViewType";
 
     @BindView(R.id.people_full_credit_list)
     RecyclerView recyclerView;
@@ -47,6 +48,7 @@ public class PeopleFullCreditViewPagerFragment extends Fragment
     private int viewType;
 
     private PeopleFullCreditAdapter adapter;
+    private Unbinder unbinder;
 
     public PeopleFullCreditViewPagerFragment() {
     }
@@ -92,7 +94,7 @@ public class PeopleFullCreditViewPagerFragment extends Fragment
                 } else {
                     recyclerView.setAdapter(null);
                     emptyTextMessage.setVisibility(View.VISIBLE);
-                    emptyTextMessage.setText("No Known Acting Credits Found");
+                    emptyTextMessage.setText(R.string.no_cast_credits);
                 }
                 break;
             case 1:
@@ -101,7 +103,7 @@ public class PeopleFullCreditViewPagerFragment extends Fragment
                 } else {
                     recyclerView.setAdapter(null);
                     emptyTextMessage.setVisibility(View.VISIBLE);
-                    emptyTextMessage.setText("No Known Crew Credits Found");
+                    emptyTextMessage.setText(R.string.no_crew_credits);
                 }
                 break;
         }
@@ -110,7 +112,7 @@ public class PeopleFullCreditViewPagerFragment extends Fragment
     }
 
     private void init(View view) {
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -129,5 +131,11 @@ public class PeopleFullCreditViewPagerFragment extends Fragment
     public void onPersonClicked(Integer movieId, int clickedPosition) {
         startActivity(MovieDetailActivity.newStartIntent(getActivity(), movieId));
         getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
     }
 }

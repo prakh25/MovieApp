@@ -50,6 +50,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         Glide.with(context).load(Constants.TMDB_IMAGE_URL + "original" +
                 images.get(position).getFilePath())
+                .thumbnail(0.5f)
                 .crossFade()
                 .into(photoView);
 

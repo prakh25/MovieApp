@@ -18,6 +18,7 @@ import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.genre.Genre;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.more_movies_list.MoreActivity;
+import com.example.prakhar.movieapp.utils.Constants;
 
 import java.util.List;
 import java.util.Locale;
@@ -31,8 +32,6 @@ import butterknife.ButterKnife;
 
 public class GenreFragment extends Fragment implements
         GenreContract.GenreView, GenreAdapter.GenreInteractionListener {
-
-    public static final String GENRE_ACTIVITY_TITLE = "activityTitle";
 
     @BindView(R.id.genre_list)
     RecyclerView recyclerView;
@@ -50,7 +49,7 @@ public class GenreFragment extends Fragment implements
     public static GenreFragment newInstance(String title) {
 
         Bundle args = new Bundle();
-        args.putString(GENRE_ACTIVITY_TITLE, title);
+        args.putString(Constants.GENRE_ACTIVITY_TITLE, title);
         GenreFragment fragment = new GenreFragment();
         fragment.setArguments(args);
         return fragment;
@@ -60,7 +59,7 @@ public class GenreFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null) {
-            title = getArguments().getString(GENRE_ACTIVITY_TITLE);
+            title = getArguments().getString(Constants.GENRE_ACTIVITY_TITLE);
         }
         genrePresenter = new GenrePresenter(DataManager.getInstance());
         genreAdapter = new GenreAdapter();

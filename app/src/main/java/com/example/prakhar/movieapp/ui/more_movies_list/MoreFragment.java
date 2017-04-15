@@ -27,6 +27,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_GENRE_ID;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_TITLE;
+import static com.example.prakhar.movieapp.utils.Constants.EXTRA_ADDED_TO_WATCHLIST;
+import static com.example.prakhar.movieapp.utils.Constants.EXTRA_MARKED_AS_FAVORITE;
+import static com.example.prakhar.movieapp.utils.Constants.EXTRA_USER_RATING;
+import static com.example.prakhar.movieapp.utils.Constants.REQUEST_CODE;
+
 
 /**
  * Created by Prakhar on 3/8/2017.
@@ -34,13 +41,6 @@ import butterknife.ButterKnife;
 
 public class MoreFragment extends Fragment implements MoreContract.MoreView,
         MoreAdapter.ListInteractionListener {
-
-    private static final String ARG_GENRE_ID = "genreId";
-    private static final String EXTRA_ADDED_TO_WATCHLIST = "addedToWatchlist";
-    private static final String EXTRA_MARKED_AS_FAVORITE = "markedAsFavorite";
-    private static final String EXTRA_USER_RATING = "userRating";
-    private static final int REQUEST_CODE = 100;
-    private static final String ARG_TOOLBAR_TITLE = "argTitle";
 
     @BindView(R.id.more_movies_list)
     RecyclerView recyclerView;
@@ -162,8 +162,6 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(moreAdapter);
         recyclerView.setLayoutManager(setUpLayoutManager());
-//        SnapHelper snapHelper = new GravitySnapHelper(Gravity.TOP);
-//        snapHelper.attachToRecyclerView(recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(setupScrollListener(recyclerView.getLayoutManager()));
 

@@ -51,6 +51,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_PERSON_ID;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_PROFILE_PATH;
+
 /**
  * Created by Prakhar on 4/3/2017.
  */
@@ -58,9 +61,6 @@ import butterknife.Unbinder;
 public class PeopleDetailFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener,
         PeopleDetailContract.PeopleDetailView, KnownForAdapter.KnownForListener,
         PeopleKnownForWrapper.PublicKnownForListener {
-
-    private static final String ARG_PERSON_ID = "argPersonId";
-    private static final String ARG_PROFILE_PATH = "argProfilePath";
 
     @BindView(R.id.people_app_bar_layout)
     AppBarLayout appBarLayout;

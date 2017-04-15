@@ -25,6 +25,11 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static com.example.prakhar.movieapp.utils.Constants.ARA_SELECT_POSITION;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_IMAGE_LIST;
+import static com.example.prakhar.movieapp.utils.Constants.DELAY_MILLI_SECONDS;
 
 /**
  * Created by Prakhar on 3/31/2017.
@@ -32,9 +37,6 @@ import butterknife.ButterKnife;
 
 public class FullScreenImageFragment extends DialogFragment implements
         FullScreenImageAdapter.FullScreenInteractionListener{
-
-    private final static String ARG_IMAGE_LIST = "argImageList";
-    private final static String ARA_SELECT_POSITION = "argPosition";
 
     @BindView(R.id.full_screen_toolbar_frame)
     FrameLayout toolbarFrame;
@@ -53,7 +55,7 @@ public class FullScreenImageFragment extends DialogFragment implements
 
     private List<Poster> imageList;
     private int selectedPosition = 0;
-    private FullScreenImageAdapter adapter;
+    private Unbinder unbinder;
 
     public static FullScreenImageFragment newInstance(ArrayList<Poster> imageList, int position) {
         Bundle args = new Bundle();
@@ -94,17 +96,17 @@ public class FullScreenImageFragment extends DialogFragment implements
     }
 
     private void init(View view) {
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
+
         imageList = new ArrayList<>();
         if(getArguments() != null) {
             imageList.addAll(getArguments().getParcelableArrayList(ARG_IMAGE_LIST));
             selectedPosition = getArguments().getInt(ARA_SELECT_POSITION);
         }
-        adapter = new FullScreenImageAdapter(getActivity(), imageList, this);
+
+        FullScreenImageAdapter adapter = new FullScreenImageAdapter(getActivity(), imageList, this);
         viewPager.setAdapter(adapter);
-        backButton.setOnClickListener(v -> {
-            dismiss();
-        });
+        backButton.setOnClickListener(v -> dismiss());
     }
 
     private void setCurrentItem(int position) {
@@ -138,12 +140,12 @@ public class FullScreenImageFragment extends DialogFragment implements
             pageCount.postDelayed(() -> {
                 pageCount.setVisibility(View.GONE);
                 isPageCountVisible = false;
-            }, 10000);
+            }, DELAY_MILLI_SECONDS);
 
             toolbarFrame.postDelayed(() -> {
                 toolbarFrame.setVisibility(View.GONE);
                 isToolbarVisible = false;
-            }, 10000);
+            }, DELAY_MILLI_SECONDS);
         }
     };
 
@@ -158,14 +160,21 @@ public class FullScreenImageFragment extends DialogFragment implements
             toolbarFrame.postDelayed(() -> {
                 toolbarFrame.setVisibility(View.GONE);
                 isToolbarVisible = false;
-            }, 10000);
+            }, DELAY_MILLI_SECONDS);
         }
         if(!isPageCountVisible) {
             pageCount.setVisibility(View.VISIBLE);
             pageCount.postDelayed(() -> {
                 pageCount.setVisibility(View.GONE);
                 isPageCountVisible = false;
-            }, 10000);
+            }, DELAY_MILLI_SECONDS);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        viewPager.setAdapter(null);
+        unbinder.unbind();
+        super.onDestroyView();
     }
 }

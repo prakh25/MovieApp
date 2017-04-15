@@ -18,16 +18,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_MOVIE_RESULT;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_USER_RATING;
+
 /**
  * Created by Prakhar on 3/24/2017.
  */
 
 public class RatingDialogFragment extends DialogFragment {
-
-    private static final String ARG_DIALOG_TITLE = "argTitle";
-    public static final String ARG_USER_RATING = "argRating";
-
-    private static final String ARG_MOVIE_RESULT = "argResult";
 
     @BindView(R.id.rating_dialog_title)
     TextView ratingDialogTitle;

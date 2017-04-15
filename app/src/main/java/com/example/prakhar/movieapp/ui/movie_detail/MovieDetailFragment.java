@@ -69,6 +69,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_MOVIE_ID;
+
 
 /**
  * Created by Prakhar on 3/2/2017.
@@ -81,8 +83,6 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         CreateNewListDialog.CreateNewListDialogListener, MovieCastWrapper.MovieCastListener,
         MovieCrewWrapper.MovieCrewListener, MovieImagesWrapper.MovieImagesListener,
         MovieImagesAdapter.MovieImageAdapterListener, MovieCastAdapter.InteractionListener {
-
-    private static final String ARG_MOVIE = "ardMovieId";
 
     @BindView(R.id.detail_content_frame)
     LinearLayout detailFrame;
@@ -144,7 +144,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     public static MovieDetailFragment newInstance(Integer movieId) {
 
         Bundle args = new Bundle();
-        args.putInt(ARG_MOVIE, movieId);
+        args.putInt(ARG_MOVIE_ID, movieId);
         MovieDetailFragment fragment = new MovieDetailFragment();
         fragment.setArguments(args);
         return fragment;
@@ -165,7 +165,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            movieId = getArguments().getInt(ARG_MOVIE);
+            movieId = getArguments().getInt(ARG_MOVIE_ID);
         }
         movieDetailPresenter = new MovieDetailPresenter(DataManager.getInstance());
     }

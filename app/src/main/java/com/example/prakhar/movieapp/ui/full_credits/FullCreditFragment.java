@@ -30,6 +30,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_CAST_LIST;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_CREW_LIST;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_COLOR;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_TITLE;
 
@@ -38,9 +40,6 @@ import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_TITLE;
  */
 
 public class FullCreditFragment extends Fragment implements FullCreditAdapter.FullCreditListener {
-
-    private static final String ARG_CREDIT_LIST = "argCredits";
-    private static final String ARG_CAST_LIST = "argCasts";
 
     @BindView(R.id.general_toolbar)
     Toolbar toolbar;
@@ -64,7 +63,7 @@ public class FullCreditFragment extends Fragment implements FullCreditAdapter.Fu
 
         Bundle args = new Bundle();
 
-        args.putParcelableArrayList(ARG_CREDIT_LIST, creditList);
+        args.putParcelableArrayList(ARG_CREW_LIST, creditList);
         args.putString(ARG_TOOLBAR_TITLE, title);
         args.putInt(ARG_TOOLBAR_COLOR, color);
         args.putParcelableArrayList(ARG_CAST_LIST, casts);
@@ -81,7 +80,7 @@ public class FullCreditFragment extends Fragment implements FullCreditAdapter.Fu
         if (getArguments() != null) {
             title = getArguments().getString(ARG_TOOLBAR_TITLE);
             color = getArguments().getInt(ARG_TOOLBAR_COLOR);
-            crewList.addAll(getArguments().getParcelableArrayList(ARG_CREDIT_LIST));
+            crewList.addAll(getArguments().getParcelableArrayList(ARG_CREW_LIST));
             castList.addAll(getArguments().getParcelableArrayList(ARG_CAST_LIST));
         }
 

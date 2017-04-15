@@ -26,16 +26,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.example.prakhar.movieapp.utils.Constants.SCREEN_TABLET_DP_WIDTH;
+import static com.example.prakhar.movieapp.utils.Constants.TAB_LAYOUT_LANDSCAPE;
+import static com.example.prakhar.movieapp.utils.Constants.TAB_LAYOUT_PORTRAIT;
+
 /**
  * Created by Prakhar on 4/8/2017.
  */
 
 public class HomePeopleFragment extends Fragment implements HomePeopleContract.HomePeopleView,
         HomePeopleAdapter.PersonInteractionListener {
-
-    private static final int TAB_LAYOUT_LANDSCAPE = 4;
-    private static final int TAB_LAYOUT_PORTRAIT = 2;
-    private static final int SCREEN_TABLET_DP_WIDTH = 600;
 
     @BindView(R.id.home_people_list)
     RecyclerView recyclerView;
@@ -61,6 +61,7 @@ public class HomePeopleFragment extends Fragment implements HomePeopleContract.H
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         adapter = new HomePeopleAdapter();
         homePeoplePresenter = new HomePeoplePresenter(DataManager.getInstance());
     }
@@ -87,8 +88,13 @@ public class HomePeopleFragment extends Fragment implements HomePeopleContract.H
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(setUpLayoutManager(isTabLayout));
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(TAB_LAYOUT_PORTRAIT,
-                Utils.dpToPx(16, activity), true));
+        if(!isTabLayout) {
+            recyclerView.addItemDecoration(new GridSpacingItemDecoration(TAB_LAYOUT_PORTRAIT,
+                    Utils.dpToPx(16, activity), true));
+        } else {
+            recyclerView.addItemDecoration(new GridSpacingItemDecoration(TAB_LAYOUT_LANDSCAPE,
+                    Utils.dpToPx(16, activity), true));
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(setupScrollListener(recyclerView.getLayoutManager()));
     }
@@ -170,14 +176,15 @@ public class HomePeopleFragment extends Fragment implements HomePeopleContract.H
 
     @Override
     public void onDestroyView() {
+        recyclerView.setAdapter(null);
         unbinder.unbind();
-        homePeoplePresenter.detachView();
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
         homePeoplePresenter.onDestroy();
+        homePeoplePresenter.detachView();
         super.onDestroy();
     }
 

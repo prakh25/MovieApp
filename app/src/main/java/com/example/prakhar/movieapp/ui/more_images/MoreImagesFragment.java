@@ -26,10 +26,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import timber.log.Timber;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_IMAGE_LIST;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_COLOR;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_TITLE;
+import static com.example.prakhar.movieapp.utils.Constants.SCREEN_TABLET_DP_WIDTH;
+import static com.example.prakhar.movieapp.utils.Constants.TAB_LAYOUT_LANDSCAPE_IMAGE;
+import static com.example.prakhar.movieapp.utils.Constants.TAB_LAYOUT_PORTRAIT_IMAGE;
 
 /**
  * Created by Prakhar on 3/31/2017.
@@ -37,12 +42,6 @@ import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_TITLE;
 
 public class MoreImagesFragment extends Fragment implements
         MoreImagesAdapter.MoreImagesInteractionListener {
-
-    private static final String ARG_IMAGE_LIST = "argImageList";
-
-    private static final int TAB_LAYOUT_LANDSCAPE = 4;
-    private static final int TAB_LAYOUT_POTRAIT = 3;
-    private static final int SCREEN_TABLET_DP_WIDTH = 600;
 
     @BindView(R.id.more_images_list)
     RecyclerView recyclerView;
@@ -69,10 +68,12 @@ public class MoreImagesFragment extends Fragment implements
     private int toolbarColor;
 
     private MoreImagesAdapter adapter;
+    private Unbinder unbinder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         imagesList = new ArrayList<>();
         if(getArguments() != null) {
             imagesList.addAll(getArguments().getParcelableArrayList(ARG_IMAGE_LIST));
@@ -101,7 +102,7 @@ public class MoreImagesFragment extends Fragment implements
 
     private void init(View view) {
 
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         mActivity = (AppCompatActivity) getActivity();
         mActivity.setSupportActionBar(toolbar);
@@ -132,9 +133,9 @@ public class MoreImagesFragment extends Fragment implements
     private RecyclerView.LayoutManager setUpLayoutManager(boolean isTabletLayout) {
         RecyclerView.LayoutManager layoutManager;
         if(!isTabletLayout) {
-            layoutManager = new GridLayoutManager(mActivity, TAB_LAYOUT_POTRAIT);
+            layoutManager = new GridLayoutManager(mActivity, TAB_LAYOUT_PORTRAIT_IMAGE);
         } else {
-            layoutManager = new GridLayoutManager(mActivity, TAB_LAYOUT_LANDSCAPE);
+            layoutManager = new GridLayoutManager(mActivity, TAB_LAYOUT_LANDSCAPE_IMAGE);
         }
         return layoutManager;
     }
@@ -147,5 +148,12 @@ public class MoreImagesFragment extends Fragment implements
         FullScreenImageFragment fragment = FullScreenImageFragment.newInstance(images, position);
         fragment.setTargetFragment(MoreImagesFragment.this, 300);
         fragment.show(fragmentManager, "fullScreenImage");
+    }
+
+    @Override
+    public void onDestroyView() {
+        recyclerView.setAdapter(null);
+        unbinder.unbind();
+        super.onDestroyView();
     }
 }
