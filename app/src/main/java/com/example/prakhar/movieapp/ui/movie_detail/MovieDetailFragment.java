@@ -29,7 +29,6 @@ import android.widget.Toast;
 import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.ImageViewTarget;
-import com.example.prakhar.movieapp.BuildConfig;
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.BelongsToCollection;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Cast;
@@ -57,7 +56,6 @@ import com.example.prakhar.movieapp.widgets.detail.OverviewWrapper;
 import com.example.prakhar.movieapp.widgets.detail.RatingsWrapper;
 import com.example.prakhar.movieapp.widgets.detail.SimilarMoviesAdapter;
 import com.example.prakhar.movieapp.widgets.detail.SimilarMoviesWrapper;
-import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
@@ -382,10 +380,10 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     @Override
     public void showMovieTrailer(String key) {
         trailerFrame.setVisibility(View.VISIBLE);
-        trailerFrame.setOnClickListener(v ->
-                startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
-                        BuildConfig.YOU_TUBE_DATA_API_KEY, key, 0, true, false))
-        );
+        trailerFrame.setOnClickListener(v -> {
+            startActivity(TrailerActivity.newStartIntent(mActivity, key));
+            mActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
     }
 
     @Override

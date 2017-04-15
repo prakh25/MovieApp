@@ -16,7 +16,6 @@ import timber.log.Timber;
 
 public class MovieDetailActivity extends BaseActivity implements MovieDetailFragment.MovieStatusListener{
 
-//    private static final String EXTRA_RESULT = "movieResult";
     private static final String EXTRA_ID = "movieId";
     private static final String EXTRA_ADDED_TO_WATCHLIST = "addedToWatchlist";
     private static final String EXTRA_MARKED_AS_FAVORITE = "markedAsFavorite";

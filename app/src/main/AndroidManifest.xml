@@ -60,6 +60,10 @@
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.people_full_credit.PeopleFullCreditActivity" />
+
+        <activity android:name=".ui.movie_detail.TrailerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/TrailerTheme.Translucent"/>
     </application>
 
 </manifest>

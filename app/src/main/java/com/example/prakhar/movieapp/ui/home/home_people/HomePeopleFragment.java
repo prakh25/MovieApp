@@ -178,12 +178,12 @@ public class HomePeopleFragment extends Fragment implements HomePeopleContract.H
     public void onDestroyView() {
         recyclerView.setAdapter(null);
         unbinder.unbind();
+        homePeoplePresenter.onDestroy();
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        homePeoplePresenter.onDestroy();
         homePeoplePresenter.detachView();
         super.onDestroy();
     }
