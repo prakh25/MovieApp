@@ -26,7 +26,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 /**
  * Created by Prakhar on 2/21/2017.
@@ -50,10 +49,6 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
     }
 
     public static HomeMovieFragment newInstance() {
-        return newInstance(null);
-    }
-
-    public static HomeMovieFragment newInstance(@Nullable Bundle arguments) {
 
         Bundle args = new Bundle();
         HomeMovieFragment fragment = new HomeMovieFragment();
@@ -141,16 +136,13 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
 
     @Override
     public void onDestroyView() {
-        Timber.i("onDestroyView");
-        homeMoviePresenter.detachView();
         unbinder.unbind();
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        homeMoviePresenter.onDestroy();
-        Timber.i("onDestroy");
+        homeMoviePresenter.detachView();
         super.onDestroy();
     }
 
