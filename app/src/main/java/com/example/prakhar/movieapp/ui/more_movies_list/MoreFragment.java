@@ -237,7 +237,6 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
     @Override
     public void onDestroyView() {
         recyclerView.setAdapter(null);
-        morePresenter.onDestroy();
         super.onDestroyView();
     }
 
