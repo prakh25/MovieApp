@@ -1,17 +1,12 @@
 package com.example.prakhar.movieapp.ui.search;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
-import com.example.prakhar.movieapp.MovieApp;
 import com.example.prakhar.movieapp.model.search.SearchResponse;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.base.BasePresenter;
-import com.example.prakhar.movieapp.utils.Constants;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Prakhar on 3/20/2017.
@@ -21,13 +16,9 @@ public class SearchPresenter extends BasePresenter<SearchContract.SearchView>
         implements SearchContract.ViewActions {
 
     private final DataManager dataManager;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private String region;
 
     public SearchPresenter(DataManager dataManager) {
         this.dataManager = dataManager;
-        SharedPreferences countryCode = PreferenceManager.getDefaultSharedPreferences(MovieApp.getApp());
-        region = countryCode.getString(Constants.COUNTRY_CODE, null);
     }
 
 
@@ -37,23 +28,33 @@ public class SearchPresenter extends BasePresenter<SearchContract.SearchView>
     }
 
     private void getSearchResult(String query) {
-        compositeDisposable.add(
-                dataManager.getMultiSearchResponse(query)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::displayResults, this::displayError)
-        );
+
+        if(!isViewAttached()) return;
+        mView.showMessageLayout(false);
+        mView.showProgress();
+        dataManager.getMultiSearchResponse(query,
+                new Callback<SearchResponse>() {
+                    @Override
+                    public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
+                        displayResults(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<SearchResponse> call, Throwable t) {
+                        displayError(t);
+                    }
+                });
     }
 
     private void displayResults(SearchResponse response) {
+        if(!isViewAttached()) return;
+        mView.hideProgress();
         mView.showSearch(response.getResults());
     }
 
     private void displayError(Throwable e) {
+        if(!isViewAttached()) return;
+        mView.hideProgress();
         mView.showError(e.getMessage());
-    }
-
-    public void onDestroy() {
-        compositeDisposable.dispose();
     }
 }

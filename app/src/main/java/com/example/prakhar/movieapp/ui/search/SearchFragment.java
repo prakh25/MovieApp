@@ -180,7 +180,6 @@ public class SearchFragment extends Fragment implements SearchContract.SearchVie
 
     @Override
     public void onDestroy() {
-        searchPresenter.onDestroy();
         searchPresenter.detachView();
         super.onDestroy();
     }
