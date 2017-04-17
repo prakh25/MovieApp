@@ -134,16 +134,14 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                 new Callback<TmdbMovieDetail>() {
                     @Override
                     public void onResponse(Call<TmdbMovieDetail> call, Response<TmdbMovieDetail> response) {
-                        if(response.code() == 200) {
-                            String imdbId = response.body().getImdbId();
-                            if (imdbId != null && !imdbId.isEmpty() && !imdbId.equals("")) {
-                                getTraktMovieRating(response.body());
-                            } else {
-                                TraktMovieRating traktMovieRating = new TraktMovieRating();
-                                Pair<TraktMovieRating, TmdbMovieDetail> pair =
-                                        new Pair<>(traktMovieRating, response.body());
-                                showMovieDetail(pair);
-                            }
+                        String imdbId = response.body().getImdbId();
+                        if (imdbId != null && !imdbId.isEmpty() && !imdbId.equals("")) {
+                            getTraktMovieRating(response.body());
+                        } else {
+                            TraktMovieRating traktMovieRating = new TraktMovieRating();
+                            Pair<TraktMovieRating, TmdbMovieDetail> pair =
+                                    new Pair<>(traktMovieRating, response.body());
+                            showMovieDetail(pair);
                         }
                     }
 
@@ -160,7 +158,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                 new Callback<TraktMovieRating>() {
                     @Override
                     public void onResponse(Call<TraktMovieRating> call, Response<TraktMovieRating> response) {
-                        if(response.code() == 200) {
+                        if (response.code() == 200) {
                             Pair<TraktMovieRating, TmdbMovieDetail> pair =
                                     new Pair<>(response.body(), movieDetail);
                             showMovieDetail(pair);
@@ -181,7 +179,6 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
 
     private void showMovieDetail(Pair moviePair) {
 
-        if(!isViewAttached()) return;
         mView.hideProgress();
 
         TraktMovieRating traktMovieRating = (TraktMovieRating) moviePair.first;
@@ -189,7 +186,14 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
         TmdbMovieDetail tmdbMovieDetail = (TmdbMovieDetail) moviePair.second;
 
         MovieStatus realmResult = findInRealmMovieStatus(realm, tmdbMovieDetail.getId());
+
+        mView.showMovieHeader(tmdbMovieDetail.getPosterPath(), tmdbMovieDetail.getBackdropPath(),
+                tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
+                tmdbMovieDetail.getGenres(),
+                tmdbMovieDetail.getRuntime());
+
         if (realmResult == null) {
+            Timber.i("posterPath " + tmdbMovieDetail.getPosterPath());
             mView.showMovieStatus(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
                     tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
                     tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
@@ -212,7 +216,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
             rating = userRating.getUserRating();
         }
 
-        if(traktMovieRating.getRating() != null) {
+        if (traktMovieRating.getRating() != null) {
             mView.showRatings(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
                     tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
                     tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
@@ -273,7 +277,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
         if (tmdbMovieDetail.getCredits().getCast().size() >= 3) {
             mView.showMovieCast(tmdbMovieDetail.getCredits().getCast().subList(0, 3));
             setCastList(tmdbMovieDetail.getCredits().getCast());
-        } else if(!tmdbMovieDetail.getCredits().getCast().isEmpty()) {
+        } else if (!tmdbMovieDetail.getCredits().getCast().isEmpty()) {
             mView.showMovieCast(tmdbMovieDetail.getCredits().getCast());
             setCastList(tmdbMovieDetail.getCredits().getCast());
         }
@@ -327,7 +331,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
     }
 
     private void showError(Throwable throwable) {
-        if(!isViewAttached()) return;
+        if (!isViewAttached()) return;
         mView.hideProgress();
         mView.showError(throwable.getMessage());
     }
@@ -392,7 +396,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                 favoriteRealm.setReleaseDate(releaseDate);
                 favoriteRealm.setBackdropPath(backDropPath);
 
-                MovieStatus status = findInRealmMovieStatus(realm1,movieId);
+                MovieStatus status = findInRealmMovieStatus(realm1, movieId);
                 if (status != null) {
                     status.setMarkedAsFavorite(true);
                 } else {

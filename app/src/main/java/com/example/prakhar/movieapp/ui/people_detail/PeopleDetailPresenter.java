@@ -93,6 +93,8 @@ public class PeopleDetailPresenter extends BasePresenter<PeopleDetailContract.Pe
         PersonSearchResult result = (PersonSearchResult) personPair.first;
         PeopleDetails details = (PeopleDetails) personPair.second;
 
+        mView.showPeopleDetailHeader(details.getName(), details.getExternalIds());
+
         if (details.getBiography() != null && !details.getBiography().isEmpty()) {
             mView.showPersonBio(details.getBiography());
         }

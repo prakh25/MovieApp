@@ -65,6 +65,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static com.example.prakhar.movieapp.utils.Constants.ARG_MOVIE_ID;
 
@@ -209,6 +210,8 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
                     .into(movieBackdrop);
         }
 
+        Timber.i("poster " + posterPath);
+        
         if (posterPath != null) {
             BitmapRequestBuilder<String, PaletteBitmap> glideRequest;
             glideRequest = Glide.with(mActivity).fromString().asBitmap()

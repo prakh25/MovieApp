@@ -183,17 +183,15 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
     }
 
     private void getBoxOfficeList() {
-
+        if(!isViewAttached()) return;
+        mView.showMessageLayout(false);
         mView.showProgress();
         dataManager.getWeekendBoxOffice(new Callback<List<BoxOffice>>() {
             @Override
             public void onResponse(Call<List<BoxOffice>> call, Response<List<BoxOffice>> response) {
-                List<MoreListResult> moreListResults = new ArrayList<>();
                 for (BoxOffice boxOffice : response.body()) {
                     getBoxOfficeMovieList(boxOffice);
-                    moreListResults.add(getMoreListResult());
                 }
-                displayResults(moreListResults);
             }
 
             @Override
@@ -205,14 +203,15 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
 
     private void getBoxOfficeMovieList(BoxOffice boxOffice) {
         Integer tmdbId = boxOffice.getMovie().getIds().getTmdb();
-
+        List<MoreListResult> moreListResults = new ArrayList<>();
         dataManager.getBoxOfficeMovieDetail(tmdbId,
                 new Callback<MovieDetail>() {
                     @Override
                     public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
                         Pair<MovieDetail, BoxOffice> pair = new Pair<>(response.body(), boxOffice);
-                        MoreListResult moreListResults = getBoxOfficeMovieDetail(pair);
-                        setMoreListResult(moreListResults);
+                        MoreListResult moreListResult = getBoxOfficeMovieDetail(pair);
+                        moreListResults.add(moreListResult);
+                        displayResults(moreListResults);
                     }
 
                     @Override
@@ -236,6 +235,10 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
             result.setTitle(movieDetail.getTitle());
             result.setId(movieDetail.getId());
             result.setPosterPath(movieDetail.getPosterPath());
+            result.setPosterPath(movieDetail.getPosterPath());
+            result.setBackdropPath(movieDetail.getBackdropPath());
+            result.setReleaseDate(movieDetail.getReleaseDate());
+            result.setVoteAverage(movieDetail.getVoteAverage());
             moreListResult.setResult(result);
             moreListResult.setRevenue(boxOffice.getRevenue());
             moreListResult.setAddedToWatchlist(false);
@@ -245,6 +248,10 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
             result.setTitle(movieDetail.getTitle());
             result.setId(movieDetail.getId());
             result.setPosterPath(movieDetail.getPosterPath());
+            result.setPosterPath(movieDetail.getPosterPath());
+            result.setBackdropPath(movieDetail.getBackdropPath());
+            result.setReleaseDate(movieDetail.getReleaseDate());
+            result.setVoteAverage(movieDetail.getVoteAverage());
             moreListResult.setResult(result);
             moreListResult.setRevenue(boxOffice.getRevenue());
             moreListResult.setAddedToWatchlist(status.isAddedToWatchList());
@@ -255,22 +262,14 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
         return moreListResult;
     }
 
-    private void setMoreListResult(MoreListResult moreListResult) {
-        this.moreListResult = moreListResult;
-    }
-
-    private MoreListResult getMoreListResult() {
-        return moreListResult;
-    }
-
     private MovieStatus findInRealmMovieStatus(Realm realm, Integer id) {
         return realm.where(MovieStatus.class).equalTo(MovieStatus.FIELD_MOVIE_ID, id)
-                .findFirstAsync();
+                .findFirst();
     }
 
     private UserRating findInRealmUserRating(Realm realm, Integer id) {
         return realm.where(UserRating.class).equalTo(UserRating.FIELD_MOVIE_ID, id)
-                .findFirstAsync();
+                .findFirst();
     }
 
     //
