@@ -16,12 +16,10 @@ import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Prakhar on 4/3/2017.
@@ -31,13 +29,11 @@ public class PeopleDetailPresenter extends BasePresenter<PeopleDetailContract.Pe
         implements PeopleDetailContract.ViewActions {
 
     private final DataManager dataManager;
-    private CompositeDisposable compositeDisposable;
     private List<Cast> castList;
     private List<Crew> crewList;
 
     public PeopleDetailPresenter(@NonNull DataManager dataManager) {
         this.dataManager = dataManager;
-        compositeDisposable = new CompositeDisposable();
         castList = new ArrayList<>();
         crewList = new ArrayList<>();
     }
@@ -48,31 +44,50 @@ public class PeopleDetailPresenter extends BasePresenter<PeopleDetailContract.Pe
     }
 
     private void getPersonDetails(Integer personId) {
+        if(!isViewAttached()) return;
+        mView.showMessageLayout(false);
         mView.showProgress();
 
-        compositeDisposable.add(dataManager.getPersonDetails(personId)
-                .flatMap(details -> {
-                    Observable<PersonSearchResult> responseObservable =
-                            dataManager.getPersonKnownFor(details.getName())
-                                    .map(PersonSearchResponse::getPersonSearchResults)
-                                    .flatMap(Observable::fromIterable)
-                                    .filter(personSearchResult -> personSearchResult.getId().equals(personId));
+        dataManager.getPersonDetails(personId,
+                new Callback<PeopleDetails>() {
+                    @Override
+                    public void onResponse(Call<PeopleDetails> call, Response<PeopleDetails> response) {
+                        findPersonKnownForCredits(response.body());
+                    }
 
-                    return Observable.zip(responseObservable, Observable.just(details), Pair::new);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(personSearchResultPeopleDetailsPair -> {
-                    PeopleDetails details = personSearchResultPeopleDetailsPair.second;
-                    mView.showPeopleDetailHeader(details.getName(), details.getExternalIds());
-                })
-                .delay(2L, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::displayPersonDetails, this::onError)
-        );
+                    @Override
+                    public void onFailure(Call<PeopleDetails> call, Throwable t) {
+                        onError(t);
+                    }
+                });
+    }
+
+    private void findPersonKnownForCredits(PeopleDetails details) {
+        dataManager.getPersonKnownFor(details.getName(),
+                new Callback<PersonSearchResponse>() {
+                    @Override
+                    public void onResponse(Call<PersonSearchResponse> call, Response<PersonSearchResponse> response) {
+                        PersonSearchResult personSearchResult = new PersonSearchResult();
+                        for(PersonSearchResult result : response.body().getPersonSearchResults()) {
+                            if(result.getId().equals(details.getId())) {
+                                personSearchResult = result;
+                            }
+                        }
+                        Pair<PersonSearchResult, PeopleDetails> pair =
+                                new Pair<>(personSearchResult, details);
+                        displayPersonDetails(pair);
+                    }
+
+                    @Override
+                    public void onFailure(Call<PersonSearchResponse> call, Throwable t) {
+                        onError(t);
+                    }
+                });
     }
 
     private void displayPersonDetails(Pair personPair) {
+
+        if(!isViewAttached()) return;
         mView.hideProgress();
 
         PersonSearchResult result = (PersonSearchResult) personPair.first;
@@ -100,7 +115,9 @@ public class PeopleDetailPresenter extends BasePresenter<PeopleDetailContract.Pe
     }
 
     private void onError(Throwable throwable) {
-
+        if(!isViewAttached()) return;
+        mView.hideProgress();
+        mView.showError(throwable.getMessage());
     }
 
     public List<Cast> getCastList() {
@@ -115,6 +132,5 @@ public class PeopleDetailPresenter extends BasePresenter<PeopleDetailContract.Pe
 
     public void onDestroy() {
         castList.clear();
-        compositeDisposable.dispose();
     }
 }
