@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/HomeScreenTheme">
         <activity android:name=".ui.home.HomeActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,16 +28,15 @@
         </activity>
 
         <activity android:name=".ui.movie_detail.MovieDetailActivity"
-            android:theme="@style/DetailTheme"
-            android:configChanges="orientation|screenSize">
+            android:screenOrientation="portrait"
+            android:theme="@style/DetailTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.home.HomeActivity"/>
         </activity>
 
         <activity android:name=".ui.more_movies_list.MoreActivity"
-            android:theme="@style/HomeScreenTheme"
-            android:configChanges="orientation|screenSize">
+            android:theme="@style/HomeScreenTheme">
         </activity>
 
         <activity android:name=".ui.search.SearchActivity"
@@ -44,8 +44,7 @@
             />
 
         <activity android:name=".ui.genre.GenreActivity"
-            android:theme="@style/HomeScreenTheme"
-            android:configChanges="orientation|screenSize">
+            android:theme="@style/HomeScreenTheme">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".ui.home.HomeActivity"/>
@@ -56,8 +55,7 @@
         <activity android:name=".ui.more_images.MoreImagesActivity"/>
 
         <activity android:name=".ui.people_detail.PeopleDetailActivity"
-            android:theme="@style/DetailTheme"
-            android:configChanges="orientation|screenSize"/>
+            android:theme="@style/DetailTheme" />
 
         <activity android:name=".ui.people_full_credit.PeopleFullCreditActivity" />
 

@@ -26,7 +26,6 @@ import com.example.prakhar.movieapp.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -160,7 +159,6 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                                     tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
                                     tmdbMovieDetail.getGenres(), tmdbMovieDetail.getRuntime());
                         })
-                        .delay(2L, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::showMovieDetail, this::onError)
         );

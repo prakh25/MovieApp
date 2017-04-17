@@ -169,11 +169,4 @@ public class FullScreenImageFragment extends DialogFragment implements
             }, DELAY_MILLI_SECONDS);
         }
     }
-
-    @Override
-    public void onDestroyView() {
-        viewPager.setAdapter(null);
-        unbinder.unbind();
-        super.onDestroyView();
-    }
 }

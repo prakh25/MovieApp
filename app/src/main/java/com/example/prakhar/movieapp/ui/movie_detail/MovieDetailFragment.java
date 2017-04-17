@@ -81,6 +81,8 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         MovieCrewWrapper.MovieCrewListener, MovieImagesWrapper.MovieImagesListener,
         MovieImagesAdapter.MovieImageAdapterListener, MovieCastAdapter.InteractionListener {
 
+    private final static String ARG_APP_BAR_EXPANDED = "appBarExpanded";
+
     @BindView(R.id.detail_content_frame)
     LinearLayout detailFrame;
     @BindView(R.id.detail_header_poster_frame)
@@ -133,11 +135,6 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     private Animation animation;
     private String toolbarTitle;
 
-
-    public static MovieDetailFragment newInstance() {
-        return newInstance(null);
-    }
-
     public static MovieDetailFragment newInstance(Integer movieId) {
 
         Bundle args = new Bundle();
@@ -161,10 +158,10 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        movieDetailPresenter = new MovieDetailPresenter(DataManager.getInstance());
         if (getArguments() != null) {
             movieId = getArguments().getInt(ARG_MOVIE_ID);
         }
-        movieDetailPresenter = new MovieDetailPresenter(DataManager.getInstance());
     }
 
 
@@ -175,6 +172,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         movieDetailPresenter.attachView(this);
         init(view);
         movieDetailPresenter.onMovieRequested(movieId);
+
         appBarLayout.addOnOffsetChangedListener(this);
         return view;
     }
@@ -626,7 +624,12 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     @Override
     public void onDestroyView() {
         movieDetailPresenter.onDestroy();
-        movieDetailPresenter.detachView();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        movieDetailPresenter.detachView();
+        super.onDestroy();
     }
 }
