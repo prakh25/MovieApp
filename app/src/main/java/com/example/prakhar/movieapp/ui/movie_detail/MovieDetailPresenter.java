@@ -27,11 +27,10 @@ import com.example.prakhar.movieapp.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -42,7 +41,6 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
         implements MovieDetailContract.ViewActions {
 
     private final DataManager dataManager;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Realm realm;
     private String region;
     private List<Cast> castList;
@@ -132,42 +130,61 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
     private void onMovieDetailRequested(Integer movieId) {
 
         mView.showProgress();
-
-        compositeDisposable.add(
-                dataManager.getMovieDetail(movieId)
-                        .flatMap(tmdbMovieDetail -> {
-                            Observable<TraktMovieRating> summaryObservable = null;
-                            TraktMovieRating traktMovieRating = new TraktMovieRating();
-
-                            if(!tmdbMovieDetail.getImdbId().isEmpty() && tmdbMovieDetail.getImdbId() != null) {
-                                summaryObservable =
-                                        dataManager.getTraktMovieRating(tmdbMovieDetail.getImdbId());
+        dataManager.getMovieDetail(movieId,
+                new Callback<TmdbMovieDetail>() {
+                    @Override
+                    public void onResponse(Call<TmdbMovieDetail> call, Response<TmdbMovieDetail> response) {
+                        if(response.code() == 200) {
+                            String imdbId = response.body().getImdbId();
+                            if (imdbId != null && !imdbId.isEmpty() && !imdbId.equals("")) {
+                                getTraktMovieRating(response.body());
                             } else {
-                                summaryObservable = Observable.just(traktMovieRating);
+                                TraktMovieRating traktMovieRating = new TraktMovieRating();
+                                Pair<TraktMovieRating, TmdbMovieDetail> pair =
+                                        new Pair<>(traktMovieRating, response.body());
+                                showMovieDetail(pair);
                             }
-                            return Observable.zip(summaryObservable,
-                                    Observable.just(tmdbMovieDetail), Pair::new);
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext(traktMovieRatingTmdbMovieDetailPair -> {
+                        }
+                    }
 
-                            TmdbMovieDetail tmdbMovieDetail = traktMovieRatingTmdbMovieDetailPair.second;
+                    @Override
+                    public void onFailure(Call<TmdbMovieDetail> call, Throwable t) {
+                        showError(t);
+                    }
+                });
+    }
 
-                            mView.showMovieHeader(tmdbMovieDetail.getPosterPath(),
-                                    tmdbMovieDetail.getBackdropPath(),
-                                    tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
-                                    tmdbMovieDetail.getGenres(), tmdbMovieDetail.getRuntime());
-                        })
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::showMovieDetail, this::onError)
-        );
+    private void getTraktMovieRating(TmdbMovieDetail movieDetail) {
+
+        dataManager.getTraktMovieRating(movieDetail.getImdbId(),
+                new Callback<TraktMovieRating>() {
+                    @Override
+                    public void onResponse(Call<TraktMovieRating> call, Response<TraktMovieRating> response) {
+                        if(response.code() == 200) {
+                            Pair<TraktMovieRating, TmdbMovieDetail> pair =
+                                    new Pair<>(response.body(), movieDetail);
+                            showMovieDetail(pair);
+                        } else {
+                            TraktMovieRating traktMovieRating = new TraktMovieRating();
+                            Pair<TraktMovieRating, TmdbMovieDetail> pair =
+                                    new Pair<>(traktMovieRating, movieDetail);
+                            showMovieDetail(pair);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TraktMovieRating> call, Throwable t) {
+                        showError(t);
+                    }
+                });
     }
 
     private void showMovieDetail(Pair moviePair) {
+
+        if(!isViewAttached()) return;
         mView.hideProgress();
 
-        TraktMovieRating traktMovieSummary = (TraktMovieRating) moviePair.first;
+        TraktMovieRating traktMovieRating = (TraktMovieRating) moviePair.first;
 
         TmdbMovieDetail tmdbMovieDetail = (TmdbMovieDetail) moviePair.second;
 
@@ -195,13 +212,13 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
             rating = userRating.getUserRating();
         }
 
-        if(traktMovieSummary.getRating() != null) {
+        if(traktMovieRating.getRating() != null) {
             mView.showRatings(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
                     tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
                     tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
                     tmdbMovieDetail.getVoteCount(), tmdbMovieDetail.getVoteAverage(),
                     rating, tmdbMovieDetail.getVoteAverage(), tmdbMovieDetail.getVoteCount(),
-                    traktMovieSummary.getRating(), traktMovieSummary.getVotes());
+                    traktMovieRating.getRating(), traktMovieRating.getVotes());
         } else {
             mView.showRatings(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
                     tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
@@ -210,6 +227,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                     rating, tmdbMovieDetail.getVoteAverage(), tmdbMovieDetail.getVoteCount(),
                     0.0, 0);
         }
+
         if (!tmdbMovieDetail.getVideoResponse().getResults().isEmpty()) {
             String key = null;
             for (Video video : tmdbMovieDetail.getVideoResponse().getResults()) {
@@ -308,7 +326,8 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                 tmdbMovieDetail.getImdbId(), tmdbMovieDetail.getTitle());
     }
 
-    private void onError(Throwable throwable) {
+    private void showError(Throwable throwable) {
+        if(!isViewAttached()) return;
         mView.hideProgress();
         mView.showError(throwable.getMessage());
     }
@@ -607,6 +626,5 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
 
     public void onDestroy() {
         realm.close();
-        compositeDisposable.dispose();
     }
 }
