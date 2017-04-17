@@ -6,7 +6,7 @@ import com.example.prakhar.movieapp.model.trakt.movie_summary.TraktMovieSummary;
 
 import java.util.List;
 
-import io.reactivex.Observable;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -22,18 +22,18 @@ public interface TraktService {
     @Headers({"Content-Type: application/json",
             "trakt-api-version: 2"})
     @GET("movies/boxoffice")
-    Observable<List<BoxOffice>> getWeekendBoxOffice(@Header("trakt-api-key") String traktClientId);
+    Call<List<BoxOffice>> getWeekendBoxOffice(@Header("trakt-api-key") String traktClientId);
 
     @Headers({"Content-Type: application/json",
             "trakt-api-version: 2"})
     @GET("movies/{id}")
-    Observable<TraktMovieSummary> getMovieSummary(@Header("trakt-api-key") String traktClientId,
+    Call<TraktMovieSummary> getMovieSummary(@Header("trakt-api-key") String traktClientId,
                                                   @Path("id") String movieId,
                                                   @Query("extended") String extended);
 
     @Headers({"Content-Type: application/json",
             "trakt-api-version: 2"})
     @GET("movies/{id}/ratings")
-    Observable<TraktMovieRating> getMovieRatings(@Header("trakt-api-key") String traktClientId,
+    Call<TraktMovieRating> getMovieRatings(@Header("trakt-api-key") String traktClientId,
                                                  @Path("id") String movieId);
 }

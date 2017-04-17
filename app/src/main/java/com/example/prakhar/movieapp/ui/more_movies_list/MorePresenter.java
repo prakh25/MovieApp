@@ -176,7 +176,7 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
                         .flatMap(Observable::fromIterable)
                         .flatMap(boxOffice -> {
                             Observable<MovieDetail> detailObservable =
-                                    dataManager.getDetail(boxOffice.getMovie().getIds().getTmdb());
+                                    dataManager.getBoxOfficeMovieDetail(boxOffice.getMovie().getIds().getTmdb());
                             return Observable.zip(detailObservable, Observable.just(boxOffice), Pair::new);
                         })
                         .subscribeOn(Schedulers.io())

@@ -5,16 +5,11 @@ import com.example.prakhar.movieapp.MovieApp;
 import com.example.prakhar.movieapp.utils.Constants;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
-import okhttp3.CacheControl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
@@ -31,7 +26,6 @@ public class NetworkServiceFactory {
 
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(provideOkhttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -65,19 +59,6 @@ public class NetworkServiceFactory {
 
         httpLoggingInterceptor.setLevel(BuildConfig.DEBUG ? HEADERS : NONE);
         return httpLoggingInterceptor;
-    }
-
-    private static Interceptor provideCacheInterceptor() {
-        return chain -> {
-            Response response = chain.proceed(chain.request());
-            CacheControl cacheControl = new CacheControl.Builder()
-                    .maxAge(Constants.MAX_AGE, TimeUnit.SECONDS)
-                    .build();
-
-            return response.newBuilder()
-                    .header(Constants.CACHE_CONTROL, cacheControl.toString())
-                    .build();
-        };
     }
 
     public static TmdbService provideTmdbService() {
