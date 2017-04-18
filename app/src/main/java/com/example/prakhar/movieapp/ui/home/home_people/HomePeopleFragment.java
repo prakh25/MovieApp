@@ -10,7 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.person_search.PersonSearchResult;
@@ -41,6 +45,17 @@ public class HomePeopleFragment extends Fragment implements HomePeopleContract.H
     RecyclerView recyclerView;
     @BindView(R.id.progress_bar_fragment)
     ProgressBar progressBar;
+    @BindView(R.id.home_people_layout)
+    LinearLayout layout;
+
+    @BindView(R.id.iv_message)
+    ImageView messageImage;
+    @BindView(R.id.tv_message)
+    TextView messageText;
+    @BindView(R.id.btn_try_again)
+    Button tryAgainBtn;
+    @BindView(R.id.message_layout)
+    LinearLayout messageLayout;
 
     private Unbinder unbinder;
     private HomePeoplePresenter homePeoplePresenter;
@@ -97,6 +112,9 @@ public class HomePeopleFragment extends Fragment implements HomePeopleContract.H
         }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(setupScrollListener(recyclerView.getLayoutManager()));
+
+        tryAgainBtn.setOnClickListener(v -> homePeoplePresenter.onInitialisedRequest());
+
     }
 
     private RecyclerView.LayoutManager setUpLayoutManager(boolean isTabletLayout) {
@@ -161,17 +179,24 @@ public class HomePeopleFragment extends Fragment implements HomePeopleContract.H
 
     @Override
     public void showEmpty() {
-
+        messageImage.setImageResource(R.drawable.ic_error_white_24dp);
+        messageText.setText(getString(R.string.nothing_to_display));
+        tryAgainBtn.setText(getString(R.string.action_try_again));
+        showMessageLayout(true);
     }
 
     @Override
     public void showError(String errorMessage) {
-
+        messageImage.setImageResource(R.drawable.ic_error_white_24dp);
+        messageText.setText(getString(R.string.error_generic_server_error, errorMessage));
+        tryAgainBtn.setText(getString(R.string.action_try_again));
+        showMessageLayout(true);
     }
 
     @Override
     public void showMessageLayout(boolean show) {
-
+        messageLayout.setVisibility(show ? View.VISIBLE : View.GONE);
+        layout.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     @Override

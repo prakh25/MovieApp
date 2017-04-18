@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -126,6 +128,17 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     FrameLayout headerFrame;
     @BindView(R.id.toolbar_movie_title)
     TextView toolbarMovieTitle;
+    @BindView(R.id.movie_detail_layout)
+    CoordinatorLayout layout;
+
+    @BindView(R.id.iv_message)
+    ImageView messageImage;
+    @BindView(R.id.tv_message)
+    TextView messageText;
+    @BindView(R.id.btn_try_again)
+    Button tryAgainBtn;
+    @BindView(R.id.message_layout)
+    LinearLayout messageLayout;
 
     private MovieDetailPresenter movieDetailPresenter;
     private AppCompatActivity mActivity;
@@ -191,6 +204,8 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         }
         animation = AnimationUtils.loadAnimation(mActivity, R.anim.fade_in);
         animation.setDuration(1000);
+
+        tryAgainBtn.setOnClickListener(v -> movieDetailPresenter.onMovieRequested(movieId));
     }
 
     @Override
@@ -498,17 +513,24 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
 
     @Override
     public void showEmpty() {
-
+        messageImage.setImageResource(R.drawable.ic_error_white_24dp);
+        messageText.setText(getString(R.string.nothing_to_display));
+        tryAgainBtn.setText(getString(R.string.action_try_again));
+        showMessageLayout(true);
     }
 
     @Override
     public void showError(String errorMessage) {
-
+        messageImage.setImageResource(R.drawable.ic_error_white_24dp);
+        messageText.setText(getString(R.string.error_generic_server_error, errorMessage));
+        tryAgainBtn.setText(getString(R.string.action_try_again));
+        showMessageLayout(true);
     }
 
     @Override
     public void showMessageLayout(boolean show) {
-
+        messageLayout.setVisibility(show ? View.VISIBLE : View.GONE);
+        layout.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     @Override

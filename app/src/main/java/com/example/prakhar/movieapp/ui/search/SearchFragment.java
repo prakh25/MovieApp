@@ -17,7 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.search.SearchResult;
@@ -47,6 +51,17 @@ public class SearchFragment extends Fragment implements SearchContract.SearchVie
     ImageView clearBtn;
     @BindView(R.id.search_list)
     RecyclerView recyclerView;
+    @BindView(R.id.progress_bar_fragment)
+    ProgressBar progressBar;
+
+    @BindView(R.id.iv_message)
+    ImageView messageImage;
+    @BindView(R.id.tv_message)
+    TextView messageText;
+    @BindView(R.id.btn_try_again)
+    Button tryAgainBtn;
+    @BindView(R.id.message_layout)
+    LinearLayout messageLayout;
 
     private SearchAdapter searchAdapter;
     private SearchPresenter searchPresenter;
@@ -135,25 +150,34 @@ public class SearchFragment extends Fragment implements SearchContract.SearchVie
 
     @Override
     public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void showEmpty() {
-
+        messageImage.setImageResource(R.drawable.ic_error_white_24dp);
+        messageText.setText(getString(R.string.nothing_to_display));
+        tryAgainBtn.setText(getString(R.string.action_try_again));
+        showMessageLayout(true);
     }
 
     @Override
     public void showError(String errorMessage) {
-
+        messageImage.setImageResource(R.drawable.ic_error_white_24dp);
+        messageText.setText(getString(R.string.error_generic_server_error, errorMessage));
+        tryAgainBtn.setText(getString(R.string.action_try_again));
+        showMessageLayout(true);
     }
 
     @Override
     public void showMessageLayout(boolean show) {
-
+        messageLayout.setVisibility(show ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     @Override
