@@ -26,9 +26,11 @@ _Mind the markedown spaces._
 ![People Detail](../master/art/people_detail.png)
 
 ![App Search](../master/art/app_search.png)
+![Error Layout](../master/art/error_layout.png)
 
 ## TODO
 
+- [x] Add Message Layout
 - [ ] Complete Home TV Fragment.
 - [ ] Add TV Detail Activity
 - [ ] Add Movie Collections Activity
