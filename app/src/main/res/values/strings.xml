@@ -44,4 +44,7 @@
     <string name="action_about">About</string>
     <string name="no_cast_credits">No Known Acting Credits Found</string>
     <string name="no_crew_credits">No Known Crew Credits Found</string>
+    <string name="error_generic_server_error">There was na error contacting the server, %1$s</string>
+    <string name="action_try_again">Try Again</string>
+    <string name="nothing_to_display">Nothing to Display</string>
 </resources>
