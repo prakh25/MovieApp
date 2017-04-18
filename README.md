@@ -51,8 +51,6 @@ An HTTP & HTTP/2 client for Android and Java applications.
 Field and method binding for Android views which uses annotation processing to generate boilerplate code.
 * [Retrolambda](https://github.com/orfjackal/retrolambda)
 Backport of Java 8's lambda expressions to Java 7, 6 and 5.
-* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
-Android specific bindings for RxJava 2.
 * [Realm](http://realm.io)
 Realm is a mobile database: a replacement for SQLite & ORMs.
 
