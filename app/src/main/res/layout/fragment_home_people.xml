@@ -12,4 +12,6 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false" />
 
+    <include layout="@layout/layout_message" />
+
 </LinearLayout>

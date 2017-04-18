@@ -7,7 +7,6 @@ import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 /**
  * Created by Prakhar on 3/27/2017.
@@ -26,6 +25,8 @@ public class GenrePresenter extends BasePresenter<GenreContract.GenreView>
     public void getGenreList() {
 
         if (!isViewAttached()) return;
+        mView.showMessageLayout(false);
+        mView.showProgress();
         dataManager.getGenreList(new Callback<GenreResponse>() {
             @Override
             public void onResponse(Call<GenreResponse> call, Response<GenreResponse> response) {
@@ -41,6 +42,7 @@ public class GenrePresenter extends BasePresenter<GenreContract.GenreView>
 
     private void displayList(GenreResponse response) {
         if (!isViewAttached()) return;
+        mView.hideProgress();
         mView.showGenreList(response.getGenres());
     }
 

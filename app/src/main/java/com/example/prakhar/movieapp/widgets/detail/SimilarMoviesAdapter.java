@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.prakhar.movieapp.MovieApp;
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.tmdb.Result;
 import com.example.prakhar.movieapp.utils.Constants;
@@ -37,7 +36,7 @@ public class SimilarMoviesAdapter extends
     private String posterUrl;
 
     public SimilarMoviesAdapter(List<Result> movies,
-                                   ListInteractionListener listInteractionListener) {
+                                ListInteractionListener listInteractionListener) {
         resultList = new ArrayList<>();
         interactionListener = listInteractionListener;
         resultList.addAll(movies);
@@ -53,11 +52,9 @@ public class SimilarMoviesAdapter extends
     @Override
     public void onBindViewHolder(SimilarMoviesAdapter.SimilarMoviesViewHolder holder, int position) {
         String posterPath = resultList.get(position).getPosterPath();
-        if (MovieApp.isWifiConnected()) {
-            imageUrl = Constants.TMDB_IMAGE_URL + "w185";
-        } else {
-            imageUrl = Constants.TMDB_IMAGE_URL + "w154";
-        }
+
+        imageUrl = Constants.TMDB_IMAGE_URL + "w185";
+
         Timber.i(imageUrl);
         posterUrl = imageUrl + posterPath;
         ViewCompat.setTransitionName(holder.moviePoster, resultList.get(position).getId().toString());
@@ -72,7 +69,7 @@ public class SimilarMoviesAdapter extends
 
         holder.title.setText(resultList.get(position).getTitle());
 
-        if(resultList.get(position).getVoteAverage() != 0.0) {
+        if (resultList.get(position).getVoteAverage() != 0.0) {
             holder.movieRating.setText(String.format(Locale.US, "%.1f",
                     resultList.get(position).getVoteAverage()));
         } else {

@@ -32,6 +32,7 @@ public class SearchPresenter extends BasePresenter<SearchContract.SearchView>
         if(!isViewAttached()) return;
         mView.showMessageLayout(false);
         mView.showProgress();
+        
         dataManager.getMultiSearchResponse(query,
                 new Callback<SearchResponse>() {
                     @Override

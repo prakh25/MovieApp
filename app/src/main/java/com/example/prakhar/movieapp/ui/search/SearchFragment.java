@@ -123,13 +123,14 @@ public class SearchFragment extends Fragment implements SearchContract.SearchVie
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (TextUtils.isEmpty(s)) {
                     searchAdapter.removeAll();
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    new Handler().postDelayed(() -> {
+                        if (System.currentTimeMillis() - lastChange >= 400) {
+                            searchPresenter.onSearchQueryEntered(s.toString());
+                        }
+                    }, 400);
                 }
-
-                new Handler().postDelayed(() -> {
-                    if (System.currentTimeMillis() - lastChange >= 400) {
-                        searchPresenter.onSearchQueryEntered(s.toString());
-                    }
-                }, 400);
                 lastChange = System.currentTimeMillis();
             }
 
@@ -145,6 +146,8 @@ public class SearchFragment extends Fragment implements SearchContract.SearchVie
             searchAdapter.removeAll();
             searchQueryView.setText(null);
             searchQueryView.requestFocus();
+            messageLayout.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
         });
     }
 

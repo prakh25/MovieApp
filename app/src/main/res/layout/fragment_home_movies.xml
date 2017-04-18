@@ -18,4 +18,6 @@
         </android.support.v4.widget.NestedScrollView>
 
     <include layout="@layout/progress_bar_fragment"/>
+
+    <include layout="@layout/layout_message" />
 </android.support.design.widget.CoordinatorLayout>

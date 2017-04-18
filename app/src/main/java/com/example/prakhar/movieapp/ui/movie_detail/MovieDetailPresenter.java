@@ -128,7 +128,8 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
     }
 
     private void onMovieDetailRequested(Integer movieId) {
-
+        if(!isViewAttached()) return;
+        mView.showMessageLayout(false);
         mView.showProgress();
         dataManager.getMovieDetail(movieId,
                 new Callback<TmdbMovieDetail>() {

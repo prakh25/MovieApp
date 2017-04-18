@@ -530,7 +530,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     @Override
     public void showMessageLayout(boolean show) {
         messageLayout.setVisibility(show ? View.VISIBLE : View.GONE);
-        layout.setVisibility(show ? View.GONE : View.VISIBLE);
+        detailFrame.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     @Override
