@@ -65,6 +65,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static com.example.prakhar.movieapp.utils.Constants.ARG_MOVIE_ID;
 
@@ -89,7 +90,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     FrameLayout posterFrame;
     @BindView(R.id.detail_header_movie_poster)
     ImageView moviePoster;
-    @BindView(R.id.progress)
+    @BindView(R.id.progress_bar_fragment)
     ProgressBar contentProgress;
     @BindView(R.id.action_add_to_watchlist)
     LikeButton watchlistBtn;
@@ -209,6 +210,8 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
                     .into(movieBackdrop);
         }
 
+        Timber.i("poster " + posterPath);
+        
         if (posterPath != null) {
             BitmapRequestBuilder<String, PaletteBitmap> glideRequest;
             glideRequest = Glide.with(mActivity).fromString().asBitmap()

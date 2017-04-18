@@ -12,10 +12,9 @@ import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import com.example.prakhar.movieapp.utils.Constants;
 import com.example.prakhar.movieapp.utils.Utils;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Prakhar on 2/22/2017.
@@ -25,7 +24,6 @@ public class HomeMoviePresenter extends BasePresenter<HomeMovieContract.HomeMovi
         implements HomeMovieContract.ViewActions {
 
     private final DataManager dataManager;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private String region;
 
     public HomeMoviePresenter(@NonNull DataManager dataManager) {
@@ -40,24 +38,48 @@ public class HomeMoviePresenter extends BasePresenter<HomeMovieContract.HomeMovi
     }
 
     private void movieHomePageRequested() {
-        mView.showProgress();
 
-        compositeDisposable.add(dataManager.getMoviesList(region, Constants.SORT_ORDER, Constants.PAGE_NUMBER,
-                Utils.minDate(Utils.getTodayDate()), Utils.getTodayDate())
-                .flatMap(movieResponse -> {
-                    Observable<MovieResponse> comingSoonObservable =
-                            dataManager.getComingSoonMovies(region, Constants.PAGE_NUMBER);
-                    return Observable.zip(comingSoonObservable, Observable.just(movieResponse),
-                            Pair::new);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::displayResult, this::displayError));
+        if (!isViewAttached()) return;
+        mView.showMessageLayout(false);
+        mView.showProgress();
+        dataManager.getMoviesList(region, Constants.SORT_ORDER, Constants.PAGE_NUMBER,
+                Utils.minDate(Utils.getTodayDate()), Utils.getTodayDate(),
+                new Callback<MovieResponse>() {
+                    @Override
+                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                        getComingSoonMovies(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieResponse> call, Throwable t) {
+                        displayError(t);
+                    }
+                });
+    }
+
+    private void getComingSoonMovies(MovieResponse nowPlaying) {
+        dataManager.getComingSoonMovies(region, Constants.PAGE_NUMBER,
+                new Callback<MovieResponse>() {
+                    @Override
+                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                        MovieResponse comingSoon = response.body();
+                        Pair<MovieResponse, MovieResponse> pair =
+                                new Pair<>(comingSoon, nowPlaying);
+                        displayResult(pair);
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieResponse> call, Throwable t) {
+                        displayError(t);
+                    }
+                });
     }
 
     private void displayResult(Pair moviePair) {
         MovieResponse comingSoon = (MovieResponse) moviePair.first;
         MovieResponse nowPlaying = (MovieResponse) moviePair.second;
+
+        if (!isViewAttached()) return;
 
         mView.hideProgress();
 
@@ -69,11 +91,9 @@ public class HomeMoviePresenter extends BasePresenter<HomeMovieContract.HomeMovi
     }
 
     private void displayError(Throwable throwable) {
+        if (!isViewAttached()) return;
+        mView.hideProgress();
         mView.showError(throwable.getMessage());
-    }
-
-    public void onDestroy() {
-        compositeDisposable.dispose();
     }
 
 }

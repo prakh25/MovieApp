@@ -56,16 +56,8 @@ dependencies {
 
     retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion"
 
-    compile "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-
-    // Because RxAndroid releases are few and far between, it is recommended you also
-    // explicitly depend on RxJava's latest version for bug fixes and new features.
-    compile "io.reactivex.rxjava2:rxandroid:$rxJavaVersion"
-    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
-
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
 
     compile "com.squareup.okhttp3:okhttp:$okHttpVersion"
     compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
