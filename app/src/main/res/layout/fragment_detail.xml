@@ -27,6 +27,6 @@
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
-    <include layout="@layout/progress_bar_detail"/>
+    <include layout="@layout/progress_bar_fragment"/>
 
 </android.support.design.widget.CoordinatorLayout>

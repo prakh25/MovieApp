@@ -90,7 +90,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     FrameLayout posterFrame;
     @BindView(R.id.detail_header_movie_poster)
     ImageView moviePoster;
-    @BindView(R.id.progress)
+    @BindView(R.id.progress_bar_fragment)
     ProgressBar contentProgress;
     @BindView(R.id.action_add_to_watchlist)
     LikeButton watchlistBtn;
