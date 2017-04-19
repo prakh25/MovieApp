@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.example.prakhar.movieapp.ui.home.home_movie.HomeMovieFragment;
 import com.example.prakhar.movieapp.ui.home.home_people.HomePeopleFragment;
+import com.example.prakhar.movieapp.ui.home.home_tv.HomeTvFragment;
 import com.example.prakhar.movieapp.utils.SmartFragmentStatePagerAdapter;
 
 /**

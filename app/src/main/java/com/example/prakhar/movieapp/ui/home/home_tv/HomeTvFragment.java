@@ -1,4 +1,4 @@
-package com.example.prakhar.movieapp.ui.home;
+package com.example.prakhar.movieapp.ui.home.home_tv;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -6,8 +6,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.example.prakhar.movieapp.R;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by Prakhar on 4/8/2017.
@@ -15,13 +21,19 @@ import com.example.prakhar.movieapp.R;
 
 public class HomeTvFragment extends Fragment {
 
+    @BindView(R.id.home_tv_content_frame)
+    LinearLayout contentFrame;
+    @BindView(R.id.progress_bar_fragment)
+    ProgressBar progressBar;
+
+    private Unbinder unbinder;
+
     public HomeTvFragment() {
     }
 
     public static HomeTvFragment newInstance() {
 
         Bundle args = new Bundle();
-
         HomeTvFragment fragment = new HomeTvFragment();
         fragment.setArguments(args);
         return fragment;
@@ -30,6 +42,18 @@ public class HomeTvFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_tv, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_tv, container, false);
+        init(view);
+        return view;
+    }
+
+    private void init(View view) {
+        unbinder = ButterKnife.bind(this, view);
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
     }
 }
