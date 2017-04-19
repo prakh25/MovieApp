@@ -10,6 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.example.prakhar.movieapp.R;
+import com.example.prakhar.movieapp.model.tmdb.tv.TvResult;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,7 +22,7 @@ import butterknife.Unbinder;
  * Created by Prakhar on 4/8/2017.
  */
 
-public class HomeTvFragment extends Fragment {
+public class HomeTvFragment extends Fragment implements HomeTvContract.HomeTvView {
 
     @BindView(R.id.home_tv_content_frame)
     LinearLayout contentFrame;
@@ -49,6 +52,41 @@ public class HomeTvFragment extends Fragment {
 
     private void init(View view) {
         unbinder = ButterKnife.bind(this, view);
+    }
+
+    @Override
+    public void showProgress() {
+
+    }
+
+    @Override
+    public void hideProgress() {
+
+    }
+
+    @Override
+    public void showEmpty() {
+
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+
+    }
+
+    @Override
+    public void showMessageLayout(boolean show) {
+
+    }
+
+    @Override
+    public void showPopularTvShows(List<TvResult> tvResultList) {
+
+    }
+
+    @Override
+    public void showTopRatedTvShows(List<TvResult> tvResultList) {
+
     }
 
     @Override
