@@ -12,6 +12,7 @@ import com.example.prakhar.movieapp.model.people_detail.PeopleDetails;
 import com.example.prakhar.movieapp.model.person_search.PersonSearchResponse;
 import com.example.prakhar.movieapp.model.search.SearchResponse;
 import com.example.prakhar.movieapp.model.tmdb.MovieResponse;
+import com.example.prakhar.movieapp.model.tmdb.tv.TvResponse;
 import com.example.prakhar.movieapp.model.trakt.box_office.BoxOffice;
 import com.example.prakhar.movieapp.utils.Constants;
 
@@ -129,6 +130,16 @@ public class DataManager {
                                  Callback<MovieResponse> callback) {
         tmdbService.getMovieByGenre(BuildConfig.TMDB_API_KEY, region, Constants.SORT_ORDER,
                 Constants.INCLUDE_ADULT, Constants.INCLUDE_VIDEO, page, genreId)
+                .enqueue(callback);
+    }
+
+    public void getPopularTvList(int page, Callback<TvResponse> callback) {
+        tmdbService.getPopularTvShows(BuildConfig.TMDB_API_KEY, page)
+                .enqueue(callback);
+    }
+
+    public void getTopRatedTvList(int page, Callback<TvResponse> callback) {
+        tmdbService.getTopRatedTvShows(BuildConfig.TMDB_API_KEY, page)
                 .enqueue(callback);
     }
 
