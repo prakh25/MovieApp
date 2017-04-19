@@ -51,7 +51,7 @@ public class HomeMovieLIstWrapper extends FrameLayout {
     }
 
     private void init(Context context) {
-        inflate(context, R.layout.home_movie_wrapper, this);
+        inflate(context, R.layout.home_list_wrapper, this);
         ButterKnife.bind(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context) {
             @Override

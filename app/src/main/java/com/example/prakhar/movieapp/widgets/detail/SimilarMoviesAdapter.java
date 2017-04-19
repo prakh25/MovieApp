@@ -45,7 +45,7 @@ public class SimilarMoviesAdapter extends
     @Override
     public SimilarMoviesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_list_item, parent, false);
+                .inflate(R.layout.home_list_item, parent, false);
         return new SimilarMoviesViewHolder(view);
     }
 
