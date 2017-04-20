@@ -54,9 +54,8 @@ public final class Constants {
 
     //More Movies List
     public static final String ARG_GENRE_ID = "genreId";
-    public static final String EXTRA_ADDED_TO_WATCHLIST = "addedToWatchlist";
-    public static final String EXTRA_MARKED_AS_FAVORITE = "markedAsFavorite";
-    public static final String EXTRA_USER_RATING = "userRating";
+    public static final String ARG_ADDED_TO_WATCHLIST = "addedToWatchlist";
+    public static final String ARG_MARKED_AS_FAVORITE = "markedAsFavorite";
     public static final int REQUEST_CODE = 100;
 
     //Full Screen Image
@@ -79,9 +78,10 @@ public final class Constants {
 
     //Movie detail
     public static final String ARG_MOVIE_ID = "ardMovieId";
+    public static final String ARG_POSTER_PATH = "posterPath";
 
     //rating dialog
-    public static final String ARG_USER_RATING = "argRating";
+    public static final String ARG_USER_RATING = "argUserRating";
     public static final String ARG_MOVIE_RESULT = "argResult";
 
     //user list dialog
