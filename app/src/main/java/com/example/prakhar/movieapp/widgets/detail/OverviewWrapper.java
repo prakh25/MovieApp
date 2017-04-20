@@ -58,7 +58,7 @@ public class OverviewWrapper extends LinearLayout {
         if(overview != null && !overview.isEmpty()) {
             overViewText.setText(overview);
         } else {
-            plotFrame.setVisibility(GONE);
+            overViewText.setText(R.string.no_description);
         }
     }
 
