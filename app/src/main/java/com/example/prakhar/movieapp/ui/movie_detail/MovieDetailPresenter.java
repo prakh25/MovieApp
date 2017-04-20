@@ -1,6 +1,7 @@
 package com.example.prakhar.movieapp.ui.movie_detail;
 
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
@@ -37,7 +38,7 @@ import timber.log.Timber;
  * Created by Prakhar on 3/4/2017.
  */
 
-public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
+class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         implements MovieDetailContract.ViewActions {
 
     private final DataManager dataManager;
@@ -46,8 +47,10 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
     private List<Cast> castList;
     private List<Crew> crewList;
     private List<Poster> movieImages;
+    private TraktMovieRating traktMovieRating;
+    private TmdbMovieDetail tmdbMovieDetail;
 
-    public MovieDetailPresenter(@NonNull DataManager dataManager) {
+    MovieDetailPresenter(@NonNull DataManager dataManager) {
         this.dataManager = dataManager;
         SharedPreferences countryCode = PreferenceManager.getDefaultSharedPreferences(MovieApp.getApp());
         region = countryCode.getString(Constants.COUNTRY_CODE, null);
@@ -128,9 +131,10 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
     }
 
     private void onMovieDetailRequested(Integer movieId) {
-        if(!isViewAttached()) return;
+        if (!isViewAttached()) return;
         mView.showMessageLayout(false);
         mView.showProgress();
+
         dataManager.getMovieDetail(movieId,
                 new Callback<TmdbMovieDetail>() {
                     @Override
@@ -180,21 +184,17 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
 
     private void showMovieDetail(Pair moviePair) {
 
-        mView.hideProgress();
-
-        TraktMovieRating traktMovieRating = (TraktMovieRating) moviePair.first;
-
-        TmdbMovieDetail tmdbMovieDetail = (TmdbMovieDetail) moviePair.second;
-
-        MovieStatus realmResult = findInRealmMovieStatus(realm, tmdbMovieDetail.getId());
+        traktMovieRating = (TraktMovieRating) moviePair.first;
+        tmdbMovieDetail = (TmdbMovieDetail) moviePair.second;
 
         mView.showMovieHeader(tmdbMovieDetail.getPosterPath(), tmdbMovieDetail.getBackdropPath(),
                 tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
                 tmdbMovieDetail.getGenres(),
                 tmdbMovieDetail.getRuntime());
 
+        MovieStatus realmResult = findInRealmMovieStatus(realm, tmdbMovieDetail.getId());
+
         if (realmResult == null) {
-            Timber.i("posterPath " + tmdbMovieDetail.getPosterPath());
             mView.showMovieStatus(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
                     tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
                     tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
@@ -207,6 +207,41 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                     tmdbMovieDetail.getVoteCount(), tmdbMovieDetail.getVoteAverage(),
                     realmResult.isAddedToWatchList(), realmResult.isMarkedAsFavorite());
         }
+
+        Handler handler = new Handler();
+
+        handler.postDelayed(() -> {
+
+            if (!isViewAttached()) return;
+            mView.hideProgress();
+
+            showMovieRating();
+            if (!tmdbMovieDetail.getVideoResponse().getResults().isEmpty()) {
+                showMovieTrailer();
+            }
+            showMovieOverview();
+            if(!tmdbMovieDetail.getCredits().getCast().isEmpty()) {
+                showMovieCast();
+            }
+            if (!tmdbMovieDetail.getCredits().getCrew().isEmpty()) {
+                showMovieCrew();
+            }
+            if (!tmdbMovieDetail.getImages().getBackdrops().isEmpty() ||
+                    !tmdbMovieDetail.getImages().getPosters().isEmpty()) {
+                showMovieImages();
+            }
+            if (tmdbMovieDetail.getBelongsToCollection() != null) {
+                mView.showBelongToCollection(tmdbMovieDetail.getBelongsToCollection());
+            }
+            if (!tmdbMovieDetail.getSimilar().getResults().isEmpty()) {
+                mView.showSimilarMovies(tmdbMovieDetail.getSimilar().getResults());
+            }
+            mView.showExternalLinks(tmdbMovieDetail.getHomepage(), tmdbMovieDetail.getId(),
+                    tmdbMovieDetail.getImdbId(), tmdbMovieDetail.getTitle());
+        }, 700);
+    }
+
+    private void showMovieRating() {
 
         UserRating userRating = findInRealmRatings(realm, tmdbMovieDetail.getId());
         Integer rating;
@@ -232,103 +267,92 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
                     rating, tmdbMovieDetail.getVoteAverage(), tmdbMovieDetail.getVoteCount(),
                     0.0, 0);
         }
+    }
 
-        if (!tmdbMovieDetail.getVideoResponse().getResults().isEmpty()) {
-            String key = null;
+    private void showMovieTrailer() {
+        String key = null;
+        for (Video video : tmdbMovieDetail.getVideoResponse().getResults()) {
+            if (video.getType().equalsIgnoreCase("trailer")) {
+                key = video.getKey();
+                break;
+            }
+        }
+        if (key == null) {
             for (Video video : tmdbMovieDetail.getVideoResponse().getResults()) {
-                if (video.getType().equalsIgnoreCase("trailer")) {
+                if (video.getType().contains("teaser")) {
                     key = video.getKey();
                     break;
                 }
             }
-            if (key == null) {
-                for (Video video : tmdbMovieDetail.getVideoResponse().getResults()) {
-                    if (video.getType().contains("teaser")) {
-                        key = video.getKey();
-                        break;
-                    }
-                }
-            }
-            Timber.i("videoId" + key);
-            mView.showMovieTrailer(key);
         }
+        mView.showMovieTrailer(key);
+    }
 
+    private void showMovieOverview() {
         String releaseDate = null;
-        String country = "US";
+        String defaultRegion = "US";
+
         for (ReleaseDatesResult result : tmdbMovieDetail.getReleaseDateResponse().getResults()) {
             if (result.getIso31661().equalsIgnoreCase(region)) {
                 releaseDate = result.getReleaseDates().get(0).getReleaseDate();
-                country = result.getIso31661();
+                defaultRegion = result.getIso31661();
                 break;
             }
         }
 
         if (releaseDate == null) {
             for (ReleaseDatesResult result : tmdbMovieDetail.getReleaseDateResponse().getResults()) {
-                if (result.getIso31661().equalsIgnoreCase(country)) {
+                if (result.getIso31661().equalsIgnoreCase(defaultRegion)) {
                     releaseDate = result.getReleaseDates().get(0).getReleaseDate();
                     break;
                 }
             }
         }
 
-        mView.showMovieDetails(releaseDate, country,
+        mView.showMovieDetails(releaseDate, defaultRegion,
                 tmdbMovieDetail.getTagline(), tmdbMovieDetail.getOverview());
+    }
 
+    private void showMovieCast() {
         if (tmdbMovieDetail.getCredits().getCast().size() >= 3) {
             mView.showMovieCast(tmdbMovieDetail.getCredits().getCast().subList(0, 3));
             setCastList(tmdbMovieDetail.getCredits().getCast());
-        } else if (!tmdbMovieDetail.getCredits().getCast().isEmpty()) {
+        } else {
             mView.showMovieCast(tmdbMovieDetail.getCredits().getCast());
             setCastList(tmdbMovieDetail.getCredits().getCast());
         }
+    }
 
-        if (!tmdbMovieDetail.getCredits().getCrew().isEmpty()) {
-            List<Crew> director = new ArrayList<>();
-            List<Crew> writers = new ArrayList<>();
-            List<Crew> screenPlay = new ArrayList<>();
+    private void showMovieCrew() {
+        List<Crew> director = new ArrayList<>();
+        List<Crew> writers = new ArrayList<>();
+        List<Crew> screenPlay = new ArrayList<>();
 
-            for (Crew crew : tmdbMovieDetail.getCredits().getCrew()) {
-                if (crew.getJob().equalsIgnoreCase("director")) {
-                    director.add(crew);
-                }
-                if (crew.getJob().equalsIgnoreCase("story") ||
-                        crew.getJob().equalsIgnoreCase("writer")) {
-                    writers.add(crew);
-                }
-                if (crew.getJob().equalsIgnoreCase("screenplay")) {
-                    screenPlay.add(crew);
-                }
+        for (Crew crew : tmdbMovieDetail.getCredits().getCrew()) {
+            if (crew.getJob().equalsIgnoreCase("director")) {
+                director.add(crew);
             }
-
-            mView.showMovieCrew(director, writers, screenPlay);
-
-            setCrewList(tmdbMovieDetail.getCredits().getCrew());
-        }
-
-        if (!tmdbMovieDetail.getImages().getBackdrops().isEmpty() ||
-                !tmdbMovieDetail.getImages().getPosters().isEmpty()) {
-            List<Poster> images = new ArrayList<>(tmdbMovieDetail.getImages().getBackdrops());
-            images.addAll(tmdbMovieDetail.getImages().getPosters());
-            if (images.size() > 5) {
-                mView.showMovieImages(images.subList(0, 5), images.size(), true);
-            } else {
-                mView.showMovieImages(images, images.size(), false);
+            if (crew.getJob().equalsIgnoreCase("story") ||
+                    crew.getJob().equalsIgnoreCase("writer")) {
+                writers.add(crew);
             }
-
-            setMovieImages(images);
+            if (crew.getJob().equalsIgnoreCase("screenplay")) {
+                screenPlay.add(crew);
+            }
         }
+        mView.showMovieCrew(director, writers, screenPlay);
+        setCrewList(tmdbMovieDetail.getCredits().getCrew());
+    }
 
-        if (tmdbMovieDetail.getBelongsToCollection() != null) {
-            mView.showBelongToCollection(tmdbMovieDetail.getBelongsToCollection());
+    private void showMovieImages() {
+        List<Poster> images = new ArrayList<>(tmdbMovieDetail.getImages().getBackdrops());
+        images.addAll(tmdbMovieDetail.getImages().getPosters());
+        if (images.size() > 5) {
+            mView.showMovieImages(images.subList(0, 5), images.size(), true);
+        } else {
+            mView.showMovieImages(images, images.size(), false);
         }
-
-        if (!tmdbMovieDetail.getSimilar().getResults().isEmpty()) {
-            mView.showSimilarMovies(tmdbMovieDetail.getSimilar().getResults());
-        }
-
-        mView.showExternalLinks(tmdbMovieDetail.getHomepage(), tmdbMovieDetail.getId(),
-                tmdbMovieDetail.getImdbId(), tmdbMovieDetail.getTitle());
+        setMovieImages(images);
     }
 
     private void showError(Throwable throwable) {
@@ -625,7 +649,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailContract.Deta
         movieImages = images;
     }
 
-    public List<Poster> getMovieImages() {
+    List<Poster> getMovieImages() {
         return movieImages;
     }
 
