@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/detail_similar_poster"
+            android:id="@+id/movie_poster"
             android:layout_width="match_parent"
             android:layout_height="190dp"
             android:scaleType="fitXY" />
