@@ -36,6 +36,6 @@
         app:layout_anchorGravity="bottom|center"
         android:paddingTop="64dp"/>
 
-    <include layout="@layout/layout_message" />
+    <include layout="@layout/layout_message_detail" />
 
 </android.support.design.widget.CoordinatorLayout>
