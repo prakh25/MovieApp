@@ -25,14 +25,14 @@ import retrofit2.Response;
  * Created by Prakhar on 4/3/2017.
  */
 
-public class PeopleDetailPresenter extends BasePresenter<PeopleDetailContract.PeopleDetailView>
+class PeopleDetailPresenter extends BasePresenter<PeopleDetailContract.PeopleDetailView>
         implements PeopleDetailContract.ViewActions {
 
     private final DataManager dataManager;
     private List<Cast> castList;
     private List<Crew> crewList;
 
-    public PeopleDetailPresenter(@NonNull DataManager dataManager) {
+    PeopleDetailPresenter(@NonNull DataManager dataManager) {
         this.dataManager = dataManager;
         castList = new ArrayList<>();
         crewList = new ArrayList<>();

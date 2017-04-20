@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Prakhar on 4/3/2017.
  */
 
-public class PeopleDetailContract {
+class PeopleDetailContract {
 
     interface ViewActions {
         void onPersonDetailRequested(Integer personId);
