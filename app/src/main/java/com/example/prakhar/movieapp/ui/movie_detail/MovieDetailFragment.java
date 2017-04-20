@@ -689,7 +689,6 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
 
     @Override
     public void showError(String errorMessage) {
-        headerFrame.setVisibility(View.GONE);
         messageImage.setImageResource(R.drawable.ic_error_white_24dp);
         messageText.setText(getString(R.string.error_generic_server_error, errorMessage));
         tryAgainBtn.setText(getString(R.string.action_try_again));
