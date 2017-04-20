@@ -101,7 +101,7 @@ public class CreateNewListDialog extends DialogFragment {
         });
     }
 
-    public interface CreateNewListDialogListener {
+    interface CreateNewListDialogListener {
         void createNewList(String title, String description, Result result);
 
         void cannotCreateList();

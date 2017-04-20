@@ -104,7 +104,7 @@ public class UserListDialogFragment extends DialogFragment
         dismiss();
     }
 
-    public interface AddToListDialogListener {
+    interface AddToListDialogListener {
         void createNewListClick(Result result);
 
         void addMovieToList(String name, int listId, Result result);

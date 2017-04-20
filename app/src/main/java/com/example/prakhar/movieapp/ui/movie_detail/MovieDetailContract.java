@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Prakhar on 3/4/2017.
  */
 
-public interface MovieDetailContract {
+interface MovieDetailContract {
 
     interface ViewActions {
         void onMovieRequested(Integer movieId);

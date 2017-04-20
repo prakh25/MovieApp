@@ -99,7 +99,7 @@ public class RatingDialogFragment extends DialogFragment {
         });
     }
 
-    public interface RatingDialogListener {
+    interface RatingDialogListener {
         void onRatingSave(Result result, int rating);
 
         void onRatingDelete();

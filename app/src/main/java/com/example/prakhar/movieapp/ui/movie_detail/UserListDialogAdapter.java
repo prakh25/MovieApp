@@ -20,13 +20,13 @@ import butterknife.ButterKnife;
  * Created by Prakhar on 3/25/2017.
  */
 
-public class UserListDialogAdapter extends
+class UserListDialogAdapter extends
         RecyclerView.Adapter<UserListDialogAdapter.UserListViewHolder> {
 
     private List<String> stringList;
     private UserListDialogListener listener;
 
-    public UserListDialogAdapter() {
+    UserListDialogAdapter() {
         stringList = new ArrayList<>();
     }
 
@@ -66,14 +66,14 @@ public class UserListDialogAdapter extends
         notifyItemRangeInserted(getItemCount(), this.stringList.size() - 1);
     }
 
-    public class UserListViewHolder extends RecyclerView.ViewHolder {
+    class UserListViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.dialog_add_to_user_list_item_layout)
         LinearLayout listItem;
         @BindView(R.id.user_list_dialog_list_name)
         TextView userListName;
 
-        public UserListViewHolder(View itemView) {
+        UserListViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -84,11 +84,11 @@ public class UserListDialogAdapter extends
         }
     }
 
-    public interface UserListDialogListener {
+    interface UserListDialogListener {
         void onListSelected(String title, int position);
     }
 
-    public void setListInteractionListener(UserListDialogListener listDialogListener) {
+    void setListInteractionListener(UserListDialogListener listDialogListener) {
         listener = listDialogListener;
     }
 }
