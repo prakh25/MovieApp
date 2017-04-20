@@ -1,5 +1,6 @@
 package com.example.prakhar.movieapp.widgets.people_detail;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,7 @@ public class KnownForAdapter extends BaseAdapter {
     private List<KnownFor> knownForList;
     private KnownForListener listener;
 
-    public KnownForAdapter(List<KnownFor> knownFors, KnownForListener knownForListener) {
+    KnownForAdapter(List<KnownFor> knownFors, KnownForListener knownForListener) {
         knownForList = new ArrayList<>();
         knownForList.addAll(knownFors);
         listener = knownForListener;
@@ -64,14 +65,24 @@ public class KnownForAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.people_credits_acting_item, null);
+
+            ButterKnife.bind(this, convertView);
+
+            final ViewHolder viewHolder =
+                    new ViewHolder(movieCard, moviePoster, movieTitle, movieRating);
+
+            convertView.setTag(viewHolder);
         }
-        ButterKnife.bind(this, convertView);
+
+        final ViewHolder viewHolder = (ViewHolder) convertView.getTag();
 
         Glide.with(moviePoster.getContext())
                 .load(Constants.TMDB_IMAGE_URL + "w185" + knownForList.get(position).getPosterPath())
                 .placeholder(R.drawable.movie_poster_placeholder)
-                .crossFade()
-                .into(moviePoster);
+                .into(viewHolder.moviePoster);
+
+        ViewCompat.setTransitionName(viewHolder.moviePoster,
+                knownForList.get(position).getPosterPath());
 
         if (knownForList.get(position).getMediaType().equals("movie")) {
             movieTitle.setText(knownForList.get(position).getTitle());
@@ -87,12 +98,27 @@ public class KnownForAdapter extends BaseAdapter {
         }
 
         movieCard.setOnClickListener(v -> listener.knownForMovieClicked(
-                knownForList.get(position).getId(), position));
+                knownForList.get(position).getId(), position, viewHolder.moviePoster));
 
         return convertView;
     }
 
+    private class ViewHolder {
+        CardView movieCard;
+        ImageView moviePoster;
+        TextView movieTitle;
+        TextView movieRating;
+
+        public ViewHolder(CardView movieCard, ImageView moviePoster, TextView movieTitle,
+                          TextView movieRating) {
+            this.movieCard = movieCard;
+            this.moviePoster = moviePoster;
+            this.movieTitle = movieTitle;
+            this.movieRating = movieRating;
+        }
+    }
+
     public interface KnownForListener {
-        void knownForMovieClicked(Integer movieId, int clickedPosition);
+        void knownForMovieClicked(Integer movieId, int clickedPosition, ImageView sharedImageView);
     }
 }
