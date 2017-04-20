@@ -2,6 +2,7 @@ package com.example.prakhar.movieapp.ui.more_movies_list;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,7 +35,7 @@ import timber.log.Timber;
  * Created by Prakhar on 3/14/2017.
  */
 
-public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<MoreListResult> listResultList;
 
@@ -53,7 +54,7 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ListInteractionListener listInteractionListener;
 
-    public MoreAdapter(boolean revenue) {
+    MoreAdapter(boolean revenue) {
         listResultList = new ArrayList<>();
         viewType = VIEW_TYPE_LIST;
         listInteractionListener = null;
@@ -114,6 +115,9 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .load(posterUrl)
                 .placeholder(R.drawable.empty_image)
                 .into(holder.poster);
+
+        ViewCompat.setTransitionName(holder.poster,
+                listResultList.get(position).getResult().getPosterPath());
 
         if (!listResultList.get(position).getResult().getReleaseDate().isEmpty() &&
                 !listResultList.get(position).getResult().getReleaseDate().equals("")) {
@@ -185,7 +189,7 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyItemRangeInserted(getItemCount(), listResultList.size() - 1);
     }
 
-    public void updateItem(boolean watchListStatus,boolean favoriteStatus,
+    void updateItem(boolean watchListStatus,boolean favoriteStatus,
                            int userRating, int position) {
         Timber.i("Watchlist adapter " + watchListStatus);
         Timber.i("favorite adapter " + favoriteStatus);
@@ -210,7 +214,7 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public boolean addLoadingView() {
+    boolean addLoadingView() {
         if (getItemViewType(listResultList.size() - 1) != VIEW_TYPE_LOADING) {
             add(null);
             return true;
@@ -218,7 +222,7 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return false;
     }
 
-    public boolean removeLoadingView() {
+    boolean removeLoadingView() {
         if (listResultList.size() > 1) {
             int loadingViewPosition = listResultList.size() - 1;
             if (getItemViewType(loadingViewPosition) == VIEW_TYPE_LOADING) {
@@ -241,18 +245,18 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.viewType = viewType;
     }
 
-    public class ProgressViewHolder extends RecyclerView.ViewHolder {
+    class ProgressViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.item_progress_bar)
         ProgressBar progressBar;
 
-        public ProgressViewHolder(View itemView) {
+        ProgressViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
 
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
+    class MovieViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.card_view_more)
         CardView cardView;
@@ -277,22 +281,24 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.ratings_frame)
         LinearLayout ratingsFrame;
 
-        public MovieViewHolder(View itemView) {
+        MovieViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
             cardView.setOnClickListener(v ->
-                    listInteractionListener.onItemClick(listResultList.get(getAdapterPosition()).getResult(),
-                            getAdapterPosition()));
+                    listInteractionListener.onItemClick(
+                            listResultList.get(getAdapterPosition()).getResult(),
+                            getAdapterPosition(), poster)
+            );
 
         }
     }
 
     public interface ListInteractionListener {
-        void onItemClick(Result result, int clickedPosition);
+        void onItemClick(Result result, int clickedPosition, ImageView sharedImageView);
     }
 
-    public void setListInteractionListener(ListInteractionListener interactionListener) {
+    void setListInteractionListener(ListInteractionListener interactionListener) {
         listInteractionListener = interactionListener;
     }
 }

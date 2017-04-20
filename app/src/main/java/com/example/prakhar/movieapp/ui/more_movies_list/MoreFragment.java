@@ -1,15 +1,21 @@
 package com.example.prakhar.movieapp.ui.more_movies_list;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +37,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.prakhar.movieapp.utils.Constants.ARG_ADDED_TO_WATCHLIST;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_GENRE_ID;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_MARKED_AS_FAVORITE;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_TITLE;
-import static com.example.prakhar.movieapp.utils.Constants.EXTRA_ADDED_TO_WATCHLIST;
-import static com.example.prakhar.movieapp.utils.Constants.EXTRA_MARKED_AS_FAVORITE;
-import static com.example.prakhar.movieapp.utils.Constants.EXTRA_USER_RATING;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_USER_RATING;
 import static com.example.prakhar.movieapp.utils.Constants.REQUEST_CODE;
 
 
@@ -223,19 +229,36 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        boolean watchlistStatus = data.getBooleanExtra(EXTRA_ADDED_TO_WATCHLIST, false);
-        boolean favoriteStatus = data.getBooleanExtra(EXTRA_MARKED_AS_FAVORITE, false);
-        int rating = data.getIntExtra(EXTRA_USER_RATING, 0);
+        boolean watchlistStatus = data.getBooleanExtra(ARG_ADDED_TO_WATCHLIST, false);
+        boolean favoriteStatus = data.getBooleanExtra(ARG_MARKED_AS_FAVORITE, false);
+        int rating = data.getIntExtra(ARG_USER_RATING, 0);
         if (requestCode == REQUEST_CODE) {
             moreAdapter.updateItem(watchlistStatus, favoriteStatus, rating, position);
         }
     }
 
     @Override
-    public void onItemClick(Result result, int clickedPosition) {
+    public void onItemClick(Result result, int clickedPosition, ImageView sharedImageView) {
         position = clickedPosition;
-        startActivityForResult(MovieDetailActivity.newStartIntent(getActivity(), result.getId()), REQUEST_CODE);
-        getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        startActivityForResult(MovieDetailActivity.newStartIntent(getActivity(), result.getId(),
+                ViewCompat.getTransitionName(sharedImageView)), REQUEST_CODE,
+                makeTransitionBundle(sharedImageView));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setUpTransitionAnimation();
+        }
+    }
+
+    private Bundle makeTransitionBundle(ImageView sharedElementView) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                sharedElementView, ViewCompat.getTransitionName(sharedElementView)).toBundle();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpTransitionAnimation() {
+        Transition transition = TransitionInflater.from(activity)
+                .inflateTransition(R.transition.arc_motion);
+        activity.getWindow().setSharedElementReenterTransition(transition);
     }
 
     @Override

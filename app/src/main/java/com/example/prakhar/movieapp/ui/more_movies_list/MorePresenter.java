@@ -30,18 +30,17 @@ import timber.log.Timber;
  * Created by Prakhar on 3/14/2017.
  */
 
-public class MorePresenter extends BasePresenter<MoreContract.MoreView>
+class MorePresenter extends BasePresenter<MoreContract.MoreView>
         implements MoreContract.ViewActions {
 
     private final DataManager dataManager;
     private String region;
     private Realm realm;
     private Integer genreId;
-    private MoreListResult moreListResult;
 
     private static final int ITEM_REQUEST_INITIAL_PAGE = 1;
 
-    public MorePresenter(@NonNull DataManager dataManager) {
+    MorePresenter(@NonNull DataManager dataManager) {
         this.dataManager = dataManager;
         SharedPreferences countryCode = PreferenceManager.getDefaultSharedPreferences(MovieApp.getApp());
         region = countryCode.getString(Constants.COUNTRY_CODE, null);

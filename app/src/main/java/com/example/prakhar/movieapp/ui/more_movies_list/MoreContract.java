@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Prakhar on 3/14/2017.
  */
 
-public class MoreContract {
+class MoreContract {
 
     interface ViewActions {
         void mostPopularListRequested();
