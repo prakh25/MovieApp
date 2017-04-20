@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Prakhar on 3/20/2017.
  */
 
-public class SearchContract {
+class SearchContract {
 
     interface ViewActions{
         void onSearchQueryEntered(String query);

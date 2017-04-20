@@ -1,9 +1,13 @@
 package com.example.prakhar.movieapp.ui.search;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +16,8 @@ import android.support.v7.widget.SnapHelper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -190,8 +196,26 @@ public class SearchFragment extends Fragment implements SearchContract.SearchVie
     }
 
     @Override
-    public void onMovieItemClick(Integer movieId, int clickedPosition) {
-        startActivity(MovieDetailActivity.newStartIntent(getActivity(),movieId));
+    public void onMovieItemClick(Integer movieId, int clickedPosition, ImageView sharedImageView) {
+        startActivity(MovieDetailActivity.newStartIntent(getActivity(),movieId,
+                ViewCompat.getTransitionName(sharedImageView)),
+                makeTransitionBundle(sharedImageView));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setUpTransitionAnimation();
+        }
+    }
+
+    private Bundle makeTransitionBundle(ImageView sharedElementView) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                sharedElementView, ViewCompat.getTransitionName(sharedElementView)).toBundle();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpTransitionAnimation() {
+        Transition transition = TransitionInflater.from(getActivity())
+                .inflateTransition(R.transition.arc_motion);
+        getActivity().getWindow().setSharedElementReenterTransition(transition);
     }
 
     @Override

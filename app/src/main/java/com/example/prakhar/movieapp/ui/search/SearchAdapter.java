@@ -1,6 +1,7 @@
 package com.example.prakhar.movieapp.ui.search;
 
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ import timber.log.Timber;
  * Created by Prakhar on 3/22/2017.
  */
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
+class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
     private static final String SEARCH_TYPE_MOVIES = "movie";
     private static final String SEARCH_TYPE_TV = "tv";
@@ -36,7 +37,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     private List<SearchResult> searchResults;
     private ListInteractionListener listInteractionListener;
 
-    public SearchAdapter() {
+    SearchAdapter() {
         searchResults = new ArrayList<>();
         listInteractionListener = null;
     }
@@ -83,6 +84,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                         .thumbnail(0.5f)
                         .into(holder.poster);
 
+                ViewCompat.setTransitionName(holder.poster, posterPath);
+
                 if (searchResults.get(position).getTitle() != null) {
                     if (!searchResults.get(position).getReleaseDate().isEmpty() &&
                             !searchResults.get(position).getReleaseDate().equals("")) {
@@ -107,7 +110,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                 holder.frameLayout.setOnClickListener(v ->
                         listInteractionListener.onMovieItemClick(searchResults.get(position).getId(),
-                                position));
+                                position, holder.poster));
                 break;
             case SEARCH_TYPE_TV:
                 String tvPoster = searchResults.get(position).getPosterPath();
@@ -194,12 +197,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         notifyItemRemoved(position);
     }
 
-    public void removeAll() {
+    void removeAll() {
         searchResults.clear();
         notifyDataSetChanged();
     }
 
-    public class SearchViewHolder extends RecyclerView.ViewHolder {
+    static class SearchViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.search_poster)
         ImageView poster;
@@ -210,14 +213,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         @BindView(R.id.search_result_frame)
         FrameLayout frameLayout;
 
-        public SearchViewHolder(View itemView) {
+        SearchViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
 
     public interface ListInteractionListener {
-        void onMovieItemClick(Integer movieId, int clickedPosition);
+        void onMovieItemClick(Integer movieId, int clickedPosition, ImageView sharedImageView);
 
         void onPersonClicked(Integer personId, String profilePath, int clickedPosition);
     }
