@@ -1,5 +1,6 @@
 package com.example.prakhar.movieapp.widgets.home_movie;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -69,6 +70,8 @@ public class HomeMovieListAdapter extends
             holder.moviePoster.setAnimation(new Pulse());
         }
 
+        ViewCompat.setTransitionName(holder.moviePoster, posterPath);
+
         holder.title.setText(resultList.get(position).getTitle());
 
         if (resultList.get(position).getVoteAverage() != 0.0) {
@@ -103,7 +106,7 @@ public class HomeMovieListAdapter extends
 
         @BindView(R.id.movie_list_item_card)
         CardView listItemCard;
-        @BindView(R.id.detail_similar_poster)
+        @BindView(R.id.movie_poster)
         ImageView moviePoster;
         @BindView(R.id.detail_similar_title)
         TextView title;
@@ -119,12 +122,13 @@ public class HomeMovieListAdapter extends
 
             listItemCard.setOnClickListener(v ->
                     interactionListener.onListItemClick
-                            (resultList.get(getAdapterPosition()), getAdapterPosition())
+                            (resultList.get(getAdapterPosition()), getAdapterPosition(),
+                                    moviePoster)
             );
         }
     }
 
     public interface ListInteractionListener {
-        void onListItemClick(Result result, int position);
+        void onListItemClick(Result result, int position, ImageView poster);
     }
 }
