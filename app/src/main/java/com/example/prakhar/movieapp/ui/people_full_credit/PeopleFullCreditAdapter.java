@@ -1,5 +1,6 @@
 package com.example.prakhar.movieapp.ui.people_full_credit;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +63,10 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
                         .load(Constants.TMDB_IMAGE_URL + "w185" + castList.get(position).getPosterPath())
                         .placeholder(R.drawable.movie_poster_placeholder)
                         .into(holder.moviePoster);
+
+                ViewCompat.setTransitionName(holder.moviePoster,
+                        castList.get(position).getPosterPath());
+
                 if(castList.get(position).getMediaType().equals("movie")) {
                     if (castList.get(position).getReleaseDate() != null &&
                             !castList.get(position).getReleaseDate().isEmpty()) {
@@ -86,7 +91,8 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
                         castList.get(position).getCharacter()));
 
                 holder.creditFrame.setOnClickListener(v ->
-                        listener.onPersonClicked(castList.get(position).getId(), position));
+                        listener.onPersonClicked(castList.get(position).getId(), position,
+                                holder.moviePoster));
                 break;
             case VIEW_TYPE_CREW:
                 Glide.with(holder.itemView.getContext())
@@ -117,7 +123,8 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
                 holder.characterPlayed.setText(crewList.get(position).getJob());
 
                 holder.creditFrame.setOnClickListener(v ->
-                        listener.onPersonClicked(crewList.get(position).getId(), position));
+                        listener.onPersonClicked(crewList.get(position).getId(), position,
+                                holder.moviePoster));
                 break;
         }
     }
@@ -143,7 +150,7 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
         notifyItemRangeInserted(0, crewList.size() - 1);
     }
 
-    public class CreditViewHolder extends RecyclerView.ViewHolder {
+    public static class CreditViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.people_full_credit_frame)
         FrameLayout creditFrame;
@@ -161,7 +168,7 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
     }
 
     public interface PeopleFullCreditListener {
-        void onPersonClicked(Integer movieId, int clickedPosition);
+        void onPersonClicked(Integer movieId, int clickedPosition, ImageView sharedImageView);
     }
 
     public void setUpFullCreditListener(PeopleFullCreditListener creditListener) {

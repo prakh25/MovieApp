@@ -1,10 +1,9 @@
 
-package com.example.prakhar.movieapp.model.trakt.box_office;
+package com.example.prakhar.movieapp.model.more_movie_list.box_office;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.prakhar.movieapp.model.trakt.Ids;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

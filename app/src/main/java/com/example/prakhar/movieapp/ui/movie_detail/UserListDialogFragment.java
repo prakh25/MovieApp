@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +36,16 @@ public class UserListDialogFragment extends DialogFragment
     LinearLayout createNewList;
 
     private List<String> listName;
-    private Result result;
+    private GenericMovieDataWrapper wrapper;
     private UserListDialogAdapter adapter;
     private AddToListDialogListener listener;
 
-    public UserListDialogFragment() {
-    }
-
-    public static UserListDialogFragment newInstance(List<String> userListsName, Result result) {
+    public static UserListDialogFragment newInstance(List<String> userListsName,
+                                                     GenericMovieDataWrapper wrapper) {
 
         Bundle args = new Bundle();
         args.putStringArrayList(ARG_USER_LIST_NAME, (ArrayList<String>) userListsName);
-        args.putParcelable(ARG_USER_RESULT, result);
+        args.putParcelable(ARG_USER_RESULT, wrapper);
         UserListDialogFragment fragment = new UserListDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -59,7 +57,7 @@ public class UserListDialogFragment extends DialogFragment
         listName = new ArrayList<>();
         if(getArguments() != null) {
             listName = getArguments().getStringArrayList(ARG_USER_LIST_NAME);
-            result = getArguments().getParcelable(ARG_USER_RESULT);
+            wrapper = getArguments().getParcelable(ARG_USER_RESULT);
         }
         adapter = new UserListDialogAdapter();
     }
@@ -93,20 +91,20 @@ public class UserListDialogFragment extends DialogFragment
         }
 
         createNewList.setOnClickListener(v -> {
-            listener.createNewListClick(result);
+            listener.createNewListClick(wrapper);
             dismiss();
         });
     }
 
     @Override
     public void onListSelected(String title, int position) {
-        listener.addMovieToList(title, position, result);
+        listener.addMovieToList(title, position, wrapper);
         dismiss();
     }
 
     public interface AddToListDialogListener {
-        void createNewListClick(Result result);
+        void createNewListClick(GenericMovieDataWrapper wrapper);
 
-        void addMovieToList(String name, int listId, Result result);
+        void addMovieToList(String name, int listId, GenericMovieDataWrapper wrapper);
     }
 }

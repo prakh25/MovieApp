@@ -51,9 +51,6 @@ public class PeopleFullCreditFragment extends Fragment {
     private int color;
     private Unbinder unbinder;
 
-    public PeopleFullCreditFragment() {
-    }
-
     public static PeopleFullCreditFragment newInstance(ArrayList<Cast> casts, ArrayList<Crew> crews,
                                                        int color) {
         Bundle args = new Bundle();

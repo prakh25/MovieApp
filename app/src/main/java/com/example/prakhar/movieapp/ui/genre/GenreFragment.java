@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.genre.Genre;
 import com.example.prakhar.movieapp.network.DataManager;
-import com.example.prakhar.movieapp.ui.more_movies_list.MoreActivity;
+import com.example.prakhar.movieapp.ui.more_movies_list.MovieListActivity;
 import com.example.prakhar.movieapp.utils.Constants;
 
 import java.util.List;
@@ -60,9 +60,6 @@ public class GenreFragment extends Fragment implements
     private AppCompatActivity activity;
     private GenrePresenter genrePresenter;
     private Unbinder unbinder;
-
-    public GenreFragment() {
-    }
 
     public static GenreFragment newInstance(String title) {
 
@@ -121,7 +118,7 @@ public class GenreFragment extends Fragment implements
     @Override
     public void onGenreSelected(String name, Integer id) {
         String title = String.format(Locale.US, "Popular %s Movies", name);
-        startActivity(MoreActivity.newStartIntent(activity, title, id));
+        startActivity(MovieListActivity.newStartIntent(activity, title, id));
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 

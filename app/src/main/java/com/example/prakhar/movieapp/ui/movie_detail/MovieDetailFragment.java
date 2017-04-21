@@ -1,24 +1,30 @@
 package com.example.prakhar.movieapp.ui.movie_detail;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -30,14 +36,17 @@ import android.widget.Toast;
 
 import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.Target;
 import com.example.prakhar.movieapp.R;
+import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.BelongsToCollection;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Cast;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Crew;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Genre;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.full_credits.FullCreditsActivity;
 import com.example.prakhar.movieapp.ui.full_screen_image.FullScreenImageFragment;
@@ -67,9 +76,9 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 import static com.example.prakhar.movieapp.utils.Constants.ARG_MOVIE_ID;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_POSTER_PATH;
 
 
 /**
@@ -84,15 +93,15 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         MovieCrewWrapper.MovieCrewListener, MovieImagesWrapper.MovieImagesListener,
         MovieImagesAdapter.MovieImageAdapterListener, MovieCastAdapter.InteractionListener {
 
-    private final static String ARG_APP_BAR_EXPANDED = "appBarExpanded";
+//    private final static String ARG_APP_BAR_EXPANDED = "appBarExpanded";
 
     @BindView(R.id.detail_content_frame)
     LinearLayout detailFrame;
     @BindView(R.id.detail_header_poster_frame)
     FrameLayout posterFrame;
-    @BindView(R.id.detail_header_movie_poster)
+    @BindView(R.id.movie_poster)
     ImageView moviePoster;
-    @BindView(R.id.progress_bar_fragment)
+    @BindView(R.id.progress_bar_detail)
     ProgressBar contentProgress;
     @BindView(R.id.action_add_to_watchlist)
     LikeButton watchlistBtn;
@@ -130,6 +139,8 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     TextView toolbarMovieTitle;
     @BindView(R.id.movie_detail_layout)
     CoordinatorLayout layout;
+    @BindView(R.id.detail_status_wrapper_frame)
+    FrameLayout statusFrame;
 
     @BindView(R.id.iv_message)
     ImageView messageImage;
@@ -146,13 +157,14 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     private MovieStatusListener statusListener;
     private int toolbarColor;
     private Integer movieId;
-    private Animation animation;
     private String toolbarTitle;
+    private String posterPath;
 
-    public static MovieDetailFragment newInstance(Integer movieId) {
+    public static MovieDetailFragment newInstance(Integer movieId, String posterPath) {
 
         Bundle args = new Bundle();
         args.putInt(ARG_MOVIE_ID, movieId);
+        args.putString(ARG_POSTER_PATH, posterPath);
         MovieDetailFragment fragment = new MovieDetailFragment();
         fragment.setArguments(args);
         return fragment;
@@ -168,13 +180,13 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         }
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         movieDetailPresenter = new MovieDetailPresenter(DataManager.getInstance());
         if (getArguments() != null) {
             movieId = getArguments().getInt(ARG_MOVIE_ID);
+            posterPath = getArguments().getString(ARG_POSTER_PATH);
         }
     }
 
@@ -202,10 +214,143 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
         }
-        animation = AnimationUtils.loadAnimation(mActivity, R.anim.fade_in);
-        animation.setDuration(1000);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            moviePoster.setTransitionName(posterPath);
+        }
+
+        BitmapRequestBuilder<String, PaletteBitmap> glideRequest;
+
+        glideRequest = Glide.with(mActivity).fromString().asBitmap()
+                .transcode(new PaletteBitmapTranscoder(mActivity), PaletteBitmap.class);
+
+        glideRequest.load(Constants.TMDB_IMAGE_URL + "w185" + posterPath)
+                .listener(new RequestListener<String, PaletteBitmap>() {
+                    @Override
+                    public boolean onException(Exception e, String model,
+                                               Target<PaletteBitmap> target, boolean isFirstResource) {
+                        getActivity().supportStartPostponedEnterTransition();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(PaletteBitmap resource, String model,
+                                                   Target<PaletteBitmap> target,
+                                                   boolean isFromMemoryCache, boolean isFirstResource) {
+                        getActivity().supportStartPostponedEnterTransition();
+                        return false;
+                    }
+                })
+                .into(new ImageViewTarget<PaletteBitmap>(moviePoster) {
+                    @Override
+                    protected void setResource(PaletteBitmap resource) {
+                        super.view.setImageBitmap(resource.bitmap);
+                        toolbarColor = resource.palette.getVibrantColor(
+                                resource.palette.getMutedColor(
+                                        resource.palette.getDominantColor(
+                                                ContextCompat.getColor(mActivity,
+                                                        R.color.colorPrimary))));
+                        headerFrame.setBackgroundColor(toolbarColor);
+                    }
+                });
+
+        posterFrame.setVisibility(View.VISIBLE);
 
         tryAgainBtn.setOnClickListener(v -> movieDetailPresenter.onMovieRequested(movieId));
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                moviePoster.setTransitionName(null);
+            }
+            mActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            toolbarMovieTitle.setText(toolbarTitle);
+            toolbar.setBackgroundColor(toolbarColor);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mActivity.getWindow().setStatusBarColor(Utils.getDarkColor(toolbarColor));
+            }
+        } else {
+            toolbarMovieTitle.setText("");
+            toolbar.setBackgroundColor(ContextCompat.getColor(mActivity, android.R.color.transparent));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mActivity.getWindow().setStatusBarColor(ContextCompat.getColor(mActivity, android.R.color.transparent));
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setUpSharedElementTransition();
+                setUpActivityTransition();
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpSharedElementTransition() {
+        Transition transition = TransitionInflater.from(mActivity)
+                .inflateTransition(R.transition.arc_motion);
+        transition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                posterFrame.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                posterFrame.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+                //Auto Generated method stub
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+                //Auto Generated method stub
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+                //Auto Generated method stub
+            }
+        });
+
+        mActivity.getWindow().setSharedElementEnterTransition(transition);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpActivityTransition() {
+
+        moviePoster.setTransitionName(posterPath);
+        Fade fade = new Fade(Fade.OUT);
+        fade.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                posterFrame.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                onDestroy();
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+                //Auto Generated method stub
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+                //Auto Generated method stub
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+                //Auto Generated method stub
+            }
+        });
+        mActivity.getWindow().setReturnTransition(fade);
     }
 
     @Override
@@ -218,48 +363,30 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
             Glide.with(getActivity())
                     .load(Constants.TMDB_IMAGE_URL + "w780" + backDropPath)
                     .into(movieBackdrop);
+
+            if (movieBackdrop.getVisibility() == View.INVISIBLE) {
+                doCircularReveal();
+            }
+
         } else {
             Glide.with(getActivity()).load(Constants.TMDB_IMAGE_URL + "w780" + posterPath)
                     .placeholder(R.drawable.movie_poster_placeholder)
                     .centerCrop()
                     .into(movieBackdrop);
-        }
 
-        Timber.i("poster " + posterPath);
-        
-        if (posterPath != null) {
-            BitmapRequestBuilder<String, PaletteBitmap> glideRequest;
-            glideRequest = Glide.with(mActivity).fromString().asBitmap()
-                    .transcode(new PaletteBitmapTranscoder(getContext()), PaletteBitmap.class);
-            glideRequest.load(Constants.TMDB_IMAGE_URL + "w185" + posterPath)
-                    .into(new ImageViewTarget<PaletteBitmap>(moviePoster) {
-                        @Override
-                        protected void setResource(PaletteBitmap resource) {
-                            super.view.setImageBitmap(resource.bitmap);
-                            toolbarColor = resource.palette.getVibrantColor(
-                                    resource.palette.getMutedColor(
-                                            resource.palette.getDominantColor(
-                                                    ContextCompat.getColor(mActivity, R.color.colorPrimary))));
-                            headerFrame.setBackgroundColor(toolbarColor);
-                        }
-                    });
-        } else {
-            Glide.with(mActivity)
-                    .load(R.drawable.movie_poster_placeholder)
-                    .into(moviePoster);
+            if (movieBackdrop.getVisibility() == View.INVISIBLE) {
+                doCircularReveal();
+            }
         }
-
-        Animation animations = AnimationUtils.loadAnimation(mActivity, R.anim.zoom_in);
-        posterFrame.setAnimation(animations);
 
         String title = String.format(Locale.US, "%s (%d)", movieName, Utils.getReleaseYear(releaseDate));
         movieTitle.setText(title);
 
-        if(!movieGenre.isEmpty()) {
+        if (!movieGenre.isEmpty()) {
             movieCertificateGenre.setText(android.text.TextUtils.join(", ", getGenreNames(movieGenre)));
         }
 
-        if (movieRuntime != 0) {
+        if (movieRuntime != null && movieRuntime != 0) {
             int hours = movieRuntime / 60;
             int minutes = movieRuntime % 60;
             String runtime = String.format(Locale.US, "%d h %d min", hours, minutes);
@@ -267,9 +394,25 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         } else {
             movieRuntimeView.setVisibility(View.GONE);
         }
-        headerFrame.setAnimation(animation);
-
         toolbarTitle = movieName;
+    }
+
+    private void doCircularReveal() {
+
+        int centerX = (movieBackdrop.getLeft() + movieBackdrop.getRight()) / 2;
+        int centerY = movieBackdrop.getTop();
+        int startRadius = 0;
+        int endRadius = Math.max(movieBackdrop.getWidth(), movieBackdrop.getHeight());
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Animator animator = ViewAnimationUtils
+                    .createCircularReveal(movieBackdrop, centerX, centerY, startRadius, endRadius);
+            animator.setDuration(500);
+            movieBackdrop.setVisibility(View.VISIBLE);
+            animator.start();
+        } else {
+            movieBackdrop.setVisibility(View.VISIBLE);
+        }
     }
 
     private List<String> getGenreNames(List<Genre> genreList) {
@@ -281,9 +424,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void showMovieStatus(Integer movieId, String posterPath, String overview,
-                                String backDropPath, String movieName, String releaseDate,
-                                Integer voteCount, Double voteAverage, boolean isAddedToWatchlist,
+    public void showMovieStatus(GenericMovieDataWrapper wrapper, boolean isAddedToWatchlist,
                                 boolean isMarkedAsFavorite) {
 
         if (isAddedToWatchlist) {
@@ -306,27 +447,23 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
             statusListener.movieMarkedAsFavorite(false);
         }
 
-        watchlistClickListener(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+        watchlistClickListener(wrapper);
 
-        favoriteClickListener(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+        favoriteClickListener(wrapper);
 
-        addToClickListener(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+        addToClickListener(wrapper);
+
+        statusFrame.setVisibility(View.VISIBLE);
+
     }
 
-    private void watchlistClickListener(Integer movieId, String posterPath, String overview,
-                                        String backDropPath, String movieName,
-                                        String releaseDate, Integer voteCount,
-                                        Double voteAverage) {
+    private void watchlistClickListener(GenericMovieDataWrapper wrapper) {
 
         watchlistBtn.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
                 watchlistText.setText(R.string.added_to_watchlist);
-                movieDetailPresenter.onAddToWatchlistClicked(movieId, posterPath, overview,
-                        backDropPath, movieName, releaseDate, voteCount, voteAverage);
+                movieDetailPresenter.onAddToWatchlistClicked(wrapper);
                 statusListener.movieAddedToWatchlist(true);
             }
 
@@ -339,17 +476,13 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         });
     }
 
-    private void favoriteClickListener(Integer movieId, String posterPath, String overview,
-                                       String backDropPath, String movieName,
-                                       String releaseDate, Integer voteCount,
-                                       Double voteAverage) {
+    private void favoriteClickListener(GenericMovieDataWrapper wrapper) {
 
         favoriteBtn.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
                 favoriteText.setText(R.string.marked_as_favorite);
-                movieDetailPresenter.onAddMarkAsFavoriteClicked(movieId, posterPath,
-                        overview, backDropPath, movieName, releaseDate, voteCount, voteAverage);
+                movieDetailPresenter.onAddMarkAsFavoriteClicked(wrapper);
                 statusListener.movieMarkedAsFavorite(true);
             }
 
@@ -362,13 +495,10 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         });
     }
 
-    private void addToClickListener(Integer movieId, String posterPath, String overview,
-                                    String backDropPath, String movieName, String releaseDate,
-                                    Integer voteCount, Double voteAverage) {
+    private void addToClickListener(GenericMovieDataWrapper wrapper) {
 
         addToUserListBtn.setOnClickListener(v ->
-                movieDetailPresenter.onAddToListClicked(movieId, posterPath, overview,
-                        backDropPath, movieName, releaseDate, voteCount, voteAverage));
+                movieDetailPresenter.onAddToListClicked(wrapper));
     }
 
     @Override
@@ -379,17 +509,13 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void showRatings(Integer movieId, String posterPath, String overview,
-                            String backDropPath, String movieName, String releaseDate,
-                            Integer voteCount, Double voteAverage,
-                            Integer userRating, Double tmdbRating,
-                            Integer tmdbVotes, Double traktRating, Integer traktVotes) {
+    public void showRatings(GenericMovieDataWrapper wrapper, Integer userRating,
+                            Double traktRating, Integer traktVotes) {
 
-        ratingsWrapper = new RatingsWrapper(mActivity, movieId, posterPath, overview,
-                backDropPath, movieName, releaseDate, voteCount, voteAverage, userRating,
-                tmdbRating, tmdbVotes, traktRating, traktVotes, this);
-
+        ratingsWrapper = new RatingsWrapper(mActivity, wrapper, userRating,
+                traktRating, traktVotes, this);
         detailFrame.addView(ratingsWrapper);
+
         statusListener.movieUserRatingChanged(userRating);
     }
 
@@ -422,10 +548,10 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void showAddToListDialog(List<String> userListsName, Result result) {
+    public void showAddToListDialog(List<String> userListsName, GenericMovieDataWrapper wrapper) {
 
         FragmentManager fragmentManager = getFragmentManager();
-        UserListDialogFragment fragment = UserListDialogFragment.newInstance(userListsName, result);
+        UserListDialogFragment fragment = UserListDialogFragment.newInstance(userListsName, wrapper);
 
         fragment.setTargetFragment(MovieDetailFragment.this, 300);
         fragment.show(fragmentManager, "userListFragment");
@@ -453,40 +579,47 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void onListItemClick(Result result, View sharedElementView, int position) {
-        startActivity(MovieDetailActivity.newStartIntent(mActivity, result.getId()));
-        mActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    public void onSimilarListItemClick(Result result, View sharedElementView, int position, ImageView view) {
+
+        startActivity(MovieDetailActivity.newStartIntent(mActivity, result.getId(),
+                ViewCompat.getTransitionName(view)), makeTransitionBundle(view));
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            setUpTransitionAnimation();
+        }
+    }
+
+    private Bundle makeTransitionBundle(ImageView sharedElementView) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity,
+                sharedElementView, ViewCompat.getTransitionName(sharedElementView)).toBundle();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpTransitionAnimation() {
+        Transition transition = TransitionInflater.from(mActivity)
+                .inflateTransition(R.transition.arc_motion);
+
+        mActivity.getWindow().setSharedElementReenterTransition(transition);
+        mActivity.getWindow().setSharedElementExitTransition(transition);
+
+        mActivity.getWindow().setAllowEnterTransitionOverlap(true);
+        mActivity.getWindow().setAllowReturnTransitionOverlap(true);
     }
 
     @Override
-    public void onRateMovieClicked(Integer movieId, String posterPath, String overview,
-                                   String backDropPath, String movieName, String releaseDate,
-                                   Integer voteCount, Double voteAverage, Integer userRating) {
-
-        Result result = new Result();
-
-        result.setId(movieId);
-        result.setPosterPath(posterPath);
-        result.setOverview(overview);
-        result.setBackdropPath(backDropPath);
-        result.setTitle(movieName);
-        result.setReleaseDate(releaseDate);
-        result.setVoteCount(voteCount);
-        result.setVoteAverage(voteAverage);
+    public void onRateMovieClicked(GenericMovieDataWrapper wrapper, Integer userRating) {
 
         FragmentManager fragmentManager = getFragmentManager();
-        RatingDialogFragment fragment = RatingDialogFragment.newInstance(result, userRating);
+        RatingDialogFragment fragment = RatingDialogFragment.newInstance(wrapper, userRating);
         fragment.setTargetFragment(MovieDetailFragment.this, 300);
         fragment.show(fragmentManager, "ratingDialog");
     }
 
     @Override
-    public void onRatingSave(Result result, int rating) {
+    public void onRatingSave(GenericMovieDataWrapper wrapper, int rating) {
         Toast.makeText(getContext(), Integer.toString(rating), Toast.LENGTH_SHORT).show();
         ratingsWrapper.updateUserRating(rating);
-        movieDetailPresenter.onSaveMovieRatingClicked(result.getId(), result.getPosterPath(),
-                result.getOverview(), result.getBackdropPath(), result.getTitle(),
-                result.getReleaseDate(), result.getVoteCount(), result.getVoteAverage(), rating);
+        movieDetailPresenter.onSaveMovieRatingClicked(wrapper, rating);
         statusListener.movieUserRatingChanged(rating);
     }
 
@@ -534,50 +667,28 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void createNewListClick(Result result) {
+    public void createNewListClick(GenericMovieDataWrapper wrapper) {
         FragmentManager fragmentManager = getFragmentManager();
-        CreateNewListDialog fragment = CreateNewListDialog.newInstance(result);
+        CreateNewListDialog fragment = CreateNewListDialog.newInstance(wrapper);
         fragment.setTargetFragment(MovieDetailFragment.this, 300);
         fragment.show(fragmentManager, "createNewListDialog");
     }
 
     @Override
-    public void addMovieToList(String name, int listId, Result result) {
+    public void addMovieToList(String name, int listId, GenericMovieDataWrapper wrapper) {
         Toast.makeText(mActivity, "Movie Added To List " + name, Toast.LENGTH_SHORT).show();
-        movieDetailPresenter.onAddMovieToList(listId, result.getId(), result.getPosterPath(),
-                result.getOverview(), result.getBackdropPath(), result.getTitle(),
-                result.getReleaseDate(), result.getVoteCount(), result.getVoteAverage());
+        movieDetailPresenter.onAddMovieToList(listId, wrapper);
     }
 
     @Override
-    public void createNewList(String title, String description, Result result) {
+    public void createNewList(String title, String description, GenericMovieDataWrapper wrapper) {
         Toast.makeText(mActivity, "Movie Added To List " + title, Toast.LENGTH_SHORT).show();
-        movieDetailPresenter.onCreateNewListRequested(title, description,
-                result.getId(), result.getPosterPath(),
-                result.getOverview(), result.getBackdropPath(), result.getTitle(),
-                result.getReleaseDate(), result.getVoteCount(), result.getVoteAverage());
+        movieDetailPresenter.onCreateNewListRequested(title, description, wrapper);
     }
 
     @Override
     public void cannotCreateList() {
         Toast.makeText(mActivity, "Please provide List Title", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
-            toolbarMovieTitle.setText(toolbarTitle);
-            toolbar.setBackgroundColor(toolbarColor);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mActivity.getWindow().setStatusBarColor(Utils.getDarkColor(toolbarColor));
-            }
-        } else {
-            toolbarMovieTitle.setText("");
-            toolbar.setBackgroundColor(ContextCompat.getColor(mActivity, android.R.color.transparent));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mActivity.getWindow().setStatusBarColor(ContextCompat.getColor(mActivity, android.R.color.transparent));
-            }
-        }
     }
 
     @Override

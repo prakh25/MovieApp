@@ -5,15 +5,14 @@ import android.support.annotation.Nullable;
 
 import com.example.prakhar.movieapp.BuildConfig;
 import com.example.prakhar.movieapp.model.genre.GenreResponse;
-import com.example.prakhar.movieapp.model.movie_detail.MovieDetail;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.TmdbMovieDetail;
 import com.example.prakhar.movieapp.model.movie_detail.trakt.TraktMovieRating;
 import com.example.prakhar.movieapp.model.people_detail.PeopleDetails;
 import com.example.prakhar.movieapp.model.person_search.PersonSearchResponse;
 import com.example.prakhar.movieapp.model.search.SearchResponse;
-import com.example.prakhar.movieapp.model.tmdb.MovieResponse;
-import com.example.prakhar.movieapp.model.tmdb.tv.TvResponse;
-import com.example.prakhar.movieapp.model.trakt.box_office.BoxOffice;
+import com.example.prakhar.movieapp.model.home.movie.MovieResponse;
+import com.example.prakhar.movieapp.model.home.tv.TvResponse;
+import com.example.prakhar.movieapp.model.more_movie_list.box_office.BoxOffice;
 import com.example.prakhar.movieapp.utils.Constants;
 
 import java.util.List;
@@ -99,7 +98,7 @@ public class DataManager {
 //                .enqueue(callback);
 //    }
 
-    public void getBoxOfficeMovieDetail(Integer movieId, Callback<MovieDetail> callback) {
+    public void getBoxOfficeMovieDetail(Integer movieId, Callback<TmdbMovieDetail> callback) {
         tmdbService.getDetail(movieId, BuildConfig.TMDB_API_KEY)
                 .enqueue(callback);
     }

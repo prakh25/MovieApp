@@ -11,9 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.utils.Constants;
-import com.example.prakhar.movieapp.utils.animation.Pulse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +31,6 @@ public class SimilarMoviesAdapter extends
 
     private List<Result> resultList;
     private ListInteractionListener interactionListener;
-    private String imageUrl;
-    private String posterUrl;
 
     public SimilarMoviesAdapter(List<Result> movies,
                                 ListInteractionListener listInteractionListener) {
@@ -53,18 +50,18 @@ public class SimilarMoviesAdapter extends
     public void onBindViewHolder(SimilarMoviesAdapter.SimilarMoviesViewHolder holder, int position) {
         String posterPath = resultList.get(position).getPosterPath();
 
-        imageUrl = Constants.TMDB_IMAGE_URL + "w185";
+        String imageUrl = Constants.TMDB_IMAGE_URL + "w185";
 
         Timber.i(imageUrl);
-        posterUrl = imageUrl + posterPath;
-        ViewCompat.setTransitionName(holder.moviePoster, resultList.get(position).getId().toString());
+        String posterUrl = imageUrl + posterPath;
+
+        ViewCompat.setTransitionName(holder.moviePoster, posterPath);
+
         if (!posterUrl.isEmpty()) {
             Glide.with(holder.listItem.getContext())
                     .load(posterUrl)
                     .placeholder(R.drawable.movie_poster_placeholder)
                     .into(holder.moviePoster);
-        } else {
-            holder.moviePoster.setAnimation(new Pulse());
         }
 
         holder.title.setText(resultList.get(position).getTitle());
@@ -105,7 +102,7 @@ public class SimilarMoviesAdapter extends
 
         @BindView(R.id.movie_list_item_card)
         CardView listItemCard;
-        @BindView(R.id.detail_similar_poster)
+        @BindView(R.id.movie_poster)
         ImageView moviePoster;
         @BindView(R.id.detail_similar_title)
         TextView title;
@@ -119,14 +116,16 @@ public class SimilarMoviesAdapter extends
             listItem = itemView;
             ButterKnife.bind(this, itemView);
             listItemCard.setOnClickListener(v ->
-                    interactionListener.onListItemClick
+                    interactionListener.onSimilarListItemClick
                             (resultList.get(getAdapterPosition()),
-                                    moviePoster, getAdapterPosition())
+                                    moviePoster, getAdapterPosition(),
+                                    moviePoster)
             );
         }
     }
 
     public interface ListInteractionListener {
-        void onListItemClick(Result result, View sharedElementView, int position);
+        void onSimilarListItemClick(Result result, View sharedElementView, int position,
+                                    ImageView sharedImageView);
     }
 }

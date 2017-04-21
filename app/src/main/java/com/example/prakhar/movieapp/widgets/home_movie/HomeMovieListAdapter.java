@@ -1,5 +1,6 @@
 package com.example.prakhar.movieapp.widgets.home_movie;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.utils.Constants;
-import com.example.prakhar.movieapp.utils.animation.Pulse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * Created by Prakhar on 2/24/2017.
@@ -31,8 +30,6 @@ public class HomeMovieListAdapter extends
 
     private List<Result> resultList;
     private ListInteractionListener interactionListener;
-    String imageUrl;
-    String posterUrl;
 
     public HomeMovieListAdapter(List<Result> results,
                                 ListInteractionListener listInteractionListener) {
@@ -54,10 +51,9 @@ public class HomeMovieListAdapter extends
 
         String posterPath = resultList.get(position).getPosterPath();
 
-        imageUrl = Constants.TMDB_IMAGE_URL + "w185";
+        String imageUrl = Constants.TMDB_IMAGE_URL + "w185";
 
-        Timber.i(imageUrl);
-        posterUrl = imageUrl + posterPath;
+        String posterUrl = imageUrl + posterPath;
 
         if (!posterUrl.isEmpty()) {
             Glide.with(holder.listItem.getContext())
@@ -65,9 +61,9 @@ public class HomeMovieListAdapter extends
                     .placeholder(R.drawable.movie_poster_placeholder)
                     .crossFade()
                     .into(holder.moviePoster);
-        } else {
-            holder.moviePoster.setAnimation(new Pulse());
         }
+
+        ViewCompat.setTransitionName(holder.moviePoster, posterPath);
 
         holder.title.setText(resultList.get(position).getTitle());
 
@@ -103,7 +99,7 @@ public class HomeMovieListAdapter extends
 
         @BindView(R.id.movie_list_item_card)
         CardView listItemCard;
-        @BindView(R.id.detail_similar_poster)
+        @BindView(R.id.movie_poster)
         ImageView moviePoster;
         @BindView(R.id.detail_similar_title)
         TextView title;
@@ -119,12 +115,13 @@ public class HomeMovieListAdapter extends
 
             listItemCard.setOnClickListener(v ->
                     interactionListener.onListItemClick
-                            (resultList.get(getAdapterPosition()), getAdapterPosition())
+                            (resultList.get(getAdapterPosition()), getAdapterPosition(),
+                                    moviePoster)
             );
         }
     }
 
     public interface ListInteractionListener {
-        void onListItemClick(Result result, int position);
+        void onListItemClick(Result result, int position, ImageView poster);
     }
 }

@@ -9,8 +9,6 @@ import io.realm.annotations.PrimaryKey;
 
 public class MovieStatus extends RealmObject {
 
-    public static final String FIELD_MOVIE_ID = "movieId";
-
     @PrimaryKey
     private Integer movieId;
 
@@ -19,6 +17,8 @@ public class MovieStatus extends RealmObject {
     private boolean isMarkedAsFavorite;
 
     private boolean isRated;
+
+    private boolean isPresentInUserList;
 
 
     public boolean isMarkedAsFavorite() {
@@ -51,5 +51,13 @@ public class MovieStatus extends RealmObject {
 
     public void setRated(boolean rated) {
         isRated = rated;
+    }
+
+    public boolean isPresentInUserList() {
+        return isPresentInUserList;
+    }
+
+    public void setPresentInUserList(boolean presentInUserList) {
+        isPresentInUserList = presentInUserList;
     }
 }

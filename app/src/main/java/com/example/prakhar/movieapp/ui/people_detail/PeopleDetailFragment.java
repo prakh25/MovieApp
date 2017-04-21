@@ -4,14 +4,19 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,9 +117,6 @@ public class PeopleDetailFragment extends Fragment implements AppBarLayout.OnOff
     private GradientDrawable gradientDrawable;
     private Animation animation;
     private int toolbarColor;
-
-    public PeopleDetailFragment() {
-    }
 
     public static PeopleDetailFragment newInstance(Integer personId,
                                                    @Nullable String profilePath) {
@@ -356,8 +358,25 @@ public class PeopleDetailFragment extends Fragment implements AppBarLayout.OnOff
     }
 
     @Override
-    public void knownForMovieClicked(Integer movieId, int clickedPosition) {
-        startActivity(MovieDetailActivity.newStartIntent(activity, movieId));
-        activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    public void knownForMovieClicked(Integer movieId, int clickedPosition, ImageView shareImageView) {
+        startActivity(MovieDetailActivity.newStartIntent(getActivity(), movieId,
+                ViewCompat.getTransitionName(shareImageView)),
+                makeTransitionBundle(shareImageView));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setUpTransitionAnimation();
+        }
+    }
+
+    private Bundle makeTransitionBundle(ImageView sharedElementView) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                sharedElementView, ViewCompat.getTransitionName(sharedElementView)).toBundle();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpTransitionAnimation() {
+        Transition transition = TransitionInflater.from(getActivity())
+                .inflateTransition(R.transition.arc_motion);
+        getActivity().getWindow().setSharedElementReenterTransition(transition);
     }
 }

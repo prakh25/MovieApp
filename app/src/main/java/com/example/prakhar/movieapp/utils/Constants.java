@@ -7,9 +7,9 @@ package com.example.prakhar.movieapp.utils;
 public final class Constants {
 
     //OkHttp
-    public static final String CACHE_CONTROL = "cache_control";
+//    public static final String CACHE_CONTROL = "cache_control";
     public static final int HTTP_CACHE_SIZE = 10*1024*1024; //10 MB
-    public static final int MAX_AGE = 10;
+//    public static final int MAX_AGE = 10;
     public static final String CACHE_DIR = "http_cache";
 
     //TMDB
@@ -17,7 +17,7 @@ public final class Constants {
     public static final String TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/";
     public static final boolean INCLUDE_ADULT = false;
     public static final boolean INCLUDE_VIDEO = false;
-    public static final String TMDB_ICLUDE_IMAGE_LANGUAGE = "en,null";
+//    public static final String TMDB_ICLUDE_IMAGE_LANGUAGE = "en,null";
     public static final String TMDB_APPEND_TO_RESPONSE =
             "recommendations,images,credits,videos,release_dates";
     public static final String TMDB_PERSON_APPEND_TO_RESPONSE =
@@ -43,6 +43,10 @@ public final class Constants {
 //    public static final boolean OMDB_INCLUDE_ROTTEN_TOMATOES = true;
 //    public static final String TRANSACTION_PREFIX_ = "transaction_prefix_";
 
+    //Realm
+    public static final String FIELD_MOVIE_ID = "movieId";
+    public static final String FIELD_LIST_ID = "id";
+
     //External Links
     public static final String TMDB_MOVIE_LINK = "https://www.themoviedb.org/movie/";
     public static final String TMDB_PERSON_LINK = "https://www.themoviedb.org/person/";
@@ -54,9 +58,8 @@ public final class Constants {
 
     //More Movies List
     public static final String ARG_GENRE_ID = "genreId";
-    public static final String EXTRA_ADDED_TO_WATCHLIST = "addedToWatchlist";
-    public static final String EXTRA_MARKED_AS_FAVORITE = "markedAsFavorite";
-    public static final String EXTRA_USER_RATING = "userRating";
+    public static final String ARG_ADDED_TO_WATCHLIST = "addedToWatchlist";
+    public static final String ARG_MARKED_AS_FAVORITE = "markedAsFavorite";
     public static final int REQUEST_CODE = 100;
 
     //Full Screen Image
@@ -79,9 +82,10 @@ public final class Constants {
 
     //Movie detail
     public static final String ARG_MOVIE_ID = "ardMovieId";
+    public static final String ARG_POSTER_PATH = "posterPath";
 
     //rating dialog
-    public static final String ARG_USER_RATING = "argRating";
+    public static final String ARG_USER_RATING = "argUserRating";
     public static final String ARG_MOVIE_RESULT = "argResult";
 
     //user list dialog

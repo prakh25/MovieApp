@@ -1,50 +1,55 @@
 package com.example.prakhar.movieapp.ui.more_movies_list;
 
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.example.prakhar.movieapp.MovieApp;
-import com.example.prakhar.movieapp.model.more.MoreListResult;
-import com.example.prakhar.movieapp.model.movie_detail.MovieDetail;
+import com.example.prakhar.movieapp.model.home.movie.MovieResponse;
+import com.example.prakhar.movieapp.model.home.movie.Result;
+import com.example.prakhar.movieapp.model.more_movie_list.MovieListResult;
+import com.example.prakhar.movieapp.model.more_movie_list.box_office.BoxOffice;
+import com.example.prakhar.movieapp.model.more_movie_list.box_office.RevenueComparator;
+import com.example.prakhar.movieapp.model.movie_detail.tmdb.TmdbMovieDetail;
 import com.example.prakhar.movieapp.model.realm.MovieStatus;
 import com.example.prakhar.movieapp.model.realm.UserRating;
-import com.example.prakhar.movieapp.model.tmdb.MovieResponse;
-import com.example.prakhar.movieapp.model.tmdb.Result;
-import com.example.prakhar.movieapp.model.trakt.box_office.BoxOffice;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import com.example.prakhar.movieapp.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
+
+import static com.example.prakhar.movieapp.utils.Constants.FIELD_MOVIE_ID;
 
 /**
  * Created by Prakhar on 3/14/2017.
  */
 
-public class MorePresenter extends BasePresenter<MoreContract.MoreView>
-        implements MoreContract.ViewActions {
+public class MovieListPresenter extends BasePresenter<MovieListContract.MoreView>
+        implements MovieListContract.ViewActions {
 
     private final DataManager dataManager;
     private String region;
     private Realm realm;
     private Integer genreId;
-    private MoreListResult moreListResult;
+    private List<MovieListResult> movieListResults;
 
     private static final int ITEM_REQUEST_INITIAL_PAGE = 1;
 
-    public MorePresenter(@NonNull DataManager dataManager) {
+    public MovieListPresenter(@NonNull DataManager dataManager) {
         this.dataManager = dataManager;
         SharedPreferences countryCode = PreferenceManager.getDefaultSharedPreferences(MovieApp.getApp());
         region = countryCode.getString(Constants.COUNTRY_CODE, null);
+        movieListResults = new ArrayList<>();
     }
 
     @Override
@@ -83,6 +88,8 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
             case 4:
                 getMoviesByGenre(pageNo, genreId);
                 break;
+            default:
+                break;
         }
     }
 
@@ -95,9 +102,9 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
                 new Callback<MovieResponse>() {
                     @Override
                     public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        List<MoreListResult> moreListResults = new ArrayList<>();
-                        moreListResults.addAll(getMoreList(response.body()));
-                        displayResults(moreListResults);
+                        List<MovieListResult> movieListResults = new ArrayList<>();
+                        movieListResults.addAll(getMovieList(response.body()));
+                        displayResults(movieListResults);
                     }
 
                     @Override
@@ -116,9 +123,9 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
                 new Callback<MovieResponse>() {
                     @Override
                     public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        List<MoreListResult> moreListResults = new ArrayList<>();
-                        moreListResults.addAll(getMoreList(response.body()));
-                        displayResults(moreListResults);
+                        List<MovieListResult> movieListResults = new ArrayList<>();
+                        movieListResults.addAll(getMovieList(response.body()));
+                        displayResults(movieListResults);
                     }
 
                     @Override
@@ -137,9 +144,9 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
                 new Callback<MovieResponse>() {
                     @Override
                     public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        List<MoreListResult> moreListResults = new ArrayList<>();
-                        moreListResults.addAll(getMoreList(response.body()));
-                        displayResults(moreListResults);
+                        List<MovieListResult> movieListResults = new ArrayList<>();
+                        movieListResults.addAll(getMovieList(response.body()));
+                        displayResults(movieListResults);
                     }
 
                     @Override
@@ -149,41 +156,40 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
                 });
     }
 
-    private List<MoreListResult> getMoreList(MovieResponse response) {
+    private List<MovieListResult> getMovieList(MovieResponse response) {
         List<Result> results = response.getResults();
-        List<MoreListResult> moreListResults = new ArrayList<>();
+        List<MovieListResult> movieListResults = new ArrayList<>();
         realm = Realm.getDefaultInstance();
         for (Result result : results) {
-            MoreListResult moreListResult = new MoreListResult();
+            MovieListResult movieListResult = new MovieListResult();
             MovieStatus status = findInRealmMovieStatus(realm, result.getId());
             if (status == null) {
-                Timber.i("Null status");
-                moreListResult.setResult(result);
-                moreListResult.setAddedToWatchlist(false);
-                moreListResult.setMarkedAsFavorite(false);
-                moreListResult.setUserRating(0);
+                movieListResult.setResult(result);
+                movieListResult.setAddedToWatchlist(false);
+                movieListResult.setMarkedAsFavorite(false);
+                movieListResult.setUserRating(0);
             } else {
                 if (!status.isRated()) {
-                    moreListResult.setResult(result);
-                    moreListResult.setAddedToWatchlist(status.isAddedToWatchList());
-                    moreListResult.setMarkedAsFavorite(status.isMarkedAsFavorite());
-                    moreListResult.setUserRating(0);
+                    movieListResult.setResult(result);
+                    movieListResult.setAddedToWatchlist(status.isAddedToWatchList());
+                    movieListResult.setMarkedAsFavorite(status.isMarkedAsFavorite());
+                    movieListResult.setUserRating(0);
                 } else {
                     int rating = findInRealmUserRating(realm, result.getId()).getUserRating();
-                    moreListResult.setResult(result);
-                    moreListResult.setAddedToWatchlist(status.isAddedToWatchList());
-                    moreListResult.setMarkedAsFavorite(status.isMarkedAsFavorite());
-                    moreListResult.setUserRating(rating);
+                    movieListResult.setResult(result);
+                    movieListResult.setAddedToWatchlist(status.isAddedToWatchList());
+                    movieListResult.setMarkedAsFavorite(status.isMarkedAsFavorite());
+                    movieListResult.setUserRating(rating);
                 }
             }
-            moreListResults.add(moreListResult);
+            movieListResults.add(movieListResult);
         }
         realm.close();
-        return moreListResults;
+        return movieListResults;
     }
 
     private void getBoxOfficeList() {
-        if(!isViewAttached()) return;
+        if (!isViewAttached()) return;
         mView.showMessageLayout(false);
         mView.showProgress();
         dataManager.getWeekendBoxOffice(new Callback<List<BoxOffice>>() {
@@ -192,6 +198,8 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
                 for (BoxOffice boxOffice : response.body()) {
                     getBoxOfficeMovieList(boxOffice);
                 }
+                Handler handler = new Handler();
+                handler.postDelayed(() -> displayBoxOfficeResults(movieListResults), 1000);
             }
 
             @Override
@@ -203,84 +211,94 @@ public class MorePresenter extends BasePresenter<MoreContract.MoreView>
 
     private void getBoxOfficeMovieList(BoxOffice boxOffice) {
         Integer tmdbId = boxOffice.getMovie().getIds().getTmdb();
-        List<MoreListResult> moreListResults = new ArrayList<>();
         dataManager.getBoxOfficeMovieDetail(tmdbId,
-                new Callback<MovieDetail>() {
+                new Callback<TmdbMovieDetail>() {
                     @Override
-                    public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
-                        Pair<MovieDetail, BoxOffice> pair = new Pair<>(response.body(), boxOffice);
-                        MoreListResult moreListResult = getBoxOfficeMovieDetail(pair);
-                        moreListResults.add(moreListResult);
-                        displayResults(moreListResults);
+                    public void onResponse(Call<TmdbMovieDetail> call, Response<TmdbMovieDetail> response) {
+                        Pair<TmdbMovieDetail, BoxOffice> pair = new Pair<>(response.body(), boxOffice);
+                        setMovieListResultList(getBoxOfficeMovieDetail(pair));
                     }
 
                     @Override
-                    public void onFailure(Call<MovieDetail> call, Throwable t) {
-
+                    public void onFailure(Call<TmdbMovieDetail> call, Throwable t) {
+                        //Empty
                     }
                 });
     }
 
-    private MoreListResult getBoxOfficeMovieDetail(Pair pair) {
-        MovieDetail movieDetail = (MovieDetail) pair.first;
+    private void setMovieListResultList(MovieListResult movieListResult) {
+        movieListResults.add(movieListResult);
+    }
+
+    private MovieListResult getBoxOfficeMovieDetail(Pair pair) {
+
+        TmdbMovieDetail movieDetail = (TmdbMovieDetail) pair.first;
         BoxOffice boxOffice = (BoxOffice) pair.second;
 
         realm = Realm.getDefaultInstance();
-
-        MoreListResult moreListResult = new MoreListResult();
+        MovieListResult movieListResult = new MovieListResult();
+        Result result = createResult(movieDetail);
 
         MovieStatus status = findInRealmMovieStatus(realm, movieDetail.getId());
         if (status == null) {
-            Result result = new Result();
-            result.setTitle(movieDetail.getTitle());
-            result.setId(movieDetail.getId());
-            result.setPosterPath(movieDetail.getPosterPath());
-            result.setPosterPath(movieDetail.getPosterPath());
-            result.setBackdropPath(movieDetail.getBackdropPath());
-            result.setReleaseDate(movieDetail.getReleaseDate());
-            result.setVoteAverage(movieDetail.getVoteAverage());
-            moreListResult.setResult(result);
-            moreListResult.setRevenue(boxOffice.getRevenue());
-            moreListResult.setAddedToWatchlist(false);
-            moreListResult.setMarkedAsFavorite(false);
+            movieListResult.setResult(result);
+            movieListResult.setRevenue(boxOffice.getRevenue());
+            movieListResult.setAddedToWatchlist(false);
+            movieListResult.setMarkedAsFavorite(false);
         } else {
-            Result result = new Result();
-            result.setTitle(movieDetail.getTitle());
-            result.setId(movieDetail.getId());
-            result.setPosterPath(movieDetail.getPosterPath());
-            result.setPosterPath(movieDetail.getPosterPath());
-            result.setBackdropPath(movieDetail.getBackdropPath());
-            result.setReleaseDate(movieDetail.getReleaseDate());
-            result.setVoteAverage(movieDetail.getVoteAverage());
-            moreListResult.setResult(result);
-            moreListResult.setRevenue(boxOffice.getRevenue());
-            moreListResult.setAddedToWatchlist(status.isAddedToWatchList());
-            moreListResult.setMarkedAsFavorite(status.isMarkedAsFavorite());
+            movieListResult.setResult(result);
+            movieListResult.setRevenue(boxOffice.getRevenue());
+            movieListResult.setAddedToWatchlist(status.isAddedToWatchList());
+            movieListResult.setMarkedAsFavorite(status.isMarkedAsFavorite());
         }
         realm.close();
 
-        return moreListResult;
+        return movieListResult;
+    }
+
+    private Result createResult(TmdbMovieDetail movieDetail) {
+        Result result = new Result();
+        result.setTitle(movieDetail.getTitle());
+        result.setId(movieDetail.getId());
+        result.setPosterPath(movieDetail.getPosterPath());
+        result.setPosterPath(movieDetail.getPosterPath());
+        result.setBackdropPath(movieDetail.getBackdropPath());
+        result.setReleaseDate(movieDetail.getReleaseDate());
+        result.setVoteAverage(movieDetail.getVoteAverage());
+
+        return result;
     }
 
     private MovieStatus findInRealmMovieStatus(Realm realm, Integer id) {
-        return realm.where(MovieStatus.class).equalTo(MovieStatus.FIELD_MOVIE_ID, id)
+        return realm.where(MovieStatus.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
     private UserRating findInRealmUserRating(Realm realm, Integer id) {
-        return realm.where(UserRating.class).equalTo(UserRating.FIELD_MOVIE_ID, id)
+        return realm.where(UserRating.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
     //
-    private void displayResults(List<MoreListResult> moreListResults) {
+    private void displayResults(List<MovieListResult> movieListResults) {
         if (!isViewAttached()) return;
         mView.hideProgress();
-        if (moreListResults.isEmpty()) {
+        if (movieListResults.isEmpty()) {
             mView.showEmpty();
             return;
         }
-        mView.showMoviesList(moreListResults);
+        mView.showMoviesList(movieListResults);
+    }
+
+    private void displayBoxOfficeResults(List<MovieListResult> movieListResults) {
+        if (!isViewAttached()) return;
+        mView.hideProgress();
+        if (movieListResults.isEmpty()) {
+            mView.showEmpty();
+            return;
+        }
+        Collections.sort(movieListResults, new RevenueComparator());
+        mView.showMoviesList(movieListResults);
     }
 
     private void displayError(Throwable t) {

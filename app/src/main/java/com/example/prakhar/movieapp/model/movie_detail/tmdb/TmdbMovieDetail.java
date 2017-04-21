@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.prakhar.movieapp.model.release_dates.ReleaseDateResponse;
-import com.example.prakhar.movieapp.model.tmdb.MovieResponse;
+import com.example.prakhar.movieapp.model.home.movie.MovieResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

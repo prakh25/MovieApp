@@ -3,15 +3,14 @@ package com.example.prakhar.movieapp.network;
 import android.support.annotation.NonNull;
 
 import com.example.prakhar.movieapp.model.genre.GenreResponse;
-import com.example.prakhar.movieapp.model.movie_detail.MovieDetail;
+import com.example.prakhar.movieapp.model.home.movie.Images;
+import com.example.prakhar.movieapp.model.home.movie.MovieResponse;
+import com.example.prakhar.movieapp.model.home.tv.TvResponse;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.TmdbMovieDetail;
 import com.example.prakhar.movieapp.model.people_detail.PeopleDetails;
 import com.example.prakhar.movieapp.model.person_search.PersonSearchResponse;
 import com.example.prakhar.movieapp.model.release_dates.ReleaseDateResponse;
 import com.example.prakhar.movieapp.model.search.SearchResponse;
-import com.example.prakhar.movieapp.model.tmdb.Images;
-import com.example.prakhar.movieapp.model.tmdb.MovieResponse;
-import com.example.prakhar.movieapp.model.tmdb.tv.TvResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -23,7 +22,7 @@ import retrofit2.http.Query;
  * Created by Prakhar on 2/24/2017.
  */
 
-public interface TmdbService {
+interface TmdbService {
 
 
     // MOVIES
@@ -68,7 +67,7 @@ public interface TmdbService {
                                               @NonNull @Query("api_key") String apiKey);
 
     @GET("movie/{movie_id}")
-    Call<MovieDetail> getDetail(@Path("movie_id") Integer movieId,
+    Call<TmdbMovieDetail> getDetail(@Path("movie_id") Integer movieId,
                                 @Query("api_key") String apiKey);
 
     @GET("search/movie")

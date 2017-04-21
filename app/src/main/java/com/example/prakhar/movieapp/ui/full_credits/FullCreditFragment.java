@@ -55,9 +55,6 @@ public class FullCreditFragment extends Fragment implements FullCreditAdapter.Fu
     private Unbinder unbinder;
     private FullCreditAdapter adapter;
 
-    public FullCreditFragment() {
-    }
-
     public static FullCreditFragment newInstance(@Nullable ArrayList<Crew> creditList,
                                                  @Nullable ArrayList<Cast> casts,
                                                  String title, int color) {

@@ -1,10 +1,16 @@
 package com.example.prakhar.movieapp.ui.home.home_movie;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +21,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.genre.GenreActivity;
-import com.example.prakhar.movieapp.ui.more_movies_list.MoreActivity;
+import com.example.prakhar.movieapp.ui.more_movies_list.MovieListActivity;
 import com.example.prakhar.movieapp.ui.movie_detail.MovieDetailActivity;
 import com.example.prakhar.movieapp.widgets.home_movie.HomeLinksWrapper;
 import com.example.prakhar.movieapp.widgets.home_movie.HomeMovieLIstWrapper;
@@ -114,9 +120,26 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
     }
 
     @Override
-    public void onListItemClick(Result result, int position) {
-        startActivity(MovieDetailActivity.newStartIntent(activity, result.getId()));
-        activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    public void onListItemClick(Result result, int position, ImageView poster) {
+
+        startActivity(MovieDetailActivity.newStartIntent(activity, result.getId(),
+                ViewCompat.getTransitionName(poster)), makeTransitionBundle(poster));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setUpTransitionAnimation();
+        }
+    }
+
+    private Bundle makeTransitionBundle(ImageView sharedElementView) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                sharedElementView, ViewCompat.getTransitionName(sharedElementView)).toBundle();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpTransitionAnimation() {
+        Transition transition = TransitionInflater.from(activity)
+                .inflateTransition(R.transition.arc_motion);
+        activity.getWindow().setSharedElementReenterTransition(transition);
     }
 
     @Override
@@ -169,7 +192,7 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
 
     @Override
     public void onFrameClick(String title) {
-        startActivity(MoreActivity.newStartIntent(activity, title, 0));
+        startActivity(MovieListActivity.newStartIntent(activity, title, 0));
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 

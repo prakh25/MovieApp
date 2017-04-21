@@ -24,12 +24,20 @@
             android:orientation="vertical">
 
             <include layout="@layout/detail_movie_status_wrapper"/>
+
             <include layout="@layout/detail_trailer_wrapper"/>
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
-    <include layout="@layout/progress_bar_fragment"/>
+    <ProgressBar
+        android:id="@+id/progress_bar_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/detail_status_wrapper_frame"
+        app:layout_anchorGravity="bottom|center"
+        android:layout_gravity="center"
+        android:paddingTop="64dp"/>
 
-    <include layout="@layout/layout_message" />
+    <include layout="@layout/layout_message_detail" />
 </android.support.design.widget.CoordinatorLayout>

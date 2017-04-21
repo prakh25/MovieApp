@@ -1,5 +1,5 @@
 
-package com.example.prakhar.movieapp.model.trakt;
+package com.example.prakhar.movieapp.model.more_movie_list.box_office;
 
 import android.os.Parcel;
 import android.os.Parcelable;

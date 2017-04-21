@@ -2,6 +2,7 @@ package com.example.prakhar.movieapp.ui.more_movies_list;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,8 +16,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.more.MoreListResult;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.more_movie_list.MovieListResult;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.utils.Constants;
 import com.example.prakhar.movieapp.utils.Utils;
 
@@ -34,9 +35,9 @@ import timber.log.Timber;
  * Created by Prakhar on 3/14/2017.
  */
 
-public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final List<MoreListResult> listResultList;
+    private final List<MovieListResult> movieListResults;
 
     private static final int VIEW_TYPE_LIST = 0;
     private static final int VIEW_TYPE_LOADING = 1;
@@ -53,8 +54,8 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ListInteractionListener listInteractionListener;
 
-    public MoreAdapter(boolean revenue) {
-        listResultList = new ArrayList<>();
+    public MovieListAdapter(boolean revenue) {
+        movieListResults = new ArrayList<>();
         viewType = VIEW_TYPE_LIST;
         listInteractionListener = null;
         includeWeekendGross = revenue;
@@ -62,14 +63,14 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return listResultList.get(position) == null ?
-                VIEW_TYPE_LOADING : listResultList.get(position).getResult().getId();
+        return movieListResults.get(position) == null ?
+                VIEW_TYPE_LOADING : movieListResults.get(position).getResult().getId();
     }
 
     @Override
     public long getItemId(int position) {
-        return listResultList.size() >= position ?
-                listResultList.get(position).getResult().getId() : -1;
+        return movieListResults.size() >= position ?
+                movieListResults.get(position).getResult().getId() : -1;
     }
 
     @Override
@@ -90,7 +91,7 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return listResultList.size();
+        return movieListResults.size();
     }
 
     private RecyclerView.ViewHolder onIndicationViewHolder(ViewGroup parent) {
@@ -108,37 +109,40 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void onBindGenericItemViewHolder(final MovieViewHolder holder, int position) {
 
         String posterUrl = Constants.TMDB_IMAGE_URL + "w154" +
-                listResultList.get(position).getResult().getPosterPath();
+                movieListResults.get(position).getResult().getPosterPath();
 
         Glide.with(holder.itemView.getContext())
                 .load(posterUrl)
                 .placeholder(R.drawable.empty_image)
                 .into(holder.poster);
 
-        if (!listResultList.get(position).getResult().getReleaseDate().isEmpty() &&
-                !listResultList.get(position).getResult().getReleaseDate().equals("")) {
+        ViewCompat.setTransitionName(holder.poster,
+                movieListResults.get(position).getResult().getPosterPath());
 
-            int year = Utils.getReleaseYear(listResultList.get(position).getResult().getReleaseDate());
+        if (!movieListResults.get(position).getResult().getReleaseDate().isEmpty() &&
+                !movieListResults.get(position).getResult().getReleaseDate().equals("")) {
+
+            int year = Utils.getReleaseYear(movieListResults.get(position).getResult().getReleaseDate());
 
             holder.title.setText(String.format(Locale.US, "%d. %s (%d)",
-                    position + 1, listResultList.get(position).getResult().getTitle(),
+                    position + 1, movieListResults.get(position).getResult().getTitle(),
                     year));
         } else {
             holder.title.setText(String.format(Locale.US, "%d. %s",
-                    position + 1, listResultList.get(position).getResult().getTitle()));
+                    position + 1, movieListResults.get(position).getResult().getTitle()));
         }
 
         holder.tmdbRating.setText(String.format(Locale.US, "%.1f",
-                listResultList.get(position).getResult().getVoteAverage()));
+                movieListResults.get(position).getResult().getVoteAverage()));
 
-        if(listResultList.get(position).getUserRating() == 0) {
+        if(movieListResults.get(position).getUserRating() == 0) {
             holder.userRating.setText("-");
         } else {
             holder.userRating.setText(String.format(Locale.US,"%d",
-                    listResultList.get(position).getUserRating()));
+                    movieListResults.get(position).getUserRating()));
         }
 
-        if (listResultList.get(position).isAddedToWatchlist()) {
+        if (movieListResults.get(position).isAddedToWatchlist()) {
             Glide.with(holder.itemView.getContext())
                     .load(R.drawable.bookmark_check_green)
                     .into(holder.watchlist);
@@ -148,7 +152,7 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .into(holder.watchlist);
         }
 
-        if (listResultList.get(position).isMarkedAsFavorite()) {
+        if (movieListResults.get(position).isMarkedAsFavorite()) {
             Glide.with(holder.itemView.getContext())
                     .load(R.drawable.heart)
                     .into(holder.favorite);
@@ -160,58 +164,55 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         if(includeWeekendGross) {
             holder.boxOfficeGross.setText(String.format(Locale.US, "Weekend Gross: %s",
-                    Utils.currencyConverter(listResultList.get(position).getRevenue())));
+                    Utils.currencyConverter(movieListResults.get(position).getRevenue())));
             holder.boxOfficeGross.setVisibility(View.VISIBLE);
             holder.ratingsFrame.setVisibility(View.GONE);
         }
     }
 
-    public void add(MoreListResult item) {
+    public void add(MovieListResult item) {
         add(null, item);
     }
 
-    public void add(@Nullable Integer position, MoreListResult item) {
+    public void add(@Nullable Integer position, MovieListResult item) {
         if (position != null) {
-            listResultList.add(position, item);
+            movieListResults.add(position, item);
             notifyItemInserted(position);
         } else {
-            listResultList.add(item);
-            notifyItemInserted(listResultList.size() - 1);
+            movieListResults.add(item);
+            notifyItemInserted(movieListResults.size() - 1);
         }
     }
 
-    public void addItems(List<MoreListResult> moreListResults) {
-        listResultList.addAll(moreListResults);
-        notifyItemRangeInserted(getItemCount(), listResultList.size() - 1);
+    public void addItems(List<MovieListResult> movieListResults) {
+        this.movieListResults.addAll(movieListResults);
+        notifyItemRangeInserted(getItemCount(), this.movieListResults.size() - 1);
     }
 
     public void updateItem(boolean watchListStatus,boolean favoriteStatus,
                            int userRating, int position) {
-        Timber.i("Watchlist adapter " + watchListStatus);
-        Timber.i("favorite adapter " + favoriteStatus);
-
-        listResultList.get(position).setAddedToWatchlist(watchListStatus);
-        listResultList.get(position).setMarkedAsFavorite(favoriteStatus);
-        listResultList.get(position).setUserRating(userRating);
+        movieListResults.get(position).setAddedToWatchlist(watchListStatus);
+        movieListResults.get(position).setMarkedAsFavorite(favoriteStatus);
+        movieListResults.get(position).setUserRating(userRating);
         notifyItemChanged(position);
     }
 
     public void remove(int position) {
-        if (listResultList.size() < position) {
+        if (movieListResults.size() < position) {
             Timber.d("The item at position: " + position + " doesn't exist");
             return;
         }
-        listResultList.remove(position);
+        movieListResults.remove(position);
         notifyItemRemoved(position);
     }
 
     public void removeAll() {
-        listResultList.clear();
+        movieListResults.clear();
         notifyDataSetChanged();
     }
 
     public boolean addLoadingView() {
-        if (getItemViewType(listResultList.size() - 1) != VIEW_TYPE_LOADING) {
+        if (getItemViewType(movieListResults.size() - 1) != VIEW_TYPE_LOADING) {
             add(null);
             return true;
         }
@@ -219,8 +220,8 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public boolean removeLoadingView() {
-        if (listResultList.size() > 1) {
-            int loadingViewPosition = listResultList.size() - 1;
+        if (movieListResults.size() > 1) {
+            int loadingViewPosition = movieListResults.size() - 1;
             if (getItemViewType(loadingViewPosition) == VIEW_TYPE_LOADING) {
                 remove(loadingViewPosition);
                 return true;
@@ -246,7 +247,7 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.item_progress_bar)
         ProgressBar progressBar;
 
-        public ProgressViewHolder(View itemView) {
+        ProgressViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -282,14 +283,16 @@ public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ButterKnife.bind(this, itemView);
 
             cardView.setOnClickListener(v ->
-                    listInteractionListener.onItemClick(listResultList.get(getAdapterPosition()).getResult(),
-                            getAdapterPosition()));
+                    listInteractionListener.onItemClick(
+                            movieListResults.get(getAdapterPosition()).getResult(),
+                            getAdapterPosition(), poster)
+            );
 
         }
     }
 
     public interface ListInteractionListener {
-        void onItemClick(Result result, int clickedPosition);
+        void onItemClick(Result result, int clickedPosition, ImageView sharedImageView);
     }
 
     public void setListInteractionListener(ListInteractionListener interactionListener) {

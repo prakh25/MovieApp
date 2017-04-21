@@ -11,8 +11,6 @@ import io.realm.annotations.Required;
 
 public class UserList extends RealmObject {
 
-    public static final String FIELD_LIST_ID = "id";
-
     @PrimaryKey
     private Integer id;
 
@@ -21,7 +19,7 @@ public class UserList extends RealmObject {
 
     private String description;
 
-    private RealmList<UserListItem> itemList = new RealmList<>();
+    private RealmList<MovieItem> itemList = new RealmList<>();
 
     public Integer getId() {
         return id;
@@ -47,11 +45,11 @@ public class UserList extends RealmObject {
         this.description = description;
     }
 
-    public RealmList<UserListItem> getItemList() {
+    public RealmList<MovieItem> getItemList() {
         return itemList;
     }
 
-    public void setItemList(RealmList<UserListItem> itemList) {
+    public void setItemList(RealmList<MovieItem> itemList) {
         this.itemList = itemList;
     }
 }

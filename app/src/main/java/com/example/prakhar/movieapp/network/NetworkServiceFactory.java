@@ -20,7 +20,7 @@ import static okhttp3.logging.HttpLoggingInterceptor.Level.NONE;
  * Created by Prakhar on 2/22/2017.
  */
 
-public class NetworkServiceFactory {
+class NetworkServiceFactory {
 
     private static Retrofit provideRetrofit(String baseUrl) {
 

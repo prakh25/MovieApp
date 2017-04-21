@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.ui.full_screen_image.FullScreenImageFragment;
 import com.example.prakhar.movieapp.utils.Utils;
 
@@ -53,10 +53,6 @@ public class MoreImagesFragment extends Fragment implements
     private int toolbarColor;
     private MoreImagesAdapter adapter;
     private Unbinder unbinder;
-
-
-    public MoreImagesFragment() {
-    }
 
     public static MoreImagesFragment newInstance(ArrayList<Poster> imageList, String title, int color) {
 
