@@ -18,6 +18,8 @@ public class MovieStatus extends RealmObject {
 
     private boolean isRated;
 
+    private boolean isPresentInUserList;
+
 
     public boolean isMarkedAsFavorite() {
         return isMarkedAsFavorite;
@@ -49,5 +51,13 @@ public class MovieStatus extends RealmObject {
 
     public void setRated(boolean rated) {
         isRated = rated;
+    }
+
+    public boolean isPresentInUserList() {
+        return isPresentInUserList;
+    }
+
+    public void setPresentInUserList(boolean presentInUserList) {
+        isPresentInUserList = presentInUserList;
     }
 }
