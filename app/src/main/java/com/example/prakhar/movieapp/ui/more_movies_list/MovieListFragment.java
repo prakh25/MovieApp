@@ -26,8 +26,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.more.MoreListResult;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.more_movie_list.MovieListResult;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.movie_detail.MovieDetailActivity;
 import com.example.prakhar.movieapp.utils.EndlessRecyclerViewOnScrollListener;
@@ -49,8 +49,8 @@ import static com.example.prakhar.movieapp.utils.Constants.REQUEST_CODE;
  * Created by Prakhar on 3/8/2017.
  */
 
-public class MoreFragment extends Fragment implements MoreContract.MoreView,
-        MoreAdapter.ListInteractionListener {
+public class MovieListFragment extends Fragment implements MovieListContract.MoreView,
+        MovieListAdapter.ListInteractionListener {
 
     @BindView(R.id.more_movies_list)
     RecyclerView recyclerView;
@@ -68,25 +68,25 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
     @BindView(R.id.message_layout)
     LinearLayout messageLayout;
 
-    private MorePresenter morePresenter;
-    private MoreAdapter moreAdapter;
+    private MovieListPresenter movieListPresenter;
+    private MovieListAdapter movieListAdapter;
     private AppCompatActivity activity;
     private int position;
     private int genreId;
     private int ID;
     private String fragmentTitle;
 
-    public MoreFragment() {
+    public MovieListFragment() {
     }
 
-    public static MoreFragment newInstance(@Nullable String fragmentTitle, Integer id) {
+    public static MovieListFragment newInstance(@Nullable String fragmentTitle, Integer id) {
         Bundle args = new Bundle();
         args.putString(ARG_TOOLBAR_TITLE, fragmentTitle);
         args.putInt(ARG_GENRE_ID, id);
-        MoreFragment moreFragment = new MoreFragment();
-        moreFragment.setArguments(args);
+        MovieListFragment movieListFragment = new MovieListFragment();
+        movieListFragment.setArguments(args);
 
-        return moreFragment;
+        return movieListFragment;
     }
 
     @Override
@@ -103,26 +103,26 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
             fragmentTitle = getArguments().getString(ARG_TOOLBAR_TITLE);
             genreId = getArguments().getInt(ARG_GENRE_ID);
         }
-        morePresenter = new MorePresenter(DataManager.getInstance());
+        movieListPresenter = new MovieListPresenter(DataManager.getInstance());
 
         if(genreId == 0) {
             switch (fragmentTitle) {
                 case "Most Popular Movies":
                     ID = 1;
-                    moreAdapter = new MoreAdapter(false);
+                    movieListAdapter = new MovieListAdapter(false);
                     break;
                 case "TMDB Top Rated":
                     ID = 2;
-                    moreAdapter = new MoreAdapter(false);
+                    movieListAdapter = new MovieListAdapter(false);
                     break;
                 case "Weekend Box Office":
                     ID = 3;
-                    moreAdapter = new MoreAdapter(true);
+                    movieListAdapter = new MovieListAdapter(true);
                     break;
             }
         } else {
             ID = 4;
-            moreAdapter = new MoreAdapter(false);
+            movieListAdapter = new MovieListAdapter(false);
         }
     }
 
@@ -130,29 +130,29 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_more_movies, container, false);
-        morePresenter.attachView(this);
-        moreAdapter.setListInteractionListener(this);
+        movieListPresenter.attachView(this);
+        movieListAdapter.setListInteractionListener(this);
         init(view);
 
         switch (ID) {
             case 1:
-                if (moreAdapter.isEmpty()) {
-                    morePresenter.mostPopularListRequested();
+                if (movieListAdapter.isEmpty()) {
+                    movieListPresenter.mostPopularListRequested();
                 }
                 break;
             case 2:
-                if (moreAdapter.isEmpty()) {
-                    morePresenter.onTopRatedMoviesRequested();
+                if (movieListAdapter.isEmpty()) {
+                    movieListPresenter.onTopRatedMoviesRequested();
                 }
                 break;
             case 3:
-                if (moreAdapter.isEmpty()) {
-                    morePresenter.onBoxOfficeRequested();
+                if (movieListAdapter.isEmpty()) {
+                    movieListPresenter.onBoxOfficeRequested();
                 }
                 break;
             case 4:
-                if(moreAdapter.isEmpty()) {
-                    morePresenter.onPopularMovieByGenreRequested(genreId);
+                if(movieListAdapter.isEmpty()) {
+                    movieListPresenter.onPopularMovieByGenreRequested(genreId);
                 }
                 break;
         }
@@ -175,7 +175,7 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
         recyclerView.setHasFixedSize(true);
         recyclerView.setMotionEventSplittingEnabled(false);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(moreAdapter);
+        recyclerView.setAdapter(movieListAdapter);
         recyclerView.setLayoutManager(setUpLayoutManager());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(setupScrollListener(recyclerView.getLayoutManager()));
@@ -183,23 +183,23 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
         tryAgainBtn.setOnClickListener(v -> {
             switch (ID) {
                 case 1:
-                    if (moreAdapter.isEmpty()) {
-                        morePresenter.mostPopularListRequested();
+                    if (movieListAdapter.isEmpty()) {
+                        movieListPresenter.mostPopularListRequested();
                     }
                     break;
                 case 2:
-                    if (moreAdapter.isEmpty()) {
-                        morePresenter.onTopRatedMoviesRequested();
+                    if (movieListAdapter.isEmpty()) {
+                        movieListPresenter.onTopRatedMoviesRequested();
                     }
                     break;
                 case 3:
-                    if (moreAdapter.isEmpty()) {
-                        morePresenter.onBoxOfficeRequested();
+                    if (movieListAdapter.isEmpty()) {
+                        movieListPresenter.onBoxOfficeRequested();
                     }
                     break;
                 case 4:
-                    if(moreAdapter.isEmpty()) {
-                        morePresenter.onPopularMovieByGenreRequested(genreId);
+                    if(movieListAdapter.isEmpty()) {
+                        movieListPresenter.onPopularMovieByGenreRequested(genreId);
                     }
                     break;
             }
@@ -218,8 +218,8 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 view.post(() -> {
-                    if (moreAdapter.addLoadingView()) {
-                        morePresenter.onListEndReached(page, ID);
+                    if (movieListAdapter.addLoadingView()) {
+                        movieListPresenter.onListEndReached(page, ID);
                     }
                 });
             }
@@ -233,7 +233,7 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
         boolean favoriteStatus = data.getBooleanExtra(ARG_MARKED_AS_FAVORITE, false);
         int rating = data.getIntExtra(ARG_USER_RATING, 0);
         if (requestCode == REQUEST_CODE) {
-            moreAdapter.updateItem(watchlistStatus, favoriteStatus, rating, position);
+            movieListAdapter.updateItem(watchlistStatus, favoriteStatus, rating, position);
         }
     }
 
@@ -263,7 +263,7 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
 
     @Override
     public void showProgress() {
-        if (moreAdapter.isEmpty()) {
+        if (movieListAdapter.isEmpty()) {
             progressBar.setVisibility(View.VISIBLE);
         }
     }
@@ -271,7 +271,7 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
-        moreAdapter.removeLoadingView();
+        movieListAdapter.removeLoadingView();
     }
 
     @Override
@@ -297,8 +297,9 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
     }
 
     @Override
-    public void showMoviesList(List<MoreListResult> resultList) {
-        moreAdapter.addItems(resultList);
+    public void showMoviesList(List<MovieListResult> resultList) {
+
+        movieListAdapter.addItems(resultList);
     }
 
     @Override
@@ -309,7 +310,7 @@ public class MoreFragment extends Fragment implements MoreContract.MoreView,
 
     @Override
     public void onDestroy() {
-        morePresenter.detachView();
+        movieListPresenter.detachView();
         super.onDestroy();
     }
 }
