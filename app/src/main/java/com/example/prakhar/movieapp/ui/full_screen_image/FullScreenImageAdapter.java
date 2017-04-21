@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.utils.Constants;
 import com.github.chrisbanes.photoview.PhotoView;
 

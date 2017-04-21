@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.utils.Constants;
 import com.example.prakhar.movieapp.utils.animation.Pulse;
 

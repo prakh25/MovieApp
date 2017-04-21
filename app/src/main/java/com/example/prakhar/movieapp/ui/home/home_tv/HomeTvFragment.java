@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.tv.TvResult;
+import com.example.prakhar.movieapp.model.home.tv.TvResult;
 
 import java.util.List;
 

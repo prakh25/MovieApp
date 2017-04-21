@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.utils.CustomViewPager;
 
 import java.util.ArrayList;

@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.MenuItem;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.ui.base.BaseActivity;
 
 import java.util.ArrayList;
