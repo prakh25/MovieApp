@@ -42,9 +42,6 @@ public class RatingDialogFragment extends DialogFragment {
     private GenericMovieDataWrapper wrapper;
     private RatingDialogListener listener;
 
-    public RatingDialogFragment() {
-    }
-
     public static RatingDialogFragment newInstance(GenericMovieDataWrapper wrapper, Integer userRating) {
 
         Bundle args = new Bundle();
@@ -99,7 +96,7 @@ public class RatingDialogFragment extends DialogFragment {
         });
     }
 
-    interface RatingDialogListener {
+    public interface RatingDialogListener {
         void onRatingSave(GenericMovieDataWrapper wrapper, int rating);
 
         void onRatingDelete();

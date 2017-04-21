@@ -34,7 +34,7 @@ import static com.example.prakhar.movieapp.utils.Constants.FIELD_MOVIE_ID;
  * Created by Prakhar on 3/14/2017.
  */
 
-class MovieListPresenter extends BasePresenter<MovieListContract.MoreView>
+public class MovieListPresenter extends BasePresenter<MovieListContract.MoreView>
         implements MovieListContract.ViewActions {
 
     private final DataManager dataManager;
@@ -45,7 +45,7 @@ class MovieListPresenter extends BasePresenter<MovieListContract.MoreView>
 
     private static final int ITEM_REQUEST_INITIAL_PAGE = 1;
 
-    MovieListPresenter(@NonNull DataManager dataManager) {
+    public MovieListPresenter(@NonNull DataManager dataManager) {
         this.dataManager = dataManager;
         SharedPreferences countryCode = PreferenceManager.getDefaultSharedPreferences(MovieApp.getApp());
         region = countryCode.getString(Constants.COUNTRY_CODE, null);

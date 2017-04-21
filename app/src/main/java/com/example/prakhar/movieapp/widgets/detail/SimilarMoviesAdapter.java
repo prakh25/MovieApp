@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.utils.Constants;
-import com.example.prakhar.movieapp.utils.animation.Pulse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +62,6 @@ public class SimilarMoviesAdapter extends
                     .load(posterUrl)
                     .placeholder(R.drawable.movie_poster_placeholder)
                     .into(holder.moviePoster);
-        } else {
-            holder.moviePoster.setAnimation(new Pulse());
         }
 
         holder.title.setText(resultList.get(position).getTitle());

@@ -40,9 +40,6 @@ public class UserListDialogFragment extends DialogFragment
     private UserListDialogAdapter adapter;
     private AddToListDialogListener listener;
 
-    public UserListDialogFragment() {
-    }
-
     public static UserListDialogFragment newInstance(List<String> userListsName,
                                                      GenericMovieDataWrapper wrapper) {
 
@@ -105,7 +102,7 @@ public class UserListDialogFragment extends DialogFragment
         dismiss();
     }
 
-    interface AddToListDialogListener {
+    public interface AddToListDialogListener {
         void createNewListClick(GenericMovieDataWrapper wrapper);
 
         void addMovieToList(String name, int listId, GenericMovieDataWrapper wrapper);

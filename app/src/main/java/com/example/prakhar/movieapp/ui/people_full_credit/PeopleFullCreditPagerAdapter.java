@@ -14,7 +14,7 @@ import java.util.List;
  * Created by Prakhar on 4/6/2017.
  */
 
-class PeopleFullCreditPagerAdapter extends FragmentStatePagerAdapter {
+public class PeopleFullCreditPagerAdapter extends FragmentStatePagerAdapter {
 
     private final static int PAGE_COUNT = 2;
 
@@ -22,7 +22,7 @@ class PeopleFullCreditPagerAdapter extends FragmentStatePagerAdapter {
     private ArrayList<Crew> crews;
     private List<String> tabTitle;
 
-    PeopleFullCreditPagerAdapter(FragmentManager fm, List<String> tabTitle,
+    public PeopleFullCreditPagerAdapter(FragmentManager fm, List<String> tabTitle,
                                         List<Cast> castList, List<Crew> crewList) {
         super(fm);
 

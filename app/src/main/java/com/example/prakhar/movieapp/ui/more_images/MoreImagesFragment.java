@@ -54,10 +54,6 @@ public class MoreImagesFragment extends Fragment implements
     private MoreImagesAdapter adapter;
     private Unbinder unbinder;
 
-
-    public MoreImagesFragment() {
-    }
-
     public static MoreImagesFragment newInstance(ArrayList<Poster> imageList, String title, int color) {
 
         Bundle args = new Bundle();

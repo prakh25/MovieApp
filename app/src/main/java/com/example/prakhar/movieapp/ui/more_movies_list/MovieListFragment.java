@@ -76,9 +76,6 @@ public class MovieListFragment extends Fragment implements MovieListContract.Mor
     private int ID;
     private String fragmentTitle;
 
-    public MovieListFragment() {
-    }
-
     public static MovieListFragment newInstance(@Nullable String fragmentTitle, Integer id) {
         Bundle args = new Bundle();
         args.putString(ARG_TOOLBAR_TITLE, fragmentTitle);

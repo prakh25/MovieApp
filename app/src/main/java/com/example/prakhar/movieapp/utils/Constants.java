@@ -7,9 +7,9 @@ package com.example.prakhar.movieapp.utils;
 public final class Constants {
 
     //OkHttp
-    public static final String CACHE_CONTROL = "cache_control";
+//    public static final String CACHE_CONTROL = "cache_control";
     public static final int HTTP_CACHE_SIZE = 10*1024*1024; //10 MB
-    public static final int MAX_AGE = 10;
+//    public static final int MAX_AGE = 10;
     public static final String CACHE_DIR = "http_cache";
 
     //TMDB
@@ -17,7 +17,7 @@ public final class Constants {
     public static final String TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/";
     public static final boolean INCLUDE_ADULT = false;
     public static final boolean INCLUDE_VIDEO = false;
-    public static final String TMDB_ICLUDE_IMAGE_LANGUAGE = "en,null";
+//    public static final String TMDB_ICLUDE_IMAGE_LANGUAGE = "en,null";
     public static final String TMDB_APPEND_TO_RESPONSE =
             "recommendations,images,credits,videos,release_dates";
     public static final String TMDB_PERSON_APPEND_TO_RESPONSE =

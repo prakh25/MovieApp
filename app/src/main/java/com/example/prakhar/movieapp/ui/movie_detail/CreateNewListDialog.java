@@ -41,9 +41,6 @@ public class CreateNewListDialog extends DialogFragment {
     private String title;
     private String description;
 
-    public CreateNewListDialog() {
-    }
-
     public static CreateNewListDialog newInstance(GenericMovieDataWrapper wrapper) {
 
         Bundle args = new Bundle();
@@ -101,7 +98,7 @@ public class CreateNewListDialog extends DialogFragment {
         });
     }
 
-    interface CreateNewListDialogListener {
+    public interface CreateNewListDialogListener {
         void createNewList(String title, String description, GenericMovieDataWrapper wrapper);
 
         void cannotCreateList();

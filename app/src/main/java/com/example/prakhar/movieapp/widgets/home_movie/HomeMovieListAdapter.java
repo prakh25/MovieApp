@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.utils.Constants;
-import com.example.prakhar.movieapp.utils.animation.Pulse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * Created by Prakhar on 2/24/2017.
@@ -32,8 +30,6 @@ public class HomeMovieListAdapter extends
 
     private List<Result> resultList;
     private ListInteractionListener interactionListener;
-    String imageUrl;
-    String posterUrl;
 
     public HomeMovieListAdapter(List<Result> results,
                                 ListInteractionListener listInteractionListener) {
@@ -55,10 +51,9 @@ public class HomeMovieListAdapter extends
 
         String posterPath = resultList.get(position).getPosterPath();
 
-        imageUrl = Constants.TMDB_IMAGE_URL + "w185";
+        String imageUrl = Constants.TMDB_IMAGE_URL + "w185";
 
-        Timber.i(imageUrl);
-        posterUrl = imageUrl + posterPath;
+        String posterUrl = imageUrl + posterPath;
 
         if (!posterUrl.isEmpty()) {
             Glide.with(holder.listItem.getContext())
@@ -66,8 +61,6 @@ public class HomeMovieListAdapter extends
                     .placeholder(R.drawable.movie_poster_placeholder)
                     .crossFade()
                     .into(holder.moviePoster);
-        } else {
-            holder.moviePoster.setAnimation(new Pulse());
         }
 
         ViewCompat.setTransitionName(holder.moviePoster, posterPath);

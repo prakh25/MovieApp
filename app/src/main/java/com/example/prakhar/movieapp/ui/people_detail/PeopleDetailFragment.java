@@ -118,9 +118,6 @@ public class PeopleDetailFragment extends Fragment implements AppBarLayout.OnOff
     private Animation animation;
     private int toolbarColor;
 
-    public PeopleDetailFragment() {
-    }
-
     public static PeopleDetailFragment newInstance(Integer personId,
                                                    @Nullable String profilePath) {
 

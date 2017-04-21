@@ -20,13 +20,13 @@ import butterknife.ButterKnife;
  * Created by Prakhar on 3/25/2017.
  */
 
-class UserListDialogAdapter extends
+public class UserListDialogAdapter extends
         RecyclerView.Adapter<UserListDialogAdapter.UserListViewHolder> {
 
     private List<String> stringList;
     private UserListDialogListener listener;
 
-    UserListDialogAdapter() {
+    public UserListDialogAdapter() {
         stringList = new ArrayList<>();
     }
 
@@ -84,11 +84,11 @@ class UserListDialogAdapter extends
         }
     }
 
-    interface UserListDialogListener {
+    public interface UserListDialogListener {
         void onListSelected(String title, int position);
     }
 
-    void setListInteractionListener(UserListDialogListener listDialogListener) {
+    public  void setListInteractionListener(UserListDialogListener listDialogListener) {
         listener = listDialogListener;
     }
 }

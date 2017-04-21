@@ -302,17 +302,17 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
 
             @Override
             public void onTransitionCancel(Transition transition) {
-
+                //Auto Generated method stub
             }
 
             @Override
             public void onTransitionPause(Transition transition) {
-
+                //Auto Generated method stub
             }
 
             @Override
             public void onTransitionResume(Transition transition) {
-
+                //Auto Generated method stub
             }
         });
 
@@ -337,17 +337,17 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
 
             @Override
             public void onTransitionCancel(Transition transition) {
-
+                //Auto Generated method stub
             }
 
             @Override
             public void onTransitionPause(Transition transition) {
-
+                //Auto Generated method stub
             }
 
             @Override
             public void onTransitionResume(Transition transition) {
-
+                //Auto Generated method stub
             }
         });
         mActivity.getWindow().setReturnTransition(fade);
@@ -749,7 +749,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         mActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-    interface MovieStatusListener {
+    public interface MovieStatusListener {
         void movieAddedToWatchlist(boolean addedToWatchlist);
 
         void movieMarkedAsFavorite(boolean markedAsFavorite);

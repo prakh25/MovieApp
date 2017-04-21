@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
  * Created by Prakhar on 4/6/2017.
  */
 
-class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCreditAdapter.CreditViewHolder> {
+public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCreditAdapter.CreditViewHolder> {
 
     private static final int VIEW_TYPE_CAST = 0;
     private static final int VIEW_TYPE_CREW = 1;
@@ -41,7 +41,7 @@ class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCreditAdapt
 
     private int year;
 
-    PeopleFullCreditAdapter(int id) {
+    public PeopleFullCreditAdapter(int id) {
         castList = new ArrayList<>();
         crewList = new ArrayList<>();
         listener = null;
@@ -140,17 +140,17 @@ class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCreditAdapt
         Glide.clear(holder.moviePoster);
     }
 
-    void addCasts(List<Cast> casts) {
+    public void addCasts(List<Cast> casts) {
         castList.addAll(casts);
         notifyItemRangeInserted(0, castList.size() - 1);
     }
 
-    void addCrews(List<Crew> crews) {
+    public void addCrews(List<Crew> crews) {
         crewList.addAll(crews);
         notifyItemRangeInserted(0, crewList.size() - 1);
     }
 
-    static class CreditViewHolder extends RecyclerView.ViewHolder {
+    public static class CreditViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.people_full_credit_frame)
         FrameLayout creditFrame;
@@ -161,17 +161,17 @@ class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCreditAdapt
         @BindView(R.id.people_full_credit_character)
         TextView characterPlayed;
 
-        CreditViewHolder(View itemView) {
+        public CreditViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
 
-    interface PeopleFullCreditListener {
+    public interface PeopleFullCreditListener {
         void onPersonClicked(Integer movieId, int clickedPosition, ImageView sharedImageView);
     }
 
-    void setUpFullCreditListener(PeopleFullCreditListener creditListener) {
+    public void setUpFullCreditListener(PeopleFullCreditListener creditListener) {
         listener = creditListener;
     }
 }

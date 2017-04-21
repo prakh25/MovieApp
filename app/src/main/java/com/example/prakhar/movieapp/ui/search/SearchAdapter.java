@@ -28,7 +28,7 @@ import timber.log.Timber;
  * Created by Prakhar on 3/22/2017.
  */
 
-class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
     private static final String SEARCH_TYPE_MOVIES = "movie";
     private static final String SEARCH_TYPE_TV = "tv";
@@ -37,7 +37,7 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder>
     private List<SearchResult> searchResults;
     private ListInteractionListener listInteractionListener;
 
-    SearchAdapter() {
+    public SearchAdapter() {
         searchResults = new ArrayList<>();
         listInteractionListener = null;
     }
@@ -197,12 +197,12 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder>
         notifyItemRemoved(position);
     }
 
-    void removeAll() {
+    public void removeAll() {
         searchResults.clear();
         notifyDataSetChanged();
     }
 
-    static class SearchViewHolder extends RecyclerView.ViewHolder {
+    public static class SearchViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.search_poster)
         ImageView poster;

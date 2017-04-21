@@ -61,9 +61,6 @@ public class GenreFragment extends Fragment implements
     private GenrePresenter genrePresenter;
     private Unbinder unbinder;
 
-    public GenreFragment() {
-    }
-
     public static GenreFragment newInstance(String title) {
 
         Bundle args = new Bundle();

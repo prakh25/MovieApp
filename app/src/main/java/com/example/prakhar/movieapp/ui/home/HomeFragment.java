@@ -40,9 +40,6 @@ public class HomeFragment extends Fragment {
     private Unbinder unbinder;
     private AppCompatActivity activity;
 
-    public HomeFragment() {
-    }
-
     public static HomeFragment newInstance() {
 
         Bundle args = new Bundle();

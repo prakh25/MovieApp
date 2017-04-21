@@ -35,7 +35,7 @@ import timber.log.Timber;
  * Created by Prakhar on 3/14/2017.
  */
 
-class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<MovieListResult> movieListResults;
 
@@ -54,7 +54,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ListInteractionListener listInteractionListener;
 
-    MovieListAdapter(boolean revenue) {
+    public MovieListAdapter(boolean revenue) {
         movieListResults = new ArrayList<>();
         viewType = VIEW_TYPE_LIST;
         listInteractionListener = null;
@@ -189,7 +189,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyItemRangeInserted(getItemCount(), this.movieListResults.size() - 1);
     }
 
-    void updateItem(boolean watchListStatus,boolean favoriteStatus,
+    public void updateItem(boolean watchListStatus,boolean favoriteStatus,
                            int userRating, int position) {
         movieListResults.get(position).setAddedToWatchlist(watchListStatus);
         movieListResults.get(position).setMarkedAsFavorite(favoriteStatus);
@@ -211,7 +211,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    boolean addLoadingView() {
+    public boolean addLoadingView() {
         if (getItemViewType(movieListResults.size() - 1) != VIEW_TYPE_LOADING) {
             add(null);
             return true;
@@ -219,7 +219,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return false;
     }
 
-    boolean removeLoadingView() {
+    public boolean removeLoadingView() {
         if (movieListResults.size() > 1) {
             int loadingViewPosition = movieListResults.size() - 1;
             if (getItemViewType(loadingViewPosition) == VIEW_TYPE_LOADING) {
@@ -242,7 +242,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.viewType = viewType;
     }
 
-    class ProgressViewHolder extends RecyclerView.ViewHolder {
+    public class ProgressViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.item_progress_bar)
         ProgressBar progressBar;
@@ -253,7 +253,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    class MovieViewHolder extends RecyclerView.ViewHolder {
+    public class MovieViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.card_view_more)
         CardView cardView;
@@ -278,7 +278,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.ratings_frame)
         LinearLayout ratingsFrame;
 
-        MovieViewHolder(View itemView) {
+        public MovieViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -295,7 +295,7 @@ class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onItemClick(Result result, int clickedPosition, ImageView sharedImageView);
     }
 
-    void setListInteractionListener(ListInteractionListener interactionListener) {
+    public void setListInteractionListener(ListInteractionListener interactionListener) {
         listInteractionListener = interactionListener;
     }
 }

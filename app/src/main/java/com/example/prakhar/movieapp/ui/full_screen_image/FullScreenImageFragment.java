@@ -25,7 +25,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 import static com.example.prakhar.movieapp.utils.Constants.ARA_SELECT_POSITION;
 import static com.example.prakhar.movieapp.utils.Constants.ARG_IMAGE_LIST;
@@ -51,10 +50,6 @@ public class FullScreenImageFragment extends DialogFragment implements
     private boolean isPageCountVisible = false;
     private List<Poster> imageList;
     private int selectedPosition = 0;
-    private Unbinder unbinder;
-
-    public FullScreenImageFragment() {
-    }
 
     public static FullScreenImageFragment newInstance(ArrayList<Poster> imageList, int position) {
         Bundle args = new Bundle();
@@ -95,7 +90,7 @@ public class FullScreenImageFragment extends DialogFragment implements
     }
 
     private void init(View view) {
-        unbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
 
         imageList = new ArrayList<>();
         if(getArguments() != null) {
