@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.example.prakhar.movieapp.MovieApp;
+import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Cast;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Crew;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.TmdbMovieDetail;
@@ -19,8 +20,7 @@ import com.example.prakhar.movieapp.model.realm.UserListItem;
 import com.example.prakhar.movieapp.model.realm.UserRating;
 import com.example.prakhar.movieapp.model.realm.WatchList;
 import com.example.prakhar.movieapp.model.release_dates.ReleaseDatesResult;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import com.example.prakhar.movieapp.utils.Constants;
@@ -66,11 +66,8 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
     }
 
     @Override
-    public void onAddToWatchlistClicked(Integer movieId, String posterPath, String overview,
-                                        String backDropPath, String movieName, String releaseDate,
-                                        Integer voteCount, Double voteAverage) {
-        addToWatchlist(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+    public void onAddToWatchlistClicked(GenericMovieDataWrapper wrapper) {
+        addToWatchlist(wrapper);
     }
 
     @Override
@@ -79,12 +76,9 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
     }
 
     @Override
-    public void onAddMarkAsFavoriteClicked(Integer movieId, String posterPath, String overview,
-                                           String backDropPath, String movieName, String releaseDate,
-                                           Integer voteCount, Double voteAverage) {
+    public void onAddMarkAsFavoriteClicked(GenericMovieDataWrapper wrapper) {
 
-        markedAsFavorite(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+        markedAsFavorite(wrapper);
     }
 
     @Override
@@ -93,11 +87,8 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
     }
 
     @Override
-    public void onSaveMovieRatingClicked(Integer movieId, String posterPath, String overview,
-                                         String backDropPath, String movieName, String releaseDate,
-                                         Integer voteCount, Double voteAverage, int userRating) {
-        addUserRating(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage, userRating);
+    public void onSaveMovieRatingClicked(GenericMovieDataWrapper wrapper, int userRating) {
+        addUserRating(wrapper, userRating);
     }
 
     @Override
@@ -106,28 +97,19 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
     }
 
     @Override
-    public void onAddToListClicked(Integer movieId, String posterPath, String overview,
-                                   String backDropPath, String movieName, String releaseDate,
-                                   Integer voteCount, Double voteAverage) {
-        addToList(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+    public void onAddToListClicked(GenericMovieDataWrapper wrapper) {
+        addToList(wrapper);
     }
 
     @Override
-    public void onCreateNewListRequested(@NonNull String title, String description, Integer movieId,
-                                         String posterPath, String overview,
-                                         String backDropPath, String movieName, String releaseDate,
-                                         Integer voteCount, Double voteAverage) {
-        createNewUserList(title, description, movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+    public void onCreateNewListRequested(@NonNull String title, String description,
+                                         GenericMovieDataWrapper wrapper) {
+        createNewUserList(title, description, wrapper);
     }
 
     @Override
-    public void onAddMovieToList(int listId, Integer movieId, String posterPath, String overview,
-                                 String backDropPath, String movieName, String releaseDate,
-                                 Integer voteCount, Double voteAverage) {
-        addMovieToUserList(listId, movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+    public void onAddMovieToList(int listId, GenericMovieDataWrapper wrapper) {
+        addMovieToUserList(listId, wrapper);
     }
 
     private void onMovieDetailRequested(Integer movieId) {
@@ -192,22 +174,6 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
                 tmdbMovieDetail.getGenres(),
                 tmdbMovieDetail.getRuntime());
 
-        MovieStatus realmResult = findInRealmMovieStatus(realm, tmdbMovieDetail.getId());
-
-        if (realmResult == null) {
-            mView.showMovieStatus(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
-                    tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
-                    tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
-                    tmdbMovieDetail.getVoteCount(), tmdbMovieDetail.getVoteAverage(),
-                    false, false);
-        } else {
-            mView.showMovieStatus(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
-                    tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
-                    tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
-                    tmdbMovieDetail.getVoteCount(), tmdbMovieDetail.getVoteAverage(),
-                    realmResult.isAddedToWatchList(), realmResult.isMarkedAsFavorite());
-        }
-
         Handler handler = new Handler();
 
         handler.postDelayed(() -> {
@@ -215,7 +181,10 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             if (!isViewAttached()) return;
             mView.hideProgress();
 
+            showMovieStatus();
+
             showMovieRating();
+
             if (!tmdbMovieDetail.getVideoResponse().getResults().isEmpty()) {
                 showMovieTrailer();
             }
@@ -238,12 +207,28 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             }
             mView.showExternalLinks(tmdbMovieDetail.getHomepage(), tmdbMovieDetail.getId(),
                     tmdbMovieDetail.getImdbId(), tmdbMovieDetail.getTitle());
-        }, 700);
+        }, 1000);
+    }
+
+    private void showMovieStatus() {
+        MovieStatus realmResult = findInRealmMovieStatus(realm, tmdbMovieDetail.getId());
+
+        GenericMovieDataWrapper wrapper = createGenericMovieWrapper();
+
+        if (realmResult == null) {
+            mView.showMovieStatus(wrapper, false, false);
+        } else {
+            mView.showMovieStatus(wrapper, realmResult.isAddedToWatchList(),
+                    realmResult.isMarkedAsFavorite());
+        }
     }
 
     private void showMovieRating() {
 
+        GenericMovieDataWrapper ratingsWrapper = createGenericMovieWrapper();
+
         UserRating userRating = findInRealmRatings(realm, tmdbMovieDetail.getId());
+
         Integer rating;
 
         if (userRating == null) {
@@ -253,19 +238,10 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         }
 
         if (traktMovieRating.getRating() != null) {
-            mView.showRatings(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
-                    tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
-                    tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
-                    tmdbMovieDetail.getVoteCount(), tmdbMovieDetail.getVoteAverage(),
-                    rating, tmdbMovieDetail.getVoteAverage(), tmdbMovieDetail.getVoteCount(),
+            mView.showRatings(ratingsWrapper, rating,
                     traktMovieRating.getRating(), traktMovieRating.getVotes());
         } else {
-            mView.showRatings(tmdbMovieDetail.getId(), tmdbMovieDetail.getPosterPath(),
-                    tmdbMovieDetail.getOverview(), tmdbMovieDetail.getBackdropPath(),
-                    tmdbMovieDetail.getTitle(), tmdbMovieDetail.getReleaseDate(),
-                    tmdbMovieDetail.getVoteCount(), tmdbMovieDetail.getVoteAverage(),
-                    rating, tmdbMovieDetail.getVoteAverage(), tmdbMovieDetail.getVoteCount(),
-                    0.0, 0);
+            mView.showRatings(ratingsWrapper, rating, 0.0, 0);
         }
     }
 
@@ -361,32 +337,29 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         mView.showError(throwable.getMessage());
     }
 
-    private void addToWatchlist(Integer movieId, String posterPath, String overview,
-                                String backDropPath, String movieName,
-                                String releaseDate, Integer voteCount,
-                                Double voteAverage) {
+    private void addToWatchlist(GenericMovieDataWrapper wrapper) {
 
         realm.executeTransactionAsync(realm1 -> {
-            WatchList watchListRealm = findInRealmWatchList(realm1, movieId);
+            WatchList watchListRealm = findInRealmWatchList(realm1, wrapper.getMovieId());
             if (watchListRealm == null) {
-                watchListRealm = realm1.createObject(WatchList.class, movieId);
-                watchListRealm.setTitle(movieName);
-                watchListRealm.setPosterPath(posterPath);
-                watchListRealm.setOverview(overview);
-                watchListRealm.setVoteCount(voteCount);
-                watchListRealm.setVoteAverage(voteAverage);
-                watchListRealm.setReleaseDate(releaseDate);
-                watchListRealm.setBackdropPath(backDropPath);
+                watchListRealm = realm1.createObject(WatchList.class, wrapper.getMovieId());
+                watchListRealm.setTitle(wrapper.getTitle());
+                watchListRealm.setPosterPath(wrapper.getPosterPath());
+                watchListRealm.setOverview(wrapper.getOverview());
+                watchListRealm.setVoteCount(wrapper.getVoteCount());
+                watchListRealm.setVoteAverage(wrapper.getVoteAverage());
+                watchListRealm.setReleaseDate(wrapper.getReleaseDate());
+                watchListRealm.setBackdropPath(wrapper.getBackdropPath());
 
-                MovieStatus status = findInRealmMovieStatus(realm1, movieId);
+                MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
                 if (status != null) {
                     status.setAddedToWatchList(true);
                 } else {
-                    realm1.createObject(MovieStatus.class, movieId)
+                    realm1.createObject(MovieStatus.class, wrapper.getMovieId())
                             .setAddedToWatchList(true);
                 }
             } else {
-                Timber.i(movieId + "Already present in watchlist");
+                Timber.i(wrapper.getTitle() + "Already present in watchlist");
             }
         });
     }
@@ -404,32 +377,29 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         });
     }
 
-    private void markedAsFavorite(Integer movieId, String posterPath, String overview,
-                                  String backDropPath, String movieName,
-                                  String releaseDate, Integer voteCount,
-                                  Double voteAverage) {
+    private void markedAsFavorite(GenericMovieDataWrapper wrapper) {
 
         realm.executeTransactionAsync(realm1 -> {
-            Favorite favoriteRealm = findInRealmFavorite(realm1, movieId);
+            Favorite favoriteRealm = findInRealmFavorite(realm1, wrapper.getMovieId());
             if (favoriteRealm == null) {
-                favoriteRealm = realm1.createObject(Favorite.class, movieId);
-                favoriteRealm.setTitle(movieName);
-                favoriteRealm.setPosterPath(posterPath);
-                favoriteRealm.setOverview(overview);
-                favoriteRealm.setVoteCount(voteCount);
-                favoriteRealm.setVoteAverage(voteAverage);
-                favoriteRealm.setReleaseDate(releaseDate);
-                favoriteRealm.setBackdropPath(backDropPath);
+                favoriteRealm = realm1.createObject(Favorite.class, wrapper.getMovieId());
+                favoriteRealm.setTitle(wrapper.getTitle());
+                favoriteRealm.setPosterPath(wrapper.getPosterPath());
+                favoriteRealm.setOverview(wrapper.getOverview());
+                favoriteRealm.setVoteCount(wrapper.getVoteCount());
+                favoriteRealm.setVoteAverage(wrapper.getVoteAverage());
+                favoriteRealm.setReleaseDate(wrapper.getReleaseDate());
+                favoriteRealm.setBackdropPath(wrapper.getBackdropPath());
 
-                MovieStatus status = findInRealmMovieStatus(realm1, movieId);
+                MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
                 if (status != null) {
                     status.setMarkedAsFavorite(true);
                 } else {
-                    realm1.createObject(MovieStatus.class, movieId)
+                    realm1.createObject(MovieStatus.class, wrapper.getMovieId())
                             .setMarkedAsFavorite(true);
                 }
             } else {
-                Timber.i(movieId + "Already present in watchlist");
+                Timber.i(wrapper.getTitle() + "Already present in watchlist");
             }
         });
     }
@@ -448,27 +418,25 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         });
     }
 
-    private void addUserRating(Integer movieId, String posterPath, String overview,
-                               String backDropPath, String movieName, String releaseDate,
-                               Integer voteCount, Double voteAverage, int userRating) {
+    private void addUserRating(GenericMovieDataWrapper wrapper, int userRating) {
 
         realm.executeTransactionAsync(realm1 -> {
-            UserRating ratingRealm = findInRealmRatings(realm1, movieId);
+            UserRating ratingRealm = findInRealmRatings(realm1, wrapper.getMovieId());
             if (ratingRealm == null) {
-                ratingRealm = realm1.createObject(UserRating.class, movieId);
-                ratingRealm.setTitle(movieName);
-                ratingRealm.setPosterPath(posterPath);
-                ratingRealm.setOverview(overview);
-                ratingRealm.setVoteCount(voteCount);
-                ratingRealm.setVoteAverage(voteAverage);
-                ratingRealm.setReleaseDate(releaseDate);
-                ratingRealm.setBackdropPath(backDropPath);
+                ratingRealm = realm1.createObject(UserRating.class, wrapper.getMovieId());
+                ratingRealm.setTitle(wrapper.getTitle());
+                ratingRealm.setPosterPath(wrapper.getPosterPath());
+                ratingRealm.setOverview(wrapper.getOverview());
+                ratingRealm.setVoteCount(wrapper.getVoteCount());
+                ratingRealm.setVoteAverage(wrapper.getVoteAverage());
+                ratingRealm.setReleaseDate(wrapper.getReleaseDate());
+                ratingRealm.setBackdropPath(wrapper.getBackdropPath());
                 ratingRealm.setUserRating(userRating);
-                MovieStatus status = findInRealmMovieStatus(realm1, movieId);
+                MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
                 if (status != null) {
                     status.setRated(true);
                 } else {
-                    realm1.createObject(MovieStatus.class, movieId)
+                    realm1.createObject(MovieStatus.class, wrapper.getMovieId())
                             .setRated(true);
                 }
             } else {
@@ -490,37 +458,33 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         });
     }
 
-    private void addToList(Integer movieId, String posterPath, String overview,
-                           String backDropPath, String movieName, String releaseDate,
-                           Integer voteCount, Double voteAverage) {
+    private void addToList(GenericMovieDataWrapper wrapper) {
 
-        Result result = new Result();
-
-        result.setId(movieId);
-        result.setPosterPath(posterPath);
-        result.setOverview(overview);
-        result.setBackdropPath(backDropPath);
-        result.setTitle(movieName);
-        result.setReleaseDate(releaseDate);
-        result.setVoteCount(voteCount);
-        result.setVoteAverage(voteAverage);
+//        Result result = new Result();
+//
+//        result.setId(movieId);
+//        result.setPosterPath(posterPath);
+//        result.setOverview(overview);
+//        result.setBackdropPath(backDropPath);
+//        result.setTitle(movieName);
+//        result.setReleaseDate(releaseDate);
+//        result.setVoteCount(voteCount);
+//        result.setVoteAverage(voteAverage);
 
         List<UserList> userListRealm = findInRealmUserLists(realm);
         if (userListRealm == null) {
-            mView.showAddToListDialog(null, result);
+            mView.showAddToListDialog(null, wrapper);
         } else {
             List<String> listName = new ArrayList<>();
             for (UserList userlist : userListRealm) {
                 listName.add(userlist.getName());
             }
-            mView.showAddToListDialog(listName, result);
+            mView.showAddToListDialog(listName, wrapper);
         }
     }
 
-    private void createNewUserList(String listTitle, String listDescription, Integer movieId,
-                                   String posterPath, String overview,
-                                   String backDropPath, String movieName, String releaseDate,
-                                   Integer voteCount, Double voteAverage) {
+    private void createNewUserList(String listTitle, String listDescription,
+                                   GenericMovieDataWrapper wrapper) {
 
         realm.executeTransactionAsync(realm1 -> {
 
@@ -528,16 +492,16 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             userList.setName(listTitle);
             userList.setDescription(listDescription);
 
-            UserListItem userListItem = findInRealmUserListItem(realm1, movieId);
+            UserListItem userListItem = findInRealmUserListItem(realm1, wrapper.getMovieId());
             if (userListItem == null) {
-                userListItem = realm1.createObject(UserListItem.class, movieId);
-                userListItem.setTitle(movieName);
-                userListItem.setPosterPath(posterPath);
-                userListItem.setOverview(overview);
-                userListItem.setVoteCount(voteCount);
-                userListItem.setVoteAverage(voteAverage);
-                userListItem.setReleaseDate(releaseDate);
-                userListItem.setBackdropPath(backDropPath);
+                userListItem = realm1.createObject(UserListItem.class, wrapper.getMovieId());
+                userListItem.setTitle(wrapper.getTitle());
+                userListItem.setPosterPath(wrapper.getPosterPath());
+                userListItem.setOverview(wrapper.getOverview());
+                userListItem.setVoteCount(wrapper.getVoteCount());
+                userListItem.setVoteAverage(wrapper.getVoteAverage());
+                userListItem.setReleaseDate(wrapper.getReleaseDate());
+                userListItem.setBackdropPath(wrapper.getBackdropPath());
 
                 userList.getItemList().add(userListItem);
             } else {
@@ -547,29 +511,27 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         });
     }
 
-    private void addMovieToUserList(int listId, Integer movieId, String posterPath, String overview,
-                                    String backDropPath, String movieName, String releaseDate,
-                                    Integer voteCount, Double voteAverage) {
+    private void addMovieToUserList(int listId, GenericMovieDataWrapper wrapper) {
 
         realm.executeTransactionAsync(realm1 -> {
             UserList userList = findInRealmUserList(realm1, listId);
 
-            UserListItem userListItem = findInRealmUserListItem(realm1, movieId);
+            UserListItem userListItem = findInRealmUserListItem(realm1, wrapper.getMovieId());
             if (userListItem == null) {
-                userListItem = realm1.createObject(UserListItem.class, movieId);
-                userListItem.setTitle(movieName);
-                userListItem.setPosterPath(posterPath);
-                userListItem.setOverview(overview);
-                userListItem.setVoteCount(voteCount);
-                userListItem.setVoteAverage(voteAverage);
-                userListItem.setReleaseDate(releaseDate);
-                userListItem.setBackdropPath(backDropPath);
+                userListItem = realm1.createObject(UserListItem.class, wrapper.getMovieId());
+                userListItem.setTitle(wrapper.getTitle());
+                userListItem.setPosterPath(wrapper.getPosterPath());
+                userListItem.setOverview(wrapper.getOverview());
+                userListItem.setVoteCount(wrapper.getVoteCount());
+                userListItem.setVoteAverage(wrapper.getVoteAverage());
+                userListItem.setReleaseDate(wrapper.getReleaseDate());
+                userListItem.setBackdropPath(wrapper.getBackdropPath());
 
                 userList.getItemList().add(userListItem);
             } else {
                 boolean isAlreadyPresent = false;
                 for (UserListItem item : userList.getItemList()) {
-                    if (item.getMovieId().equals(movieId)) {
+                    if (item.getMovieId().equals(wrapper.getMovieId())) {
                         isAlreadyPresent = true;
                         break;
                     }
@@ -581,6 +543,21 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
                 }
             }
         });
+    }
+
+    private GenericMovieDataWrapper createGenericMovieWrapper() {
+
+        GenericMovieDataWrapper wrapper = new GenericMovieDataWrapper();
+        wrapper.setMovieId(tmdbMovieDetail.getId());
+        wrapper.setPosterPath(tmdbMovieDetail.getPosterPath());
+        wrapper.setOverview(tmdbMovieDetail.getOverview());
+        wrapper.setBackdropPath(tmdbMovieDetail.getBackdropPath());
+        wrapper.setTitle(tmdbMovieDetail.getTitle());
+        wrapper.setReleaseDate(tmdbMovieDetail.getReleaseDate());
+        wrapper.setVoteCount(tmdbMovieDetail.getVoteCount());
+        wrapper.setVoteAverage(tmdbMovieDetail.getVoteAverage());
+
+        return wrapper;
     }
 
     private WatchList findInRealmWatchList(Realm realm, Integer id) {

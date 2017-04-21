@@ -40,12 +40,13 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.example.prakhar.movieapp.R;
+import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.BelongsToCollection;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Cast;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Crew;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Genre;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.full_credits.FullCreditsActivity;
 import com.example.prakhar.movieapp.ui.full_screen_image.FullScreenImageFragment;
@@ -423,9 +424,7 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void showMovieStatus(Integer movieId, String posterPath, String overview,
-                                String backDropPath, String movieName, String releaseDate,
-                                Integer voteCount, Double voteAverage, boolean isAddedToWatchlist,
+    public void showMovieStatus(GenericMovieDataWrapper wrapper, boolean isAddedToWatchlist,
                                 boolean isMarkedAsFavorite) {
 
         if (isAddedToWatchlist) {
@@ -448,30 +447,23 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
             statusListener.movieMarkedAsFavorite(false);
         }
 
-        watchlistClickListener(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+        watchlistClickListener(wrapper);
 
-        favoriteClickListener(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+        favoriteClickListener(wrapper);
 
-        addToClickListener(movieId, posterPath, overview, backDropPath, movieName,
-                releaseDate, voteCount, voteAverage);
+        addToClickListener(wrapper);
 
         statusFrame.setVisibility(View.VISIBLE);
 
     }
 
-    private void watchlistClickListener(Integer movieId, String posterPath, String overview,
-                                        String backDropPath, String movieName,
-                                        String releaseDate, Integer voteCount,
-                                        Double voteAverage) {
+    private void watchlistClickListener(GenericMovieDataWrapper wrapper) {
 
         watchlistBtn.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
                 watchlistText.setText(R.string.added_to_watchlist);
-                movieDetailPresenter.onAddToWatchlistClicked(movieId, posterPath, overview,
-                        backDropPath, movieName, releaseDate, voteCount, voteAverage);
+                movieDetailPresenter.onAddToWatchlistClicked(wrapper);
                 statusListener.movieAddedToWatchlist(true);
             }
 
@@ -484,17 +476,13 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         });
     }
 
-    private void favoriteClickListener(Integer movieId, String posterPath, String overview,
-                                       String backDropPath, String movieName,
-                                       String releaseDate, Integer voteCount,
-                                       Double voteAverage) {
+    private void favoriteClickListener(GenericMovieDataWrapper wrapper) {
 
         favoriteBtn.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
                 favoriteText.setText(R.string.marked_as_favorite);
-                movieDetailPresenter.onAddMarkAsFavoriteClicked(movieId, posterPath,
-                        overview, backDropPath, movieName, releaseDate, voteCount, voteAverage);
+                movieDetailPresenter.onAddMarkAsFavoriteClicked(wrapper);
                 statusListener.movieMarkedAsFavorite(true);
             }
 
@@ -507,13 +495,10 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
         });
     }
 
-    private void addToClickListener(Integer movieId, String posterPath, String overview,
-                                    String backDropPath, String movieName, String releaseDate,
-                                    Integer voteCount, Double voteAverage) {
+    private void addToClickListener(GenericMovieDataWrapper wrapper) {
 
         addToUserListBtn.setOnClickListener(v ->
-                movieDetailPresenter.onAddToListClicked(movieId, posterPath, overview,
-                        backDropPath, movieName, releaseDate, voteCount, voteAverage));
+                movieDetailPresenter.onAddToListClicked(wrapper));
     }
 
     @Override
@@ -524,16 +509,11 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void showRatings(Integer movieId, String posterPath, String overview,
-                            String backDropPath, String movieName, String releaseDate,
-                            Integer voteCount, Double voteAverage,
-                            Integer userRating, Double tmdbRating,
-                            Integer tmdbVotes, Double traktRating, Integer traktVotes) {
+    public void showRatings(GenericMovieDataWrapper wrapper, Integer userRating,
+                            Double traktRating, Integer traktVotes) {
 
-        ratingsWrapper = new RatingsWrapper(mActivity, movieId, posterPath, overview,
-                backDropPath, movieName, releaseDate, voteCount, voteAverage, userRating,
-                tmdbRating, tmdbVotes, traktRating, traktVotes, this);
-
+        ratingsWrapper = new RatingsWrapper(mActivity, wrapper, userRating,
+                traktRating, traktVotes, this);
         detailFrame.addView(ratingsWrapper);
 
         statusListener.movieUserRatingChanged(userRating);
@@ -568,10 +548,10 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void showAddToListDialog(List<String> userListsName, Result result) {
+    public void showAddToListDialog(List<String> userListsName, GenericMovieDataWrapper wrapper) {
 
         FragmentManager fragmentManager = getFragmentManager();
-        UserListDialogFragment fragment = UserListDialogFragment.newInstance(userListsName, result);
+        UserListDialogFragment fragment = UserListDialogFragment.newInstance(userListsName, wrapper);
 
         fragment.setTargetFragment(MovieDetailFragment.this, 300);
         fragment.show(fragmentManager, "userListFragment");
@@ -627,34 +607,19 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void onRateMovieClicked(Integer movieId, String posterPath, String overview,
-                                   String backDropPath, String movieName, String releaseDate,
-                                   Integer voteCount, Double voteAverage, Integer userRating) {
-
-        Result result = new Result();
-
-        result.setId(movieId);
-        result.setPosterPath(posterPath);
-        result.setOverview(overview);
-        result.setBackdropPath(backDropPath);
-        result.setTitle(movieName);
-        result.setReleaseDate(releaseDate);
-        result.setVoteCount(voteCount);
-        result.setVoteAverage(voteAverage);
+    public void onRateMovieClicked(GenericMovieDataWrapper wrapper, Integer userRating) {
 
         FragmentManager fragmentManager = getFragmentManager();
-        RatingDialogFragment fragment = RatingDialogFragment.newInstance(result, userRating);
+        RatingDialogFragment fragment = RatingDialogFragment.newInstance(wrapper, userRating);
         fragment.setTargetFragment(MovieDetailFragment.this, 300);
         fragment.show(fragmentManager, "ratingDialog");
     }
 
     @Override
-    public void onRatingSave(Result result, int rating) {
+    public void onRatingSave(GenericMovieDataWrapper wrapper, int rating) {
         Toast.makeText(getContext(), Integer.toString(rating), Toast.LENGTH_SHORT).show();
         ratingsWrapper.updateUserRating(rating);
-        movieDetailPresenter.onSaveMovieRatingClicked(result.getId(), result.getPosterPath(),
-                result.getOverview(), result.getBackdropPath(), result.getTitle(),
-                result.getReleaseDate(), result.getVoteCount(), result.getVoteAverage(), rating);
+        movieDetailPresenter.onSaveMovieRatingClicked(wrapper, rating);
         statusListener.movieUserRatingChanged(rating);
     }
 
@@ -702,28 +667,23 @@ public class MovieDetailFragment extends Fragment implements AppBarLayout.OnOffs
     }
 
     @Override
-    public void createNewListClick(Result result) {
+    public void createNewListClick(GenericMovieDataWrapper wrapper) {
         FragmentManager fragmentManager = getFragmentManager();
-        CreateNewListDialog fragment = CreateNewListDialog.newInstance(result);
+        CreateNewListDialog fragment = CreateNewListDialog.newInstance(wrapper);
         fragment.setTargetFragment(MovieDetailFragment.this, 300);
         fragment.show(fragmentManager, "createNewListDialog");
     }
 
     @Override
-    public void addMovieToList(String name, int listId, Result result) {
+    public void addMovieToList(String name, int listId, GenericMovieDataWrapper wrapper) {
         Toast.makeText(mActivity, "Movie Added To List " + name, Toast.LENGTH_SHORT).show();
-        movieDetailPresenter.onAddMovieToList(listId, result.getId(), result.getPosterPath(),
-                result.getOverview(), result.getBackdropPath(), result.getTitle(),
-                result.getReleaseDate(), result.getVoteCount(), result.getVoteAverage());
+        movieDetailPresenter.onAddMovieToList(listId, wrapper);
     }
 
     @Override
-    public void createNewList(String title, String description, Result result) {
+    public void createNewList(String title, String description, GenericMovieDataWrapper wrapper) {
         Toast.makeText(mActivity, "Movie Added To List " + title, Toast.LENGTH_SHORT).show();
-        movieDetailPresenter.onCreateNewListRequested(title, description,
-                result.getId(), result.getPosterPath(),
-                result.getOverview(), result.getBackdropPath(), result.getTitle(),
-                result.getReleaseDate(), result.getVoteCount(), result.getVoteAverage());
+        movieDetailPresenter.onCreateNewListRequested(title, description, wrapper);
     }
 
     @Override

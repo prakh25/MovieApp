@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +36,7 @@ public class CreateNewListDialog extends DialogFragment {
     @BindView(R.id.dialog_create_new_list_btn)
     Button createListBtn;
 
-    private Result result;
+    private GenericMovieDataWrapper wrapper;
     private CreateNewListDialogListener listDialogListener;
     private String title;
     private String description;
@@ -44,10 +44,10 @@ public class CreateNewListDialog extends DialogFragment {
     public CreateNewListDialog() {
     }
 
-    public static CreateNewListDialog newInstance(Result result) {
+    public static CreateNewListDialog newInstance(GenericMovieDataWrapper wrapper) {
 
         Bundle args = new Bundle();
-        args.putParcelable(ARG_CREATE_LIST_DIALOG_RESULT, result);
+        args.putParcelable(ARG_CREATE_LIST_DIALOG_RESULT, wrapper);
         CreateNewListDialog fragment = new CreateNewListDialog();
         fragment.setArguments(args);
         return fragment;
@@ -57,7 +57,7 @@ public class CreateNewListDialog extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null) {
-            result = getArguments().getParcelable(ARG_CREATE_LIST_DIALOG_RESULT);
+            wrapper = getArguments().getParcelable(ARG_CREATE_LIST_DIALOG_RESULT);
         }
     }
 
@@ -95,14 +95,14 @@ public class CreateNewListDialog extends DialogFragment {
             if(title == null) {
                 listDialogListener.cannotCreateList();
             } else {
-                listDialogListener.createNewList(title, description, result);
+                listDialogListener.createNewList(title, description, wrapper);
                 dismiss();
             }
         });
     }
 
     interface CreateNewListDialogListener {
-        void createNewList(String title, String description, Result result);
+        void createNewList(String title, String description, GenericMovieDataWrapper wrapper);
 
         void cannotCreateList();
     }

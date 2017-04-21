@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
+import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 
 import java.util.Locale;
 
@@ -44,27 +45,22 @@ public class RatingsWrapper extends FrameLayout {
         super(context);
     }
 
-    public RatingsWrapper(Context context, Integer movieId, String posterPath, String overview,
-                          String backDropPath, String movieName, String releaseDate,
-                          Integer voteCount, Double voteAverage,
-                          Integer userRaitng, Double tmdbRating,
-                          Integer tmdbVotes, Double traktRating, Integer traktVotes,
+    public RatingsWrapper(Context context, GenericMovieDataWrapper wrapper, Integer userRaitng,
+                          Double traktRating, Integer traktVotes,
                           UserRatingListener userRatingListener) {
         super(context);
 
         init(context);
         initUser(userRaitng);
-        initTmdb(tmdbRating, tmdbVotes);
+        initTmdb(wrapper.getVoteAverage(), wrapper.getVoteCount());
         initTrakt(traktRating, traktVotes);
 
         listener = userRatingListener;
 
         rating = userRaitng;
 
-        userFrame.setOnClickListener(v -> {
-           listener.onRateMovieClicked(movieId, posterPath, overview,
-                   backDropPath, movieName, releaseDate, voteCount, voteAverage, rating);
-        });
+        userFrame.setOnClickListener(v ->
+           listener.onRateMovieClicked(wrapper, rating));
     }
 
     private void init(Context context) {
@@ -79,7 +75,7 @@ public class RatingsWrapper extends FrameLayout {
             userStar.setImageResource(R.drawable.star_blue);
             userMovieRating.setText(String.format(Locale.US,"%d /10", userRating));
             userRatingText.setVisibility(VISIBLE);
-            userRatingText.setText("You");
+            userRatingText.setText(R.string.you);
         }
     }
 
@@ -111,14 +107,12 @@ public class RatingsWrapper extends FrameLayout {
             userStar.setImageResource(R.drawable.star_blue);
             userMovieRating.setText(String.format(Locale.US, "%d /10", userRating));
             userRatingText.setVisibility(VISIBLE);
-            userRatingText.setText("You");
+            userRatingText.setText(R.string.you);
         }
         rating = userRating;
     }
 
     public interface UserRatingListener {
-        void onRateMovieClicked(Integer movieId, String posterPath, String overview,
-                                String backDropPath, String movieName, String releaseDate,
-                                Integer voteCount, Double voteAverage, Integer userRating);
+        void onRateMovieClicked(GenericMovieDataWrapper wrapper, Integer userRating);
     }
 }
