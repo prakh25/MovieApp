@@ -4,12 +4,10 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by Prakhar on 3/25/2017.
+ * Created by Prakhar on 4/21/2017.
  */
 
-public class UserListItem extends RealmObject {
-
-    public static final String FIELD_USER_LIST_ITEM_ID = "movieId";
+public class MovieItem extends RealmObject {
 
     @PrimaryKey
     private Integer movieId;
@@ -91,5 +89,4 @@ public class UserListItem extends RealmObject {
     public void setVoteAverage(Double voteAverage) {
         this.voteAverage = voteAverage;
     }
-
 }

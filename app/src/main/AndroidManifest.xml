@@ -35,7 +35,7 @@
                 android:value=".ui.home.HomeActivity"/>
         </activity>
 
-        <activity android:name=".ui.more_movies_list.MoreActivity"
+        <activity android:name=".ui.more_movies_list.MovieListActivity"
             android:theme="@style/HomeScreenTheme">
         </activity>
 

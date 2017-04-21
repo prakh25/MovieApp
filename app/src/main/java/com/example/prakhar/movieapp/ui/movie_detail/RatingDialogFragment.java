@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 
 import java.util.Locale;
 
@@ -39,16 +39,16 @@ public class RatingDialogFragment extends DialogFragment {
     Button deleteRatingBtn;
 
     private Integer userRating;
-    private Result result;
+    private GenericMovieDataWrapper wrapper;
     private RatingDialogListener listener;
 
     public RatingDialogFragment() {
     }
 
-    public static RatingDialogFragment newInstance(Result result, Integer userRating) {
+    public static RatingDialogFragment newInstance(GenericMovieDataWrapper wrapper, Integer userRating) {
 
         Bundle args = new Bundle();
-        args.putParcelable(ARG_MOVIE_RESULT, result);
+        args.putParcelable(ARG_MOVIE_RESULT, wrapper);
         args.putInt(ARG_USER_RATING, userRating);
         RatingDialogFragment fragment = new RatingDialogFragment();
         fragment.setArguments(args);
@@ -60,7 +60,7 @@ public class RatingDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_rating, container);
         if (getArguments() != null) {
-            result = getArguments().getParcelable(ARG_MOVIE_RESULT);
+            wrapper = getArguments().getParcelable(ARG_MOVIE_RESULT);
             userRating = getArguments().getInt(ARG_USER_RATING);
         }
         listener = (RatingDialogListener) getTargetFragment();
@@ -70,7 +70,7 @@ public class RatingDialogFragment extends DialogFragment {
 
     private void init(View view) {
         ButterKnife.bind(this, view);
-        ratingDialogTitle.setText(result.getTitle());
+        ratingDialogTitle.setText(wrapper.getTitle());
 
         ratingBar.setRating((float) userRating);
 
@@ -88,7 +88,7 @@ public class RatingDialogFragment extends DialogFragment {
         });
 
         saveRatingBan.setOnClickListener(v -> {
-            listener.onRatingSave(result, userRating);
+            listener.onRatingSave(wrapper, userRating);
             dismiss();
         });
 
@@ -99,8 +99,8 @@ public class RatingDialogFragment extends DialogFragment {
         });
     }
 
-    public interface RatingDialogListener {
-        void onRatingSave(Result result, int rating);
+    interface RatingDialogListener {
+        void onRatingSave(GenericMovieDataWrapper wrapper, int rating);
 
         void onRatingDelete();
     }

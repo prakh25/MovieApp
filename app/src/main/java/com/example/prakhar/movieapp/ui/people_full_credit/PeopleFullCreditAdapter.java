@@ -1,5 +1,6 @@
 package com.example.prakhar.movieapp.ui.people_full_credit;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ import butterknife.ButterKnife;
  * Created by Prakhar on 4/6/2017.
  */
 
-public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCreditAdapter.CreditViewHolder> {
+class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCreditAdapter.CreditViewHolder> {
 
     private static final int VIEW_TYPE_CAST = 0;
     private static final int VIEW_TYPE_CREW = 1;
@@ -40,7 +41,7 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
 
     private int year;
 
-    public PeopleFullCreditAdapter(int id) {
+    PeopleFullCreditAdapter(int id) {
         castList = new ArrayList<>();
         crewList = new ArrayList<>();
         listener = null;
@@ -62,6 +63,10 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
                         .load(Constants.TMDB_IMAGE_URL + "w185" + castList.get(position).getPosterPath())
                         .placeholder(R.drawable.movie_poster_placeholder)
                         .into(holder.moviePoster);
+
+                ViewCompat.setTransitionName(holder.moviePoster,
+                        castList.get(position).getPosterPath());
+
                 if(castList.get(position).getMediaType().equals("movie")) {
                     if (castList.get(position).getReleaseDate() != null &&
                             !castList.get(position).getReleaseDate().isEmpty()) {
@@ -86,7 +91,8 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
                         castList.get(position).getCharacter()));
 
                 holder.creditFrame.setOnClickListener(v ->
-                        listener.onPersonClicked(castList.get(position).getId(), position));
+                        listener.onPersonClicked(castList.get(position).getId(), position,
+                                holder.moviePoster));
                 break;
             case VIEW_TYPE_CREW:
                 Glide.with(holder.itemView.getContext())
@@ -117,7 +123,8 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
                 holder.characterPlayed.setText(crewList.get(position).getJob());
 
                 holder.creditFrame.setOnClickListener(v ->
-                        listener.onPersonClicked(crewList.get(position).getId(), position));
+                        listener.onPersonClicked(crewList.get(position).getId(), position,
+                                holder.moviePoster));
                 break;
         }
     }
@@ -133,17 +140,17 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
         Glide.clear(holder.moviePoster);
     }
 
-    public void addCasts(List<Cast> casts) {
+    void addCasts(List<Cast> casts) {
         castList.addAll(casts);
         notifyItemRangeInserted(0, castList.size() - 1);
     }
 
-    public void addCrews(List<Crew> crews) {
+    void addCrews(List<Crew> crews) {
         crewList.addAll(crews);
         notifyItemRangeInserted(0, crewList.size() - 1);
     }
 
-    public class CreditViewHolder extends RecyclerView.ViewHolder {
+    static class CreditViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.people_full_credit_frame)
         FrameLayout creditFrame;
@@ -154,17 +161,17 @@ public class PeopleFullCreditAdapter extends RecyclerView.Adapter<PeopleFullCred
         @BindView(R.id.people_full_credit_character)
         TextView characterPlayed;
 
-        public CreditViewHolder(View itemView) {
+        CreditViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
 
-    public interface PeopleFullCreditListener {
-        void onPersonClicked(Integer movieId, int clickedPosition);
+    interface PeopleFullCreditListener {
+        void onPersonClicked(Integer movieId, int clickedPosition, ImageView sharedImageView);
     }
 
-    public void setUpFullCreditListener(PeopleFullCreditListener creditListener) {
+    void setUpFullCreditListener(PeopleFullCreditListener creditListener) {
         listener = creditListener;
     }
 }

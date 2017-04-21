@@ -12,12 +12,12 @@ import retrofit2.Response;
  * Created by Prakhar on 3/20/2017.
  */
 
-public class SearchPresenter extends BasePresenter<SearchContract.SearchView>
+class SearchPresenter extends BasePresenter<SearchContract.SearchView>
         implements SearchContract.ViewActions {
 
     private final DataManager dataManager;
 
-    public SearchPresenter(DataManager dataManager) {
+    SearchPresenter(DataManager dataManager) {
         this.dataManager = dataManager;
     }
 

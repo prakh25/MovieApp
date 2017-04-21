@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.ui.full_screen_image.FullScreenImageFragment;
 import com.example.prakhar.movieapp.utils.Utils;
 

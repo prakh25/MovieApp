@@ -1,48 +1,46 @@
 
-package com.example.prakhar.movieapp.model.movie_detail.tmdb;
+package com.example.prakhar.movieapp.model.home.tv;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Similar implements Parcelable
+public class TvResponse implements Parcelable
 {
 
     @SerializedName("page")
     @Expose
     private Integer page;
-    @SerializedName("movies")
+    @SerializedName("results")
     @Expose
-    private List<Result> movies = new ArrayList<>();
-    @SerializedName("total_pages")
-    @Expose
-    private Integer totalPages;
+    private List<TvResult> tvResults = null;
     @SerializedName("total_results")
     @Expose
     private Integer totalResults;
-    public final static Creator<Similar> CREATOR = new Creator<Similar>() {
+    @SerializedName("total_pages")
+    @Expose
+    private Integer totalPages;
+    public final static Creator<TvResponse> CREATOR = new Creator<TvResponse>() {
 
 
         @SuppressWarnings({
             "unchecked"
         })
-        public Similar createFromParcel(Parcel in) {
-            Similar instance = new Similar();
+        public TvResponse createFromParcel(Parcel in) {
+            TvResponse instance = new TvResponse();
             instance.page = ((Integer) in.readValue((Integer.class.getClassLoader())));
-            in.readList(instance.movies, (Result.class.getClassLoader()));
-            instance.totalPages = ((Integer) in.readValue((Integer.class.getClassLoader())));
+            in.readList(instance.tvResults, (TvResult.class.getClassLoader()));
             instance.totalResults = ((Integer) in.readValue((Integer.class.getClassLoader())));
+            instance.totalPages = ((Integer) in.readValue((Integer.class.getClassLoader())));
             return instance;
         }
 
-        public Similar[] newArray(int size) {
-            return (new Similar[size]);
+        public TvResponse[] newArray(int size) {
+            return (new TvResponse[size]);
         }
 
     }
@@ -56,20 +54,12 @@ public class Similar implements Parcelable
         this.page = page;
     }
 
-    public List<Result> getMovies() {
-        return movies;
+    public List<TvResult> getTvResults() {
+        return tvResults;
     }
 
-    public void setMovies(List<Result> movies) {
-        this.movies = movies;
-    }
-
-    public Integer getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
+    public void setTvResults(List<TvResult> tvResults) {
+        this.tvResults = tvResults;
     }
 
     public Integer getTotalResults() {
@@ -80,11 +70,19 @@ public class Similar implements Parcelable
         this.totalResults = totalResults;
     }
 
+    public Integer getTotalPages() {
+        return totalPages;
+    }
+
+    public void setTotalPages(Integer totalPages) {
+        this.totalPages = totalPages;
+    }
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(page);
-        dest.writeList(movies);
-        dest.writeValue(totalPages);
+        dest.writeList(tvResults);
         dest.writeValue(totalResults);
+        dest.writeValue(totalPages);
     }
 
     public int describeContents() {

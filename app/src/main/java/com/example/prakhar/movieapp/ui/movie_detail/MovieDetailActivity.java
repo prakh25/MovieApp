@@ -8,7 +8,11 @@ import android.view.MenuItem;
 import com.example.prakhar.movieapp.R;
 import com.example.prakhar.movieapp.ui.base.BaseActivity;
 
-import timber.log.Timber;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_ADDED_TO_WATCHLIST;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_MARKED_AS_FAVORITE;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_MOVIE_ID;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_POSTER_PATH;
+import static com.example.prakhar.movieapp.utils.Constants.ARG_USER_RATING;
 
 /**
  * Created by Prakhar on 3/2/2017.
@@ -16,30 +20,28 @@ import timber.log.Timber;
 
 public class MovieDetailActivity extends BaseActivity implements MovieDetailFragment.MovieStatusListener{
 
-    private static final String EXTRA_ID = "movieId";
-    private static final String EXTRA_ADDED_TO_WATCHLIST = "addedToWatchlist";
-    private static final String EXTRA_MARKED_AS_FAVORITE = "markedAsFavorite";
-    private static final String EXTRA_USER_RATING = "userRating";
-
     private boolean watchlistStatus = false;
     private boolean favoriteStatus = false;
     private int rating;
 
-    public static Intent newStartIntent(Context context, Integer movieId) {
+    public static Intent newStartIntent(Context context, Integer movieId, String posterId) {
         Intent intent = new Intent(context, MovieDetailActivity.class);
-        intent.putExtra(EXTRA_ID, movieId);
+        intent.putExtra(ARG_MOVIE_ID, movieId);
+        intent.putExtra(ARG_POSTER_PATH, posterId);
         return intent;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Integer movieId = getIntent().getIntExtra(EXTRA_ID, 0);
+        Integer movieId = getIntent().getIntExtra(ARG_MOVIE_ID, 0);
+        String posterPath = getIntent().getStringExtra(ARG_POSTER_PATH);
+        supportPostponeEnterTransition();
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.detail_container, MovieDetailFragment.newInstance(movieId))
+                    .replace(R.id.detail_container, MovieDetailFragment.newInstance(movieId, posterPath))
                     .commit();
         }
     }
@@ -48,7 +50,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 onBackPressed();
                 return true;
             default:
@@ -59,25 +61,23 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailFrag
     @Override
     public void onBackPressed() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(EXTRA_ADDED_TO_WATCHLIST, watchlistStatus);
-        returnIntent.putExtra(EXTRA_MARKED_AS_FAVORITE, favoriteStatus);
-        returnIntent.putExtra(EXTRA_USER_RATING, rating);
+        returnIntent.putExtra(ARG_ADDED_TO_WATCHLIST, watchlistStatus);
+        returnIntent.putExtra(ARG_MARKED_AS_FAVORITE, favoriteStatus);
+        returnIntent.putExtra(ARG_USER_RATING, rating);
         setResult(RESULT_OK, returnIntent);
-        finish();
+        supportFinishAfterTransition();
         super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
     public void movieAddedToWatchlist(boolean addedToWatchlist) {
         watchlistStatus = addedToWatchlist;
-        Timber.i("Watchlist status " + watchlistStatus);
     }
 
     @Override
     public void movieMarkedAsFavorite(boolean markedAsFavorite) {
         favoriteStatus = markedAsFavorite;
-        Timber.i("Favorite Status " + favoriteStatus);
     }
 
     @Override

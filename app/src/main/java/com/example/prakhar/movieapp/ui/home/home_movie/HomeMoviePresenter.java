@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.example.prakhar.movieapp.MovieApp;
-import com.example.prakhar.movieapp.model.tmdb.MovieResponse;
+import com.example.prakhar.movieapp.model.home.movie.MovieResponse;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import com.example.prakhar.movieapp.utils.Constants;

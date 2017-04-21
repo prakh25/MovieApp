@@ -1,17 +1,24 @@
 package com.example.prakhar.movieapp.ui.people_full_credit;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
@@ -127,9 +134,26 @@ public class PeopleFullCreditViewPagerFragment extends Fragment
     }
 
     @Override
-    public void onPersonClicked(Integer movieId, int clickedPosition) {
-        startActivity(MovieDetailActivity.newStartIntent(getActivity(), movieId));
-        getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    public void onPersonClicked(Integer movieId, int clickedPosition, ImageView shareImageView) {
+        startActivity(MovieDetailActivity.newStartIntent(getActivity(),movieId,
+                ViewCompat.getTransitionName(shareImageView)),
+                makeTransitionBundle(shareImageView));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setUpTransitionAnimation();
+        }
+    }
+
+    private Bundle makeTransitionBundle(ImageView sharedElementView) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                sharedElementView, ViewCompat.getTransitionName(sharedElementView)).toBundle();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setUpTransitionAnimation() {
+        Transition transition = TransitionInflater.from(getActivity())
+                .inflateTransition(R.transition.arc_motion);
+        getActivity().getWindow().setSharedElementReenterTransition(transition);
     }
 
     @Override

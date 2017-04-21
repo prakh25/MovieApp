@@ -1,5 +1,5 @@
 
-package com.example.prakhar.movieapp.model.tmdb;
+package com.example.prakhar.movieapp.model.home.movie;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -30,8 +30,8 @@ public class Images implements Parcelable
         public Images createFromParcel(Parcel in) {
             Images instance = new Images();
             instance.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
-            in.readList(instance.backdrops, (com.example.prakhar.movieapp.model.tmdb.Backdrop.class.getClassLoader()));
-            in.readList(instance.posters, (com.example.prakhar.movieapp.model.tmdb.Poster.class.getClassLoader()));
+            in.readList(instance.backdrops, (Backdrop.class.getClassLoader()));
+            in.readList(instance.posters, (Poster.class.getClassLoader()));
             return instance;
         }
 

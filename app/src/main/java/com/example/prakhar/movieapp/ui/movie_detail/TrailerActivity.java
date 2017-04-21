@@ -48,7 +48,6 @@ public class TrailerActivity extends YouTubeBaseActivity implements YouTubePlaye
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trailer);
 
         final Bundle extras = getIntent().getExtras();
         if (extras != null && extras.containsKey(EXTRA_VIDEO_ID)) {
@@ -57,18 +56,20 @@ public class TrailerActivity extends YouTubeBaseActivity implements YouTubePlaye
             finish();
         }
 
-        unbinder = ButterKnife.bind(this);
+        setContentView(R.layout.activity_trailer);
 
-        frameLayout.setOnClickListener(v -> {
-            onBackPressed();
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        });
+        unbinder = ButterKnife.bind(this);
 
         youTubePlayerView.initialize(BuildConfig.YOU_TUBE_DATA_API_KEY, this);
 
         if (savedInstanceState != null) {
             videoTime = savedInstanceState.getInt(EXTRA_VIDEO_TIME);
         }
+
+//        frameLayout.setOnClickListener(v -> {
+//            onBackPressed();
+//            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//        });
     }
 
     @Override

@@ -47,7 +47,7 @@ public class HomeLinksWrapper extends LinearLayout {
     }
 
     private void init(Context context) {
-        inflate(context, R.layout.home_links_wrapper, this);
+        inflate(context, R.layout.home_movie_list_wrapper, this);
         ButterKnife.bind(this);
     }
 

@@ -1,6 +1,6 @@
 package com.example.prakhar.movieapp.ui.home.home_movie;
 
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.ui.base.BaseView;
 
 import java.util.List;

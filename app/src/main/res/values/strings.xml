@@ -47,4 +47,6 @@
     <string name="error_generic_server_error">There was na error contacting the server, %1$s</string>
     <string name="action_try_again">Try Again</string>
     <string name="nothing_to_display">Nothing to Display</string>
+    <string name="no_description">No Description Available for the Movie</string>
+    <string name="you">You</string>
 </resources>

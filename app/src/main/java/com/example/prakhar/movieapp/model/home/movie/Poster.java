@@ -1,5 +1,5 @@
 
-package com.example.prakhar.movieapp.model.tmdb;
+package com.example.prakhar.movieapp.model.home.movie;
 
 import android.os.Parcel;
 import android.os.Parcelable;
