@@ -366,8 +366,15 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             WatchList watchListRealm = findInRealmWatchList(realm1, movieId);
             if (watchListRealm != null) {
                 watchListRealm.deleteFromRealm();
+
                 MovieStatus status = findInRealmMovieStatus(realm1, movieId);
-                status.setAddedToWatchList(false);
+
+                if(!status.isRated() && !status.isMarkedAsFavorite()
+                        && !status.isPresentInUserList()) {
+                    status.deleteFromRealm();
+                } else {
+                    status.setAddedToWatchList(false);
+                }
             } else {
                 Timber.i("No such id present");
             }
@@ -403,7 +410,13 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
                 favoriteRealm.deleteFromRealm();
 
                 MovieStatus status = findInRealmMovieStatus(realm1, movieId);
-                status.setMarkedAsFavorite(false);
+
+                if(!status.isRated() && !status.isAddedToWatchList()
+                        && !status.isPresentInUserList()) {
+                    status.deleteFromRealm();
+                } else {
+                    status.setMarkedAsFavorite(false);
+                }
             } else {
                 Timber.i("No such id present");
             }
@@ -438,8 +451,14 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             UserRating realmRatings = findInRealmRatings(realm1, movieId);
             if (realmRatings != null) {
                 realmRatings.deleteFromRealm();
+
                 MovieStatus status = findInRealmMovieStatus(realm1, movieId);
-                status.setRated(false);
+                if(!status.isAddedToWatchList() && !status.isMarkedAsFavorite()
+                        && !status.isPresentInUserList()) {
+                    status.deleteFromRealm();
+                } else {
+                    status.setRated(false);
+                }
             } else {
                 Timber.i("No such id present");
             }
@@ -470,6 +489,14 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             userList.setDescription(listDescription);
             MovieItem movieItem = addMovieItemInUserList(realm1, wrapper);
             userList.getItemList().add(movieItem);
+
+            MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
+            if (status != null) {
+                status.setPresentInUserList(true);
+            } else {
+                realm1.createObject(MovieStatus.class, wrapper.getMovieId())
+                        .setPresentInUserList(true);
+            }
         });
     }
 
@@ -490,6 +517,14 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
 
             if(!isAlreadyPresent) {
                 userList.getItemList().add(movieItem);
+            }
+
+            MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
+            if (status != null) {
+                status.setPresentInUserList(true);
+            } else {
+                realm1.createObject(MovieStatus.class, wrapper.getMovieId())
+                        .setPresentInUserList(true);
             }
         });
     }
