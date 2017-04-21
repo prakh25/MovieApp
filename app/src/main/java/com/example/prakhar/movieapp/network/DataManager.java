@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.example.prakhar.movieapp.BuildConfig;
 import com.example.prakhar.movieapp.model.genre.GenreResponse;
-import com.example.prakhar.movieapp.model.movie_detail.MovieDetail;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.TmdbMovieDetail;
 import com.example.prakhar.movieapp.model.movie_detail.trakt.TraktMovieRating;
 import com.example.prakhar.movieapp.model.people_detail.PeopleDetails;
@@ -99,7 +98,7 @@ public class DataManager {
 //                .enqueue(callback);
 //    }
 
-    public void getBoxOfficeMovieDetail(Integer movieId, Callback<MovieDetail> callback) {
+    public void getBoxOfficeMovieDetail(Integer movieId, Callback<TmdbMovieDetail> callback) {
         tmdbService.getDetail(movieId, BuildConfig.TMDB_API_KEY)
                 .enqueue(callback);
     }

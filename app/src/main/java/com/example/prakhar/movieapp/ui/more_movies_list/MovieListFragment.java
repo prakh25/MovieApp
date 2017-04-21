@@ -116,6 +116,8 @@ public class MovieListFragment extends Fragment implements MovieListContract.Mor
                     ID = 3;
                     movieListAdapter = new MovieListAdapter(true);
                     break;
+                default:
+                    break;
             }
         } else {
             ID = 4;
@@ -151,6 +153,8 @@ public class MovieListFragment extends Fragment implements MovieListContract.Mor
                 if(movieListAdapter.isEmpty()) {
                     movieListPresenter.onPopularMovieByGenreRequested(genreId);
                 }
+                break;
+            default:
                 break;
         }
 

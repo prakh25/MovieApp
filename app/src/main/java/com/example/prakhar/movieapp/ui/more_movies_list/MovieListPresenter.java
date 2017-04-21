@@ -10,11 +10,11 @@ import com.example.prakhar.movieapp.MovieApp;
 import com.example.prakhar.movieapp.model.home.movie.MovieResponse;
 import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.model.more_movie_list.MovieListResult;
-import com.example.prakhar.movieapp.model.movie_detail.MovieDetail;
-import com.example.prakhar.movieapp.model.realm.MovieStatus;
-import com.example.prakhar.movieapp.model.realm.UserRating;
 import com.example.prakhar.movieapp.model.more_movie_list.box_office.BoxOffice;
 import com.example.prakhar.movieapp.model.more_movie_list.box_office.RevenueComparator;
+import com.example.prakhar.movieapp.model.movie_detail.tmdb.TmdbMovieDetail;
+import com.example.prakhar.movieapp.model.realm.MovieStatus;
+import com.example.prakhar.movieapp.model.realm.UserRating;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import com.example.prakhar.movieapp.utils.Constants;
@@ -87,6 +87,8 @@ public class MovieListPresenter extends BasePresenter<MovieListContract.MoreView
                 break;
             case 4:
                 getMoviesByGenre(pageNo, genreId);
+                break;
+            default:
                 break;
         }
     }
@@ -210,15 +212,16 @@ public class MovieListPresenter extends BasePresenter<MovieListContract.MoreView
     private void getBoxOfficeMovieList(BoxOffice boxOffice) {
         Integer tmdbId = boxOffice.getMovie().getIds().getTmdb();
         dataManager.getBoxOfficeMovieDetail(tmdbId,
-                new Callback<MovieDetail>() {
+                new Callback<TmdbMovieDetail>() {
                     @Override
-                    public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
-                        Pair<MovieDetail, BoxOffice> pair = new Pair<>(response.body(), boxOffice);
+                    public void onResponse(Call<TmdbMovieDetail> call, Response<TmdbMovieDetail> response) {
+                        Pair<TmdbMovieDetail, BoxOffice> pair = new Pair<>(response.body(), boxOffice);
                         setMovieListResultList(getBoxOfficeMovieDetail(pair));
                     }
 
                     @Override
-                    public void onFailure(Call<MovieDetail> call, Throwable t) {
+                    public void onFailure(Call<TmdbMovieDetail> call, Throwable t) {
+                        //Empty
                     }
                 });
     }
@@ -229,7 +232,7 @@ public class MovieListPresenter extends BasePresenter<MovieListContract.MoreView
 
     private MovieListResult getBoxOfficeMovieDetail(Pair pair) {
 
-        MovieDetail movieDetail = (MovieDetail) pair.first;
+        TmdbMovieDetail movieDetail = (TmdbMovieDetail) pair.first;
         BoxOffice boxOffice = (BoxOffice) pair.second;
 
         realm = Realm.getDefaultInstance();
@@ -253,7 +256,7 @@ public class MovieListPresenter extends BasePresenter<MovieListContract.MoreView
         return movieListResult;
     }
 
-    private Result createResult(MovieDetail movieDetail) {
+    private Result createResult(TmdbMovieDetail movieDetail) {
         Result result = new Result();
         result.setTitle(movieDetail.getTitle());
         result.setId(movieDetail.getId());
