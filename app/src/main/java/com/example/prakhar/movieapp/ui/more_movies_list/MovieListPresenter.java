@@ -28,6 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.prakhar.movieapp.utils.Constants.FIELD_MOVIE_ID;
+
 /**
  * Created by Prakhar on 3/14/2017.
  */
@@ -265,12 +267,12 @@ class MovieListPresenter extends BasePresenter<MovieListContract.MoreView>
     }
 
     private MovieStatus findInRealmMovieStatus(Realm realm, Integer id) {
-        return realm.where(MovieStatus.class).equalTo(MovieStatus.FIELD_MOVIE_ID, id)
+        return realm.where(MovieStatus.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
     private UserRating findInRealmUserRating(Realm realm, Integer id) {
-        return realm.where(UserRating.class).equalTo(UserRating.FIELD_MOVIE_ID, id)
+        return realm.where(UserRating.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 

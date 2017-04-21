@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.example.prakhar.movieapp.MovieApp;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.model.movie_detail.GenericMovieDataWrapper;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Cast;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Crew;
@@ -20,7 +21,6 @@ import com.example.prakhar.movieapp.model.realm.UserList;
 import com.example.prakhar.movieapp.model.realm.UserRating;
 import com.example.prakhar.movieapp.model.realm.WatchList;
 import com.example.prakhar.movieapp.model.release_dates.ReleaseDatesResult;
-import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.base.BasePresenter;
 import com.example.prakhar.movieapp.utils.Constants;
@@ -34,7 +34,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-import static com.example.prakhar.movieapp.model.realm.UserList.FIELD_LIST_ID;
 import static com.example.prakhar.movieapp.utils.Constants.FIELD_LIST_ID;
 import static com.example.prakhar.movieapp.utils.Constants.FIELD_MOVIE_ID;
 
@@ -185,15 +184,17 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             if (!isViewAttached()) return;
             mView.hideProgress();
 
-            showMovieStatus();
+            GenericMovieDataWrapper wrapper = createGenericMovieWrapper();
 
-            showMovieRating();
+            showMovieStatus(wrapper);
+
+            showMovieRating(wrapper);
 
             if (!tmdbMovieDetail.getVideoResponse().getResults().isEmpty()) {
                 showMovieTrailer();
             }
             showMovieOverview();
-            if(!tmdbMovieDetail.getCredits().getCast().isEmpty()) {
+            if (!tmdbMovieDetail.getCredits().getCast().isEmpty()) {
                 showMovieCast();
             }
             if (!tmdbMovieDetail.getCredits().getCrew().isEmpty()) {
@@ -211,13 +212,12 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             }
             mView.showExternalLinks(tmdbMovieDetail.getHomepage(), tmdbMovieDetail.getId(),
                     tmdbMovieDetail.getImdbId(), tmdbMovieDetail.getTitle());
-        }, 1000);
+        }, 1200);
     }
 
-    private void showMovieStatus() {
-        MovieStatus realmResult = findInRealmMovieStatus(realm, tmdbMovieDetail.getId());
+    private void showMovieStatus(GenericMovieDataWrapper wrapper) {
 
-        GenericMovieDataWrapper wrapper = createGenericMovieWrapper();
+        MovieStatus realmResult = findInRealmMovieStatus(realm, tmdbMovieDetail.getId());
 
         if (realmResult == null) {
             mView.showMovieStatus(wrapper, false, false);
@@ -227,9 +227,7 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         }
     }
 
-    private void showMovieRating() {
-
-        GenericMovieDataWrapper ratingsWrapper = createGenericMovieWrapper();
+    private void showMovieRating(GenericMovieDataWrapper ratingsWrapper) {
 
         UserRating userRating = findInRealmRatings(realm, tmdbMovieDetail.getId());
 
@@ -347,13 +345,8 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             WatchList watchListRealm = findInRealmWatchList(realm1, wrapper.getMovieId());
             if (watchListRealm == null) {
                 watchListRealm = realm1.createObject(WatchList.class, wrapper.getMovieId());
-                watchListRealm.setTitle(wrapper.getTitle());
-                watchListRealm.setPosterPath(wrapper.getPosterPath());
-                watchListRealm.setOverview(wrapper.getOverview());
-                watchListRealm.setVoteCount(wrapper.getVoteCount());
-                watchListRealm.setVoteAverage(wrapper.getVoteAverage());
-                watchListRealm.setReleaseDate(wrapper.getReleaseDate());
-                watchListRealm.setBackdropPath(wrapper.getBackdropPath());
+
+                addMovieItemInRealm(realm1, wrapper);
 
                 MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
                 if (status != null) {
@@ -387,13 +380,8 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             Favorite favoriteRealm = findInRealmFavorite(realm1, wrapper.getMovieId());
             if (favoriteRealm == null) {
                 favoriteRealm = realm1.createObject(Favorite.class, wrapper.getMovieId());
-                favoriteRealm.setTitle(wrapper.getTitle());
-                favoriteRealm.setPosterPath(wrapper.getPosterPath());
-                favoriteRealm.setOverview(wrapper.getOverview());
-                favoriteRealm.setVoteCount(wrapper.getVoteCount());
-                favoriteRealm.setVoteAverage(wrapper.getVoteAverage());
-                favoriteRealm.setReleaseDate(wrapper.getReleaseDate());
-                favoriteRealm.setBackdropPath(wrapper.getBackdropPath());
+
+                addMovieItemInRealm(realm1, wrapper);
 
                 MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
                 if (status != null) {
@@ -428,14 +416,10 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             UserRating ratingRealm = findInRealmRatings(realm1, wrapper.getMovieId());
             if (ratingRealm == null) {
                 ratingRealm = realm1.createObject(UserRating.class, wrapper.getMovieId());
-                ratingRealm.setTitle(wrapper.getTitle());
-                ratingRealm.setPosterPath(wrapper.getPosterPath());
-                ratingRealm.setOverview(wrapper.getOverview());
-                ratingRealm.setVoteCount(wrapper.getVoteCount());
-                ratingRealm.setVoteAverage(wrapper.getVoteAverage());
-                ratingRealm.setReleaseDate(wrapper.getReleaseDate());
-                ratingRealm.setBackdropPath(wrapper.getBackdropPath());
                 ratingRealm.setUserRating(userRating);
+
+                addMovieItemInRealm(realm1, wrapper);
+
                 MovieStatus status = findInRealmMovieStatus(realm1, wrapper.getMovieId());
                 if (status != null) {
                     status.setRated(true);
@@ -464,17 +448,6 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
 
     private void addToList(GenericMovieDataWrapper wrapper) {
 
-//        Result result = new Result();
-//
-//        result.setId(movieId);
-//        result.setPosterPath(posterPath);
-//        result.setOverview(overview);
-//        result.setBackdropPath(backDropPath);
-//        result.setTitle(movieName);
-//        result.setReleaseDate(releaseDate);
-//        result.setVoteCount(voteCount);
-//        result.setVoteAverage(voteAverage);
-
         List<UserList> userListRealm = findInRealmUserLists(realm);
         if (userListRealm == null) {
             mView.showAddToListDialog(null, wrapper);
@@ -495,23 +468,8 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
             UserList userList = realm1.createObject(UserList.class, nextListKey(realm1));
             userList.setName(listTitle);
             userList.setDescription(listDescription);
-
-            UserListItem userListItem = findInRealmUserListItem(realm1, wrapper.getMovieId());
-            if (userListItem == null) {
-                userListItem = realm1.createObject(UserListItem.class, wrapper.getMovieId());
-                userListItem.setTitle(wrapper.getTitle());
-                userListItem.setPosterPath(wrapper.getPosterPath());
-                userListItem.setOverview(wrapper.getOverview());
-                userListItem.setVoteCount(wrapper.getVoteCount());
-                userListItem.setVoteAverage(wrapper.getVoteAverage());
-                userListItem.setReleaseDate(wrapper.getReleaseDate());
-                userListItem.setBackdropPath(wrapper.getBackdropPath());
-
-                userList.getItemList().add(userListItem);
-            } else {
-                userList.getItemList().add(userListItem);
-            }
-
+            MovieItem movieItem = addMovieItemInUserList(realm1, wrapper);
+            userList.getItemList().add(movieItem);
         });
     }
 
@@ -519,32 +477,19 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
 
         realm.executeTransactionAsync(realm1 -> {
             UserList userList = findInRealmUserList(realm1, listId);
+            boolean isAlreadyPresent = false;
 
-            UserListItem userListItem = findInRealmUserListItem(realm1, wrapper.getMovieId());
-            if (userListItem == null) {
-                userListItem = realm1.createObject(UserListItem.class, wrapper.getMovieId());
-                userListItem.setTitle(wrapper.getTitle());
-                userListItem.setPosterPath(wrapper.getPosterPath());
-                userListItem.setOverview(wrapper.getOverview());
-                userListItem.setVoteCount(wrapper.getVoteCount());
-                userListItem.setVoteAverage(wrapper.getVoteAverage());
-                userListItem.setReleaseDate(wrapper.getReleaseDate());
-                userListItem.setBackdropPath(wrapper.getBackdropPath());
+            MovieItem movieItem = addMovieItemInUserList(realm1, wrapper);
 
-                userList.getItemList().add(userListItem);
-            } else {
-                boolean isAlreadyPresent = false;
-                for (UserListItem item : userList.getItemList()) {
-                    if (item.getMovieId().equals(wrapper.getMovieId())) {
-                        isAlreadyPresent = true;
-                        break;
-                    }
+            for (MovieItem item : userList.getItemList()) {
+                if (item.getMovieId().equals(wrapper.getMovieId())) {
+                    isAlreadyPresent = true;
+                    break;
                 }
-                if (isAlreadyPresent) {
-                    return;
-                } else {
-                    userList.getItemList().add(userListItem);
-                }
+            }
+
+            if(!isAlreadyPresent) {
+                userList.getItemList().add(movieItem);
             }
         });
     }
@@ -564,13 +509,52 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
         return wrapper;
     }
 
+    private MovieItem addMovieItemInUserList(Realm realm, GenericMovieDataWrapper wrapper) {
+
+        MovieItem movieItem = findInRealmMovieItem(realm, wrapper.getMovieId());
+
+        if (movieItem == null) {
+            movieItem = realm.createObject(MovieItem.class, wrapper.getMovieId());
+            movieItem.setTitle(wrapper.getTitle());
+            movieItem.setPosterPath(wrapper.getPosterPath());
+            movieItem.setOverview(wrapper.getOverview());
+            movieItem.setVoteCount(wrapper.getVoteCount());
+            movieItem.setVoteAverage(wrapper.getVoteAverage());
+            movieItem.setReleaseDate(wrapper.getReleaseDate());
+            movieItem.setBackdropPath(wrapper.getBackdropPath());
+        }
+
+        return movieItem;
+    }
+
+    private void addMovieItemInRealm(Realm realm, GenericMovieDataWrapper wrapper) {
+
+        MovieItem movieItemRealm = findInRealmMovieItem(realm, wrapper.getMovieId());
+
+        if (movieItemRealm == null) {
+
+            movieItemRealm = realm.createObject(MovieItem.class, wrapper.getMovieId());
+
+            movieItemRealm.setTitle(wrapper.getTitle());
+            movieItemRealm.setPosterPath(wrapper.getPosterPath());
+            movieItemRealm.setOverview(wrapper.getOverview());
+            movieItemRealm.setVoteCount(wrapper.getVoteCount());
+            movieItemRealm.setVoteAverage(wrapper.getVoteAverage());
+            movieItemRealm.setReleaseDate(wrapper.getReleaseDate());
+            movieItemRealm.setBackdropPath(wrapper.getBackdropPath());
+        } else {
+            Timber.i(wrapper.getTitle() + "Already present in MovieItem");
+        }
+    }
+
     private WatchList findInRealmWatchList(Realm realm, Integer id) {
         return realm.where(WatchList.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
     private MovieItem findInRealmMovieItem(Realm realm, Integer movieId) {
-
+        return realm.where(MovieItem.class).equalTo(FIELD_MOVIE_ID, movieId)
+                .findFirst();
     }
 
     private Favorite findInRealmFavorite(Realm realm, Integer id) {
