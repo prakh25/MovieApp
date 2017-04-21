@@ -15,6 +15,8 @@ public class HomeTvContract {
     }
 
     interface HomeTvView extends BaseView {
+        void showOnAirToday(List<TvResult> tvResultList);
+
         void showPopularTvShows(List<TvResult> tvResultList);
 
         void showTopRatedTvShows(List<TvResult> tvResultList);

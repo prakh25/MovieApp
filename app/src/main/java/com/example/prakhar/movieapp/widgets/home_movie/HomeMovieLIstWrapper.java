@@ -25,9 +25,9 @@ import butterknife.ButterKnife;
 
 public class HomeMovieLIstWrapper extends FrameLayout {
 
-    @BindView(R.id.movie_list)
+    @BindView(R.id.home_list)
     RecyclerView recyclerView;
-    @BindView(R.id.movie_wrapper_title)
+    @BindView(R.id.list_wrapper_title)
     TextView titleWrapper;
 
     private HomeMovieListAdapter adapter;

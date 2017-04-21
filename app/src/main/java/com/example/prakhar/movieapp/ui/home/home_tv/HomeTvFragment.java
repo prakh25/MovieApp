@@ -80,6 +80,11 @@ public class HomeTvFragment extends Fragment implements HomeTvContract.HomeTvVie
     }
 
     @Override
+    public void showOnAirToday(List<TvResult> tvResultList) {
+
+    }
+
+    @Override
     public void showPopularTvShows(List<TvResult> tvResultList) {
 
     }
