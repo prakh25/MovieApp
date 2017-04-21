@@ -15,13 +15,13 @@ import static com.example.prakhar.movieapp.utils.Constants.ARG_TOOLBAR_TITLE;
  * Created by Prakhar on 3/18/2017.
  */
 
-public class MoreActivity extends BaseActivity {
+public class MovieListActivity extends BaseActivity {
 
     public static final String EXTRA_GENRE_ID = "genreId";
 
     public static Intent newStartIntent(Context context, String activityTitle,
                                         @Nullable Integer genreId) {
-        Intent intent = new Intent(context, MoreActivity.class);
+        Intent intent = new Intent(context, MovieListActivity.class);
         intent.putExtra(ARG_TOOLBAR_TITLE, activityTitle);
         intent.putExtra(EXTRA_GENRE_ID, genreId);
         return intent;
@@ -35,7 +35,7 @@ public class MoreActivity extends BaseActivity {
         Integer genreId = getIntent().getIntExtra(EXTRA_GENRE_ID, 0);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.more_container, MoreFragment.newInstance(title, genreId))
+                    .replace(R.id.more_container, MovieListFragment.newInstance(title, genreId))
                     .commitAllowingStateLoss();
         }
     }
