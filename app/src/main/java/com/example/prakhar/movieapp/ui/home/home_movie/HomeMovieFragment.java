@@ -21,10 +21,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.prakhar.movieapp.R;
-import com.example.prakhar.movieapp.model.tmdb.Result;
+import com.example.prakhar.movieapp.model.home.movie.Result;
 import com.example.prakhar.movieapp.network.DataManager;
 import com.example.prakhar.movieapp.ui.genre.GenreActivity;
-import com.example.prakhar.movieapp.ui.more_movies_list.MoreActivity;
+import com.example.prakhar.movieapp.ui.more_movies_list.MovieListActivity;
 import com.example.prakhar.movieapp.ui.movie_detail.MovieDetailActivity;
 import com.example.prakhar.movieapp.widgets.home_movie.HomeLinksWrapper;
 import com.example.prakhar.movieapp.widgets.home_movie.HomeMovieLIstWrapper;
@@ -192,7 +192,7 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
 
     @Override
     public void onFrameClick(String title) {
-        startActivity(MoreActivity.newStartIntent(activity, title, 0));
+        startActivity(MovieListActivity.newStartIntent(activity, title, 0));
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
