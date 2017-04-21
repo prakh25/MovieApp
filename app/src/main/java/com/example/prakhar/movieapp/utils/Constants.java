@@ -43,6 +43,10 @@ public final class Constants {
 //    public static final boolean OMDB_INCLUDE_ROTTEN_TOMATOES = true;
 //    public static final String TRANSACTION_PREFIX_ = "transaction_prefix_";
 
+    //Realm
+    public static final String FIELD_MOVIE_ID = "movieId";
+    public static final String FIELD_LIST_ID = "id";
+
     //External Links
     public static final String TMDB_MOVIE_LINK = "https://www.themoviedb.org/movie/";
     public static final String TMDB_PERSON_LINK = "https://www.themoviedb.org/person/";

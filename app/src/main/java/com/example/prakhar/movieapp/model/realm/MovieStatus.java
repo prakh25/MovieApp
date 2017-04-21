@@ -9,8 +9,6 @@ import io.realm.annotations.PrimaryKey;
 
 public class MovieStatus extends RealmObject {
 
-    public static final String FIELD_MOVIE_ID = "movieId";
-
     @PrimaryKey
     private Integer movieId;
 

@@ -14,9 +14,9 @@ import com.example.prakhar.movieapp.model.movie_detail.tmdb.TmdbMovieDetail;
 import com.example.prakhar.movieapp.model.movie_detail.tmdb.Video;
 import com.example.prakhar.movieapp.model.movie_detail.trakt.TraktMovieRating;
 import com.example.prakhar.movieapp.model.realm.Favorite;
+import com.example.prakhar.movieapp.model.realm.MovieItem;
 import com.example.prakhar.movieapp.model.realm.MovieStatus;
 import com.example.prakhar.movieapp.model.realm.UserList;
-import com.example.prakhar.movieapp.model.realm.UserListItem;
 import com.example.prakhar.movieapp.model.realm.UserRating;
 import com.example.prakhar.movieapp.model.realm.WatchList;
 import com.example.prakhar.movieapp.model.release_dates.ReleaseDatesResult;
@@ -33,6 +33,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
+
+import static com.example.prakhar.movieapp.model.realm.UserList.FIELD_LIST_ID;
+import static com.example.prakhar.movieapp.utils.Constants.FIELD_LIST_ID;
+import static com.example.prakhar.movieapp.utils.Constants.FIELD_MOVIE_ID;
 
 /**
  * Created by Prakhar on 3/4/2017.
@@ -561,22 +565,26 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
     }
 
     private WatchList findInRealmWatchList(Realm realm, Integer id) {
-        return realm.where(WatchList.class).equalTo(WatchList.FIELD_MOVIE_ID, id)
+        return realm.where(WatchList.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
+    private MovieItem findInRealmMovieItem(Realm realm, Integer movieId) {
+
+    }
+
     private Favorite findInRealmFavorite(Realm realm, Integer id) {
-        return realm.where(Favorite.class).equalTo(Favorite.FIELD_MOVIE_ID, id)
+        return realm.where(Favorite.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
     private UserRating findInRealmRatings(Realm realm, Integer id) {
-        return realm.where(UserRating.class).equalTo(UserRating.FIELD_MOVIE_ID, id)
+        return realm.where(UserRating.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
     private MovieStatus findInRealmMovieStatus(Realm realm, Integer id) {
-        return realm.where(MovieStatus.class).equalTo(MovieStatus.FIELD_MOVIE_ID, id)
+        return realm.where(MovieStatus.class).equalTo(FIELD_MOVIE_ID, id)
                 .findFirst();
     }
 
@@ -585,17 +593,12 @@ class MovieDetailPresenter extends BasePresenter<MovieDetailContract.DetailView>
     }
 
     private UserList findInRealmUserList(Realm realm, int id) {
-        return realm.where(UserList.class).equalTo(UserList.FIELD_LIST_ID, id).findFirst();
-    }
-
-    private UserListItem findInRealmUserListItem(Realm realm, Integer id) {
-        return realm.where(UserListItem.class).equalTo(UserListItem.FIELD_USER_LIST_ITEM_ID, id)
-                .findFirst();
+        return realm.where(UserList.class).equalTo(FIELD_LIST_ID, id).findFirst();
     }
 
     private int nextListKey(Realm realm) {
         try {
-            Number currentId = realm.where(UserList.class).max(UserList.FIELD_LIST_ID);
+            Number currentId = realm.where(UserList.class).max(FIELD_LIST_ID);
             if (currentId == null) {
                 return 1;
             } else {

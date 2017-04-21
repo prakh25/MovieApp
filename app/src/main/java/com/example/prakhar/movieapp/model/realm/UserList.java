@@ -11,8 +11,6 @@ import io.realm.annotations.Required;
 
 public class UserList extends RealmObject {
 
-    public static final String FIELD_LIST_ID = "id";
-
     @PrimaryKey
     private Integer id;
 
