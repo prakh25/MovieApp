@@ -4,8 +4,8 @@ package com.example.prakhar.movieapp.model.movie_detail.tmdb;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.prakhar.movieapp.model.tmdb.Backdrop;
-import com.example.prakhar.movieapp.model.tmdb.Poster;
+import com.example.prakhar.movieapp.model.home.movie.Backdrop;
+import com.example.prakhar.movieapp.model.home.movie.Poster;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
