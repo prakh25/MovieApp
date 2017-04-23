@@ -37,7 +37,7 @@ public class HomeMovieLIstWrapper extends FrameLayout {
     }
 
     public HomeMovieLIstWrapper(Context context, @Nullable String title, List<Result> results,
-                                HomeMovieListAdapter.ListInteractionListener listener) {
+                                int scrollPos, HomeMovieListAdapter.ListInteractionListener listener) {
         super(context);
         adapter = new HomeMovieListAdapter(results, listener);
         init(context);
@@ -48,6 +48,8 @@ public class HomeMovieLIstWrapper extends FrameLayout {
         if (title != null && !title.isEmpty()) {
             titleWrapper.setText(title);
         }
+
+        ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPosition(scrollPos);
     }
 
     private void init(Context context) {
@@ -69,5 +71,4 @@ public class HomeMovieLIstWrapper extends FrameLayout {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }
-
 }

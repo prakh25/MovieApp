@@ -9,11 +9,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,6 +46,10 @@ import butterknife.Unbinder;
 public class HomeMovieFragment extends Fragment implements HomeMovieContract.HomeMovieView,
         HomeMovieListAdapter.ListInteractionListener, HomeLinksWrapper.LinkInteractionListener {
 
+    private static final String SCROLL_VIEW_Y_POS = "scrollViewYPosition";
+    private static final String NOW_PLAYING_SCROLL_POS = "nowPlayingScrollPos";
+    private static final String COMING_SOON_SCROLL_POS = "comingSoonScrollPos";
+
     @BindView(R.id.home_movies_content_frame)
     LinearLayout layout;
     @BindView(R.id.home_movies_scroll_view)
@@ -63,6 +70,13 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
     private HomeMoviePresenter homeMoviePresenter;
     private Unbinder unbinder;
 
+    private int scroll_y;
+    private RecyclerView nowPLayingRecyclerView;
+    private RecyclerView comingSoonRecyclerView;
+
+    private int nowPlayingScrollPos = 0;
+    private int comingSoonScrollPos = 0;
+
     public HomeMovieFragment() {
     }
 
@@ -79,6 +93,17 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         homeMoviePresenter = new HomeMoviePresenter(DataManager.getInstance());
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SCROLL_VIEW_Y_POS, scrollView.getScrollY());
+        outState.putInt(NOW_PLAYING_SCROLL_POS, ((LinearLayoutManager) nowPLayingRecyclerView
+                .getLayoutManager()).findFirstCompletelyVisibleItemPosition());
+        outState.putInt(COMING_SOON_SCROLL_POS, ((LinearLayoutManager) comingSoonRecyclerView
+                .getLayoutManager()).findFirstCompletelyVisibleItemPosition());
+
     }
 
     @Nullable
@@ -100,17 +125,35 @@ public class HomeMovieFragment extends Fragment implements HomeMovieContract.Hom
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null) {
+            scroll_y = savedInstanceState.getInt(SCROLL_VIEW_Y_POS);
+
+            nowPlayingScrollPos = savedInstanceState.getInt(NOW_PLAYING_SCROLL_POS);
+            comingSoonScrollPos = savedInstanceState.getInt(COMING_SOON_SCROLL_POS);
+
+            ViewTreeObserver treeObserver = scrollView.getViewTreeObserver();
+            treeObserver.addOnGlobalLayoutListener(() ->
+                    scrollView.scrollTo(0, scroll_y)
+            );
+        }
+    }
+
+    @Override
     public void showComingSoonMovies(List<Result> resultList) {
-        HomeMovieLIstWrapper nowPlayingWrapper = new HomeMovieLIstWrapper(activity, "Coming Soon",
-                resultList, this);
-        layout.addView(nowPlayingWrapper);
+        HomeMovieLIstWrapper comingSoonWrapper = new HomeMovieLIstWrapper(activity,
+                getString(R.string.coming_soon), resultList, comingSoonScrollPos, this);
+        layout.addView(comingSoonWrapper);
+        comingSoonRecyclerView = (RecyclerView) comingSoonWrapper.findViewById(R.id.home_list);
     }
 
     @Override
     public void showNowPlayingMovies(List<Result> resultList) {
-        HomeMovieLIstWrapper nowPlayingWrapper = new HomeMovieLIstWrapper(activity, "In Theaters",
-                resultList, this);
+        HomeMovieLIstWrapper nowPlayingWrapper = new HomeMovieLIstWrapper(activity,
+                getString(R.string.now_playing), resultList, nowPlayingScrollPos, this);
         layout.addView(nowPlayingWrapper);
+        nowPLayingRecyclerView = (RecyclerView) nowPlayingWrapper.findViewById(R.id.home_list);
     }
 
     @Override

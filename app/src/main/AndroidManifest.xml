@@ -18,8 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/HomeScreenTheme">
         <activity android:name=".ui.home.HomeActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +27,6 @@
         </activity>
 
         <activity android:name=".ui.movie_detail.MovieDetailActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/DetailTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
