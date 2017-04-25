@@ -1,1 +1,1 @@
-include ':core', ':mobile'
+include ':core', ':mobile', ':tablet'
