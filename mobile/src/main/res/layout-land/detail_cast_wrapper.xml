@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/credit_wrapper_title"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/wrapper_title_padding"
+        android:text="@string/top_billed_cast"
+
+        android:textSize="18sp"/>
+
+    <Button
+        android:id="@+id/credit_wrapper_btn"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="@string/full_cast_btn"
+        android:textColor="@color/colorAccent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="8dp"/>
+
+   <GridView
+       android:id="@+id/credit_grid_view"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="@dimen/recycler_view_margin_top"
+       android:columnWidth="100dp"
+       android:numColumns="5"
+       android:layout_marginBottom="16dp"
+       android:stretchMode="spacingWidthUniform"
+       tools:listitem="@layout/detail_cast_item" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:background="@android:color/darker_gray"
+        android:layout_gravity="bottom"/>
+
+</FrameLayout>
