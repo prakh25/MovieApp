@@ -8,4 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MovieAppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">#7AD52D</item>
+    </style>
 </resources>
